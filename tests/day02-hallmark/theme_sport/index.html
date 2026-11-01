@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ember &amp; Oak, coffee roasted every Tuesday in Lisbon</title>
+<meta name="description" content="Ember & Oak is a small coffee roastery in Lisbon. We roast every Tuesday and sell our beans online.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@800&family=Albert+Sans:wght@400;500&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="container">
+    <a class="wordmark" href="#top">Ember &amp; Oak</a>
+    <ul>
+      <li><a class="link" href="#calendar">Roast calendar</a></li>
+      <li><a class="link" href="#made">How we roast</a></li>
+      <li><a class="btn btn--secondary btn--small" href="#beans">Shop beans</a></li>
+    </ul>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" aria-labelledby="hero-head">
+    <div class="container">
+      <figure class="hero-field" data-slot="hero" data-alt="Fresh beans turning in the cooling tray after a Tuesday roast">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Cooling_time_for_coffee.jpg/1280px-Cooling_time_for_coffee.jpg" srcset="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Cooling_time_for_coffee.jpg/960px-Cooling_time_for_coffee.jpg 960w, https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Cooling_time_for_coffee.jpg/1280px-Cooling_time_for_coffee.jpg 1280w, https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Cooling_time_for_coffee.jpg/1920px-Cooling_time_for_coffee.jpg 1920w" sizes="100vw" width="5699" height="4000" alt="Roasted coffee beans swept round a steel cooling tray by its paddle arm" fetchpriority="high">
+        <p class="fixture" data-keep>
+          <span class="label" data-next-label>Next roast</span>
+          <span class="fixture-date" data-next-date>Every Tuesday</span>
+        </p>
+      </figure>
+      <div class="hero-base">
+        <h1 id="hero-head">Roasted every Tuesday in Lisbon</h1>
+        <div class="hero-side">
+          <p class="lead">Small batches from our Lisbon roaster, sold online by the bag.</p>
+          <div class="actions">
+            <a class="btn btn--primary" href="#beans">Shop the beans</a>
+            <a class="btn btn--secondary" href="#calendar">Roast calendar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="calendar" aria-labelledby="cal-head">
+    <div class="container stack">
+      <div class="pane">
+        <h2 id="cal-head">One roast a week</h2>
+        <p>The roaster fires once a week, on Tuesday. Every bag on the shelf comes from the last one.</p>
+      </div>
+      <table class="sheet">
+        <thead><tr><th scope="col">Day</th><th scope="col">Date</th><th scope="col">Roast</th></tr></thead>
+        <tbody data-calendar>
+          <tr class="is-next"><td class="day">Tuesday</td><td class="time"><time datetime="2026-10-27">27.10.2026</time></td><td><span class="status">Roasting now</span></td></tr>
+          <tr><td class="day">Tuesday</td><td class="time"><time datetime="2026-11-03">03.11.2026</time></td><td><span class="status">Next week</span></td></tr>
+          <tr><td class="day">Tuesday</td><td class="time"><time datetime="2026-11-10">10.11.2026</time></td><td><span class="status">In two weeks</span></td></tr>
+          <tr><td class="day">Tuesday</td><td class="time"><time datetime="2026-11-17">17.11.2026</time></td><td><span class="status">In three weeks</span></td></tr>
+          <tr><td class="day">Tuesday</td><td class="time"><time datetime="2026-11-24">24.11.2026</time></td><td><span class="status">In four weeks</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" id="beans" aria-labelledby="beans-head">
+    <div class="container range-head">
+      <h2 id="beans-head">On the shelf</h2>
+      <p class="label">Sample names. Prices <span class="fill" data-fill="prices">to be added</span>.</p>
+    </div>
+    <div class="rail-wrap">
+      <ul class="rail" tabindex="0" aria-label="Beans on the shelf">
+        <li><h3>House espresso</h3><a class="link" href="#beans">Add to bag</a></li>
+        <li><h3>Filter of the week</h3><a class="link" href="#beans">Add to bag</a></li>
+        <li><h3>Single origin</h3><a class="link" href="#beans">Add to bag</a></li>
+        <li><h3>Seasonal blend</h3><a class="link" href="#beans">Add to bag</a></li>
+        <li><h3>Decaf</h3><a class="link" href="#beans">Add to bag</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section ink-band" id="made" aria-labelledby="made-head">
+    <div class="container stack">
+      <div class="pane">
+        <h2 id="made-head">From the sack to your bag</h2>
+        <p>Three stops between the sack and your door.</p>
+        <a class="btn btn--primary" href="#beans">Shop the beans</a>
+      </div>
+      <ol class="frames">
+        <li><figure>
+          <div class="photo" data-slot="green" data-alt="Green unroasted beans waiting for Tuesday">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Green_Coffee_Beans_%284075921494%29.jpg/1280px-Green_Coffee_Beans_%284075921494%29.jpg" srcset="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Green_Coffee_Beans_%284075921494%29.jpg/960px-Green_Coffee_Beans_%284075921494%29.jpg 960w, https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Green_Coffee_Beans_%284075921494%29.jpg/1280px-Green_Coffee_Beans_%284075921494%29.jpg 1280w, https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Green_Coffee_Beans_%284075921494%29.jpg/1920px-Green_Coffee_Beans_%284075921494%29.jpg 1920w" sizes="(min-width: 60rem) 55vw, 100vw" width="3648" height="2736" alt="Pale green unroasted coffee beans, close up" loading="lazy">
+          </div>
+          <figcaption><span class="frame-no">01</span><h3>Green in</h3></figcaption>
+        </figure></li>
+        <li><figure>
+          <div class="photo" data-slot="roast" data-alt="Beans fresh from the Tuesday roast">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Roasted_coffee_beans_on_the_surface._01.jpg/1280px-Roasted_coffee_beans_on_the_surface._01.jpg" srcset="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Roasted_coffee_beans_on_the_surface._01.jpg/960px-Roasted_coffee_beans_on_the_surface._01.jpg 960w, https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Roasted_coffee_beans_on_the_surface._01.jpg/1280px-Roasted_coffee_beans_on_the_surface._01.jpg 1280w, https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Roasted_coffee_beans_on_the_surface._01.jpg/1920px-Roasted_coffee_beans_on_the_surface._01.jpg 1920w" sizes="(min-width: 60rem) 55vw, 100vw" width="4898" height="3265" alt="Roasted coffee beans scattered on black" loading="lazy">
+          </div>
+          <figcaption><span class="frame-no">02</span><h3>Roasted Tuesday</h3></figcaption>
+        </figure></li>
+        <li><figure>
+          <div class="photo" data-slot="shelf" data-alt="Bagged beans ready to send">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/D%C3%BClmen%2C_Privatr%C3%B6sterei_Schr%C3%B6er_--_2018_--_0553.jpg/1280px-D%C3%BClmen%2C_Privatr%C3%B6sterei_Schr%C3%B6er_--_2018_--_0553.jpg" srcset="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/D%C3%BClmen%2C_Privatr%C3%B6sterei_Schr%C3%B6er_--_2018_--_0553.jpg/960px-D%C3%BClmen%2C_Privatr%C3%B6sterei_Schr%C3%B6er_--_2018_--_0553.jpg 960w, https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/D%C3%BClmen%2C_Privatr%C3%B6sterei_Schr%C3%B6er_--_2018_--_0553.jpg/1280px-D%C3%BClmen%2C_Privatr%C3%B6sterei_Schr%C3%B6er_--_2018_--_0553.jpg 1280w, https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/D%C3%BClmen%2C_Privatr%C3%B6sterei_Schr%C3%B6er_--_2018_--_0553.jpg/1920px-D%C3%BClmen%2C_Privatr%C3%B6sterei_Schr%C3%B6er_--_2018_--_0553.jpg 1920w" sizes="(min-width: 60rem) 55vw, 100vw" width="6720" height="4480" alt="Rows of scoop bins of coffee beans in a roastery shop wall" style="object-position: 45% 50%" loading="lazy">
+          </div>
+          <figcaption><span class="frame-no">03</span><h3>Bagged and sent</h3></figcaption>
+        </figure></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="delivery" aria-labelledby="del-head">
+    <div class="container">
+      <div class="close">
+        <h2 id="del-head">Before you order</h2>
+        <a class="btn btn--primary" href="#beans">Shop the beans</a>
+      </div>
+      <dl class="facts">
+        <div><dt>Roasted Tuesday</dt><dd>Every bag comes from the most recent Tuesday roast.</dd></div>
+        <div><dt>From Lisbon</dt><dd>Roasted and packed at our roastery in Lisbon.</dd></div>
+        <div><dt>Delivery</dt><dd>Areas and times <span class="fill" data-fill="delivery">to be confirmed</span>.</dd></div>
+      </dl>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <a class="wordmark" href="#top">Ember &amp; Oak</a>
+    <div>
+      <p>Ember &amp; Oak is a small coffee roastery in Lisbon. We roast every Tuesday and sell our beans online.</p>
+      <p>Photographs: <a href="https://commons.wikimedia.org/wiki/File:Cooling_time_for_coffee.jpg">Jameswasswa</a> (CC BY-SA 4.0), <a href="https://commons.wikimedia.org/wiki/File:Green_Coffee_Beans_(4075921494).jpg">Michael Allen Smith</a> (CC BY-SA 2.0), <a href="https://commons.wikimedia.org/wiki/File:Roasted_coffee_beans_on_the_surface._01.jpg">A S M Jobaer</a> (CC BY-SA 4.0), <a href="https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Privatr%C3%B6sterei_Schr%C3%B6er_--_2018_--_0553.jpg">Dietmar Rabich</a> (CC BY-SA 4.0), all via Wikimedia Commons.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const now = new Date(); const d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const ahead = (2 - d.getDay() + 7) % 7; const first = new Date(d); first.setDate(d.getDate() + ahead);
+  const pad = (n) => String(n).padStart(2, '0');
+  const iso = (x) => `${x.getFullYear()}-${pad(x.getMonth() + 1)}-${pad(x.getDate())}`;
+  const dotted = (x) => `${pad(x.getDate())}.${pad(x.getMonth() + 1)}.${x.getFullYear()}`;
+  const label = document.querySelector('[data-next-label]'); const date = document.querySelector('[data-next-date]');
+  label.textContent = ahead === 0 ? 'Roasting today' : 'Next roast';
+  date.textContent = first.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+  const status = [ahead === 0 ? 'Roasting now' : 'Next roast', 'The week after', 'In two weeks', 'In three weeks', 'In four weeks'];
+  document.querySelectorAll('[data-calendar] tr').forEach((row, i) => {
+    const x = new Date(first); x.setDate(first.getDate() + i * 7);
+    row.querySelector('time').dateTime = iso(x); row.querySelector('time').textContent = dotted(x);
+    row.querySelector('.status').textContent = status[i];
+  });
+})();
+</script>
+<script>window.hallmarkSlots = (m) => { for (const [k, v] of Object.entries(m)) { const s = document.querySelector(`[data-slot="${k}"]`); if (!s) continue; const im = new Image(); im.src = typeof v === 'string' ? v : v.src; im.alt = (typeof v === 'object' && v.alt) || s.dataset.alt || ''; s.querySelectorAll(':scope > img').forEach((o) => o.remove()); s.prepend(im); } };
+document.querySelectorAll('[data-slot] img').forEach((i) => { if (i.complete && !i.naturalWidth) i.remove(); else i.addEventListener('error', () => i.remove(), { once: true }); });</script>
+</body>
+</html>

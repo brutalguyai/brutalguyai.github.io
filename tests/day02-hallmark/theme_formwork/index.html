@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ember &amp; Oak, coffee roasted every Tuesday in Lisbon</title>
+<meta name="description" content="A small coffee roastery in Lisbon. We roast every Tuesday and sell the beans online.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Archivo:wght@400;500&family=Archivo+Narrow:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="container nav__row">
+    <a class="wordmark" href="#main">Ember &amp; Oak</a>
+    <nav aria-label="Main">
+      <ul class="nav__links">
+        <li><a href="#beans">The beans</a></li>
+        <li><a href="#roast">Roast day</a></li>
+        <li><a href="#delivery">Delivery</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn--secondary btn--small" href="#beans">Shop</a>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero container" aria-labelledby="hero-head">
+    <div class="hero__text">
+      <h1 id="hero-head">Roasted every Tuesday in Lisbon</h1>
+      <p class="lead">Small batches from one drum, sold online as whole beans.</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#beans">Shop the beans</a>
+        <a class="link" href="#roast">How roast day works</a>
+      </div>
+    </div>
+    <figure class="hero__media">
+      <div class="photo photo--hero" data-slot="hero" data-alt="The drum roaster and its cooling tray">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Coffee_roasting_machine%2C_The_Roastery%2C_Coaltown_Coffee%2C_Ammanford%2C_Wales.jpg/1280px-Coffee_roasting_machine%2C_The_Roastery%2C_Coaltown_Coffee%2C_Ammanford%2C_Wales.jpg" srcset="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Coffee_roasting_machine%2C_The_Roastery%2C_Coaltown_Coffee%2C_Ammanford%2C_Wales.jpg/960px-Coffee_roasting_machine%2C_The_Roastery%2C_Coaltown_Coffee%2C_Ammanford%2C_Wales.jpg 960w, https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Coffee_roasting_machine%2C_The_Roastery%2C_Coaltown_Coffee%2C_Ammanford%2C_Wales.jpg/1280px-Coffee_roasting_machine%2C_The_Roastery%2C_Coaltown_Coffee%2C_Ammanford%2C_Wales.jpg 1280w, https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Coffee_roasting_machine%2C_The_Roastery%2C_Coaltown_Coffee%2C_Ammanford%2C_Wales.jpg/1920px-Coffee_roasting_machine%2C_The_Roastery%2C_Coaltown_Coffee%2C_Ammanford%2C_Wales.jpg 1920w" sizes="(min-width: 60rem) 40vw, 100vw" width="3024" height="4032" alt="A drum coffee roaster with its cooling tray" style="object-position: 50% 45%" fetchpriority="high">
+      </div>
+      <figcaption class="plate plate--roast"><span class="plate__label">Next roast</span> <strong class="plate__day" data-next-roast>Tuesday</strong> <span class="plate__date" data-next-roast-date>Every week</span></figcaption>
+    </figure>
+  </section>
+
+  <section class="facts container" id="delivery" aria-labelledby="facts-head">
+    <h2 id="facts-head">What you get, and when</h2>
+    <dl class="facts__list">
+      <div><dt>Roast day</dt><dd>Every Tuesday, in Lisbon</dd></div>
+      <div><dt>How it comes</dt><dd>Whole beans, from that week’s roast</dd></div>
+      <div><dt>Where we ship</dt><dd><span class="fill" data-fill="shipping-area">delivery area to be confirmed</span></dd></div>
+      <div><dt>When it leaves</dt><dd><span class="fill" data-fill="dispatch">dispatch day to be confirmed</span></dd></div>
+    </dl>
+  </section>
+
+  <section class="range" id="beans" aria-labelledby="range-head">
+    <div class="container">
+      <h2 id="range-head">This week’s beans</h2>
+      <ol class="range__list">
+        <li class="bean">
+          <h3>House espresso</h3>
+          <p>Medium-dark. Built for the machine and for milk.</p>
+          <a class="link" href="#beans">Choose a bag</a>
+        </li>
+        <li class="bean">
+          <h3>Single origin, filter</h3>
+          <p>Light. For the pour-over and the cafetière.</p>
+          <a class="link" href="#beans">Choose a bag</a>
+        </li>
+        <li class="bean">
+          <h3>Decaf</h3>
+          <p>Medium. For the cup after dinner.</p>
+          <a class="link" href="#beans">Choose a bag</a>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="made container" id="roast" aria-labelledby="made-head">
+    <div class="made__media">
+      <figure class="photo photo--made" data-slot="cooling" data-alt="Fresh beans turning in the cooling tray">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Cooling_time_for_coffee.jpg/1280px-Cooling_time_for_coffee.jpg" srcset="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Cooling_time_for_coffee.jpg/960px-Cooling_time_for_coffee.jpg 960w, https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Cooling_time_for_coffee.jpg/1280px-Cooling_time_for_coffee.jpg 1280w, https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Cooling_time_for_coffee.jpg/1920px-Cooling_time_for_coffee.jpg 1920w" sizes="(min-width: 60rem) 45vw, 100vw" width="5699" height="4000" alt="Roasted coffee beans swept round a steel cooling tray by its paddle arm" loading="lazy">
+      </figure>
+      <p class="caption">The cooling tray, a few minutes after the drop.</p>
+    </div>
+    <div class="made__text">
+      <h2 id="made-head">One day a week at the drum</h2>
+      <div class="made__panel">
+        <h3>Green in</h3>
+        <p>The week’s green coffee goes into the drum in small batches.</p>
+      </div>
+      <div class="made__panel">
+        <h3>The drop</h3>
+        <p>Each batch drops at its roast level, then turns in the tray to cool.</p>
+      </div>
+      <div class="made__panel">
+        <h3>Bagged</h3>
+        <p>Cooled beans are weighed, bagged and readied for the post.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="statement" aria-label="Roast day">
+    <div class="container">
+      <p class="statement__line">Tuesday is roast day.</p>
+    </div>
+  </section>
+
+  <section class="close container" aria-labelledby="close-head">
+    <h2 id="close-head">Get a bag from the next roast</h2>
+    <div class="plate plate--close">
+      <p class="close__sub">Order now and your beans come from <span data-next-roast-inline>Tuesday’s</span> batch.</p>
+      <a class="btn btn--primary" href="#beans">Shop the beans</a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <p class="footer__statement">Ember &amp; Oak. Coffee roasted in Lisbon.</p>
+    <div class="footer__row">
+      <ul class="footer__links">
+        <li><a href="#beans">The beans</a></li>
+        <li><a href="#roast">Roast day</a></li>
+        <li><a href="#delivery">Delivery</a></li>
+      </ul>
+      <p class="footer__credit">Photographs: <a href="https://commons.wikimedia.org/wiki/File:Coffee_roasting_machine,_The_Roastery,_Coaltown_Coffee,_Ammanford,_Wales.jpg">Vouliagmeni</a> (CC BY-SA 4.0), <a href="https://commons.wikimedia.org/wiki/File:Cooling_time_for_coffee.jpg">Jameswasswa</a> (CC BY-SA 4.0), Wikimedia Commons.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const now = new Date();
+  const ahead = (2 - now.getDay() + 7) % 7;
+  const next = new Date(now); next.setDate(now.getDate() + ahead);
+  const date = next.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
+  const day = document.querySelector('[data-next-roast]');
+  const dateEl = document.querySelector('[data-next-roast-date]');
+  const inline = document.querySelector('[data-next-roast-inline]');
+  if (day) day.textContent = ahead === 0 ? 'Today' : 'Tuesday';
+  if (dateEl) dateEl.textContent = ahead === 0 ? 'Tuesday ' + date : date;
+  if (inline) inline.textContent = ahead === 0 ? 'today’s' : 'Tuesday ' + date + '’s';
+})();
+</script>
+<script>window.hallmarkSlots = (m) => { for (const [k, v] of Object.entries(m)) { const s = document.querySelector(`[data-slot="${k}"]`); if (!s) continue; const im = new Image(); im.src = typeof v === 'string' ? v : v.src; im.alt = (typeof v === 'object' && v.alt) || s.dataset.alt || ''; s.querySelectorAll(':scope > img').forEach((o) => o.remove()); s.prepend(im); } };
+document.querySelectorAll('[data-slot] img').forEach((i) => { if (i.complete && !i.naturalWidth) i.remove(); else i.addEventListener('error', () => i.remove(), { once: true }); });</script>
+</body>
+</html>

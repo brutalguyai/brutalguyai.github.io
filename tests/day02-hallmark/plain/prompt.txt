@@ -1,0 +1,1 @@
+Build a landing page for Ember & Oak, a small coffee roastery in Lisbon that sells beans online and roasts every Tuesday. Write it as a single index.html in this folder. Don't ask questions, just build it.

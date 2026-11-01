@@ -1,0 +1,57 @@
+{
+  "run_id": "ledgerly-run-1",
+  "repo": "ledgerly",
+  "target": "~/ledgerly",
+  "source_ref": {
+    "commit": "8a21cc4932032683378f6c4ea2e6532d5b7b93f8",
+    "dirty": true,
+    "dirty_detail": "Untracked only: .agents/, .claude/, skills-lock.json (the security-audit skill itself). No tracked application file is modified; all reviewed application source is at the commit."
+  },
+  "profile": "standard",
+  "scope_paths": [
+    "src/",
+    "package.json",
+    "package-lock.json",
+    ".gitignore",
+    "README.md"
+  ],
+  "budget": null,
+  "execution_policy": "sandboxed-source-and-local-only",
+  "execution_notes": "The required OS-enforced sandbox could not be established: unshare (network/mount namespaces) and prlimit/env -i launches were refused by the host permission system. Therefore no target-controlled code (no file under src/, no package under node_modules/) is executed in this run. Local checks are limited to self-authored harnesses that use only Node.js built-ins (path, node:sqlite with ':memory:', crypto, string templates) with source expressions copied verbatim, dummy data, no network, and writes confined to the agent scratch directory.",
+  "companion_files": [
+    "WEB-PROTOCOL-AND-AUTH.md",
+    "DATA-ISOLATION-AND-LIFECYCLE.md",
+    "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md"
+  ],
+  "prior_runs": [],
+  "prior_runs_note": "Output directory was new and empty; no compatible prior coverage-ledger.json or findings.json was supplied or found.",
+  "shared_file_owners": {
+    "run-metadata.json": "parent",
+    "architecture.md": "parent",
+    "coverage-ledger.json": "parent",
+    "findings.json": "parent",
+    "REPORT.md": "parent",
+    "FINDINGS-DETAIL.md": "parent",
+    "NEEDS-VALIDATION.md": "parent"
+  },
+  "reconnaissance_note": "The target is 11 source files / ~230 lines. Reconnaissance (agents 1a-1d scope) was performed directly by the parent from a complete read of every file rather than by four delegated research agents.",
+  "run_status": "complete",
+  "coverage_claim": "partial: explicit early stop after wave 2; unit db-amplification deferred; no final-clean critic ran",
+  "agents_used": {
+    "reconnaissance": "parent (no delegated agents)",
+    "hunters": 6,
+    "coverage_critics": 2,
+    "phase3_verifiers": 14,
+    "phase5_verifiers": 12,
+    "total_delegated": 34
+  },
+  "deviations": [
+    "Reconnaissance done by parent, not four research agents (11 files).",
+    "Phase 3 for wave-1 candidates ran in parallel with wave-2 hunters; Phase 5 ran in parallel with critic-w2.",
+    "v3-03 prose-wrapped result discarded unrepaired; re-run as v3-10.",
+    "Parent normalized HTML entities in agent JSON and added one missing artifact:null to a source check.",
+    "Artifact promotion emulates openat via /proc/self/fd and pins root inode identity instead of retaining descriptors across processes.",
+    "No target code executed: OS sandbox unavailable; evidence is built-in harnesses reproducing verbatim source expressions."
+  ],
+  "completed_at": "2026-10-28"
+}

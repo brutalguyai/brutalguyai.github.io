@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ember &amp; Oak: small-batch coffee, roasted every Tuesday in Lisbon</title>
+  <meta name="description" content="Ember &amp; Oak is a small coffee roastery in Lisbon. We roast every Tuesday and ship fresh beans across Portugal and Europe.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@600&family=Grenze:wght@400&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* Hallmark · shape: Split Studio (draw ee1263) · genre: editorial · theme: Vellum (deal 1/3, seed small-coffee-roastery-lisbon-8887·c1c5a9c7·2026-10-27·r0) · redesign: full · job: buy
+     * hero: Stage · nav: masthead · footer: mast · imagery: photographs, library 3, warm · signature: the live countdown to the Monday 23:59 cut-off, in pigment figures under the hero's actions · vellum: parchment
+     * axes: light/blackletter/cool · posture: committed · contrast: pass · fold: pass · v2.0.0 */
+    /* Hallmark · pre-emit critique: P4 H5 E4 S4 R4 V4 · weakest: S, a roastery on parchment is the expected look; led with the page's own clock (the Monday cut-off) and set the beans as a day book, not product cards */
+    /* Hallmark · reworded "Roasted on Tuesday. In your cup by Friday." to "Roasted Tuesday, in your cup by Friday." · 58 caps the hero head at seven words */
+    /* Hallmark · reworded "A small roaster with a slow rhythm." to "A small roaster, a slow rhythm." · section heads run six words at most */
+    /* Hallmark · reworded "We roast once a week, in small batches, on a little drum roaster in Lisbon, then ship straight to your door" to "We roast once a week, in small batches, in Lisbon." · the hero sentence runs twelve words at most */
+    /* Hallmark · dropped #sheen · it was the gradient inside the drawn coffee bean, which 80 removes */
+    /* Hallmark · waive 85 · the user's own page carried this sign-up · the Tuesday letter form is kept from the owner's page, moved from the close into the footer under the pickup hours */
+    /* Hallmark · answered F4 · btn--paper is the same primary inverted for the ultramarine field; one filled style per surface */
+    /* Hallmark · dismissed kept · "this week's beans" and "know what's roasting" only gained a curly apostrophe; 26min is the live countdown's reading */
+    @import url("./tokens.css");
+    @import url("./base.css");
+
+    :root {
+      --nav-h: 76px;
+      --color-mark-ground: var(--color-ink);
+      --color-mark-flame: #d4572a;
+      --color-field-rule: color-mix(in oklab, var(--color-accent-ink) 38%, var(--color-accent));
+      --color-field-cell: var(--color-accent-deep);
+      --color-photo-edge: color-mix(in oklab, var(--color-ink) 9%, transparent);
+    }
+
+    .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap-columns); }
+
+    /* Controls */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: var(--space-xs);
+      min-height: 48px; padding: 0 var(--space-lg);
+      border: var(--rule-hair) solid var(--color-ink); border-radius: var(--radius-pill);
+      background: transparent; color: var(--color-ink);
+      font: 500 var(--text-md)/1 var(--font-body); white-space: nowrap; text-decoration: none; cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+    }
+    .btn:hover { background: var(--color-paper-2); }
+    .btn:active { transform: translateY(1px); }
+    .btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+    .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; transform: none; }
+    .btn[aria-busy="true"] { cursor: progress; }
+    .btn--primary { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-ink); }
+    .btn--primary:hover { background: var(--color-accent-deep); border-color: var(--color-accent-deep); }
+    .btn--paper { background: var(--color-accent-ink); border-color: var(--color-accent-ink); color: var(--color-accent); }
+    .btn--paper:hover { background: var(--color-paper-2); border-color: var(--color-paper-2); }
+    .btn--paper:focus-visible { outline-color: var(--color-accent-ink); }
+    .add.added { background: var(--color-ink); border-color: var(--color-ink); color: var(--color-paper); }
+
+    /* Roast-day line */
+    .roast-bar { background: var(--color-paper-2); border-bottom: var(--rule-hair) solid var(--color-rule); font-size: var(--text-sm); padding-block: var(--space-xs); }
+    .roast-bar strong { font-weight: 600; }
+
+    /* Masthead */
+    header.site { position: sticky; top: 0; z-index: var(--z-sticky-nav); background: var(--color-paper); border-bottom: var(--rule-double) double var(--color-ink); }
+    .nav { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: var(--space-lg); min-height: var(--nav-h); }
+    .nav ul { display: flex; gap: var(--space-lg); list-style: none; margin: 0; padding: 0; }
+    .nav ul a { font-weight: 600; font-size: var(--text-sm); text-decoration: none; white-space: nowrap; }
+    .nav ul a:hover { text-decoration: underline; text-decoration-color: var(--color-accent); }
+    .nav .btn { justify-self: end; }
+    .logo { display: inline-flex; align-items: center; gap: var(--space-sm); text-decoration: none; font: 600 var(--text-2xl)/1 var(--font-display); white-space: nowrap; }
+    .logo svg { width: 32px; height: 32px; flex-shrink: 0; }
+    .mark-ground { fill: var(--color-mark-ground); }
+    .mark-flame { fill: var(--color-mark-flame); }
+    a:focus-visible, .rail:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+
+    /* Hero */
+    .hero { min-height: calc(100svh - var(--nav-h) - var(--space-2xl)); display: grid; align-items: center; padding-block: var(--space-xl) var(--space-2xl); }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--space-3xl); align-items: start; }
+    .hero h1 { line-height: 0.92; max-width: 11ch; }
+    .hero .lead { margin-top: var(--space-lg); color: var(--color-ink-2); max-width: 30ch; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-xl); }
+    .hero-photo { height: clamp(440px, 60svh, 600px); margin: 0; border-radius: var(--radius-card); }
+    .hero-photo > img, .pin__photo > img, .story-photo > img { outline: var(--rule-hair) solid var(--color-photo-edge); outline-offset: -1px; }
+
+    .countdown { margin-top: var(--space-xl); padding-top: var(--space-md); border-top: var(--rule-hair) solid var(--color-rule); }
+    .countdown .label { display: block; font-size: var(--text-sm); font-weight: 500; color: var(--color-muted); }
+    .timer { display: flex; gap: var(--space-lg); margin-top: var(--space-xs); }
+    .timer div { display: flex; align-items: baseline; gap: var(--space-2xs); }
+    .timer b { font: 400 var(--text-3xl)/1 var(--font-outlier); color: var(--color-accent); font-variant-numeric: tabular-nums; }
+    .timer span { font-size: var(--text-sm); color: var(--color-muted); }
+
+    /* Section heads */
+    .head { align-items: end; row-gap: var(--space-lg); margin-bottom: var(--space-2xl); }
+    .head h2 { grid-column: 1 / span 6; line-height: 0.92; }
+    .head .lead { grid-column: 8 / span 5; color: var(--color-ink-2); }
+
+    /* Roast week, pinned */
+    .week { padding-block: var(--section-gap) var(--section-gap-s); }
+    .week-facts { grid-column: 8 / span 5; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; }
+    .week-facts div { padding-inline: var(--space-md); border-left: var(--rule-hair) solid var(--color-rule); }
+    .week-facts div:first-child { padding-left: 0; border-left: 0; }
+    .week-facts dt { font: 400 var(--text-2xl)/1 var(--font-outlier); color: var(--color-accent); font-variant-numeric: tabular-nums; }
+    .week-facts dd { margin: var(--space-2xs) 0 0; font-size: var(--text-sm); color: var(--color-muted); }
+    .week-intro { grid-column: 1 / span 6; margin-top: var(--space-md); color: var(--color-ink-2); }
+    .pin { align-items: start; }
+    .steps { grid-column: 1 / span 5; list-style: none; margin: 0; padding: 0; counter-reset: step; border-top: var(--rule-double) double var(--color-ink); }
+    .step { counter-increment: step; display: grid; grid-template-columns: var(--space-2xl) minmax(0, 1fr); column-gap: var(--space-md); min-height: 260px; padding-block: var(--space-xl); border-bottom: var(--rule-hair) solid var(--color-rule); }
+    .step::before { content: counter(step); grid-row: 1 / span 3; font: 400 var(--text-3xl)/1 var(--font-outlier); color: var(--color-accent); font-variant-numeric: tabular-nums; }
+    .step__head { display: flex; align-items: center; gap: var(--space-sm); }
+    .step h3 { font-family: var(--font-body); font-weight: 600; }
+    .step .when { margin-top: var(--space-2xs); font-size: var(--text-sm); font-weight: 500; color: var(--color-muted); }
+    .step p:last-child { margin-top: var(--space-sm); color: var(--color-ink-2); max-width: 40ch; }
+    .today-pill { display: none; padding: var(--space-3xs) var(--space-xs); border: var(--rule-hair) solid var(--color-accent); border-radius: var(--radius-pill); color: var(--color-accent); font-size: var(--text-sm); font-weight: 500; }
+    .step.is-today .today-pill { display: inline-block; }
+    .step.is-today h3 { color: var(--color-accent); }
+    .pin__photo { grid-column: 7 / span 6; position: sticky; top: calc(var(--nav-h) + var(--space-xl)); height: min(78svh, 720px); margin: 0; border-radius: var(--radius-card); }
+
+    /* Beans, the day book */
+    .beans { padding-block: var(--section-gap-s) var(--section-gap); }
+    .ledger { width: 100%; border-collapse: collapse; border-top: var(--rule-double) double var(--color-ink); }
+    .ledger th { padding: var(--space-sm) var(--space-md) var(--space-sm) 0; font-size: var(--text-sm); font-weight: 500; color: var(--color-muted); text-align: left; white-space: nowrap; border-bottom: var(--rule-hair) solid var(--color-ink); }
+    .ledger td { padding: var(--space-lg) var(--space-md) var(--space-lg) 0; vertical-align: top; border-bottom: var(--rule-hair) solid var(--color-rule); }
+    .ledger tbody tr { transition: background-color var(--dur-micro) var(--ease-out); }
+    .ledger tbody tr:hover { background: var(--color-accent-soft); }
+    .ledger .idx { width: var(--space-2xl); padding-left: var(--space-xs); font: 400 var(--text-2xl)/1 var(--font-outlier); color: var(--color-accent); font-variant-numeric: tabular-nums; }
+    .ledger h3 { font-family: var(--font-body); font-weight: 600; }
+    .bean-origin { margin-top: var(--space-2xs); font-size: var(--text-sm); font-weight: 500; color: var(--color-muted); }
+    .bean-line { margin-top: var(--space-sm); color: var(--color-ink-2); max-width: 44ch; }
+    .ledger .notes, .ledger .roast { color: var(--color-ink-2); }
+    .ledger .price { font: 400 var(--text-2xl)/1 var(--font-outlier); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .ledger .price small { display: block; margin-top: var(--space-2xs); font: 500 var(--text-sm)/1.4 var(--font-body); color: var(--color-muted); }
+    .ledger th.num { text-align: right; }
+    .ledger .act { width: 1%; padding-right: var(--space-xs); text-align: right; }
+
+    /* The team's line */
+    .quote { padding-block: var(--section-gap-s); background: var(--color-paper-2); position: relative; isolation: isolate; }
+    .quote::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: var(--fibre); mix-blend-mode: multiply; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='p' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.004 0.02' numOctaves='4' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.62 0 0 0 0 0.52 0 0 0 0 0.36 0 0 0 0.3 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"); }
+    .quote blockquote { grid-column: 1 / span 10; margin: 0; padding-top: var(--space-xl); border-top: var(--rule-hair) solid var(--color-ink); }
+    .quote blockquote p { max-width: 28ch; font: 400 var(--text-display-s)/1.02 var(--font-outlier); text-indent: -0.4em; text-wrap: balance; }
+    .quote blockquote footer { margin-top: var(--space-lg); font-size: var(--text-sm); font-weight: 500; color: var(--color-muted); }
+
+    /* Story */
+    .story { padding-block: var(--section-gap-l) var(--section-gap); }
+    .story-grid { align-items: center; }
+    .story-text { grid-column: 1 / span 5; }
+    .story-text h2 { line-height: 0.92; }
+    .story-text p { margin-top: var(--space-md); color: var(--color-ink-2); }
+    .story-text h2 + p { margin-top: var(--space-lg); }
+    .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: var(--space-xl) 0 0; padding-top: var(--space-lg); border-top: var(--rule-hair) solid var(--color-rule); }
+    .facts div { padding-inline: var(--space-md); border-left: var(--rule-hair) solid var(--color-rule); }
+    .facts div:first-child { padding-left: 0; border-left: 0; }
+    .facts dt { font: 400 var(--text-2xl)/1 var(--font-outlier); font-variant-numeric: tabular-nums; }
+    .facts dd { margin: var(--space-2xs) 0 0; font-size: var(--text-sm); color: var(--color-muted); }
+    .story-photo { grid-column: 7 / span 6; aspect-ratio: 6 / 5; min-height: 440px; margin: 0; border-radius: var(--radius-card); }
+
+    /* Subscription, on the field */
+    .subscribe { padding-block: var(--section-gap-s); background: var(--color-field); color: var(--color-accent-ink); }
+    .sub-grid { align-items: start; }
+    .sub-text { grid-column: 1 / span 5; }
+    .sub-text h2 { line-height: 0.92; }
+    .sub-text p { margin-top: var(--space-lg); }
+    .perks { list-style: none; margin: var(--space-xl) 0 0; padding: 0; border-top: var(--rule-hair) solid var(--color-field-rule); }
+    .perks li { padding-block: var(--space-sm); border-bottom: var(--rule-hair) solid var(--color-field-rule); }
+    .plans { grid-column: 7 / span 6; margin: 0; }
+    .plans fieldset { margin: 0; padding: 0; border: 0; }
+    .plans legend { padding: 0; margin-bottom: var(--space-sm); font-size: var(--text-sm); font-weight: 500; }
+    .plan-cells { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: var(--rule-hair) solid var(--color-accent-ink); }
+    .plan { position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: var(--space-md); min-height: 132px; padding: var(--space-md); cursor: pointer; transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out); }
+    .plan + .plan { border-left: var(--rule-hair) solid var(--color-accent-ink); }
+    .plan:hover { background: var(--color-field-cell); }
+    .plan input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+    .plan:has(input:checked) { background: var(--color-accent-ink); color: var(--color-accent); }
+    .plan:has(input:focus-visible) { outline: 2px solid var(--color-accent-ink); outline-offset: 3px; }
+    .plan-name { font-weight: 600; }
+    .plan-name small { display: block; margin-top: var(--space-2xs); font-size: var(--text-sm); font-weight: 500; }
+    .plan-price { font: 400 var(--text-xl)/1 var(--font-outlier); font-variant-numeric: tabular-nums; }
+    .plan-answer { display: block; margin-top: var(--space-xl); font: 600 var(--text-section)/0.92 var(--font-display); letter-spacing: var(--tracking-display); }
+    .plans .btn { margin-top: var(--space-xl); }
+
+    /* Visit */
+    .visit { padding-block: var(--section-gap) var(--section-gap-l); }
+    .visit-head { grid-column: 1 / span 4; }
+    .visit-head h2 { line-height: 0.92; }
+    .visit-head p { margin-top: var(--space-lg); color: var(--color-ink-2); }
+    .hours { grid-column: 6 / span 7; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); margin: 0; border-top: var(--rule-double) double var(--color-ink); }
+    .hours dt, .hours dd { margin: 0; padding-block: var(--space-xl); border-bottom: var(--rule-hair) solid var(--color-rule); }
+    .hours dt { font-size: var(--text-title); font-weight: 600; line-height: 1.2; }
+    .hours dd { font-size: var(--text-lead); color: var(--color-ink-2); font-variant-numeric: tabular-nums; }
+
+    /* Footer, the mast */
+    footer.site { padding-block: var(--space-3xl) var(--space-xl); border-top: var(--rule-double) double var(--color-ink); }
+    .mast { display: block; font: 600 clamp(4rem, 11vw, 10rem)/0.9 var(--font-display); letter-spacing: var(--tracking-display); }
+    .foot-grid { margin-top: var(--space-2xl); row-gap: var(--space-xl); }
+    .letter { grid-column: 1 / span 6; }
+    .letter h3 { font-family: var(--font-body); font-weight: 600; }
+    .letter > p { margin-top: var(--space-xs); color: var(--color-ink-2); }
+    form.signup { margin-top: var(--space-lg); max-width: 32rem; }
+    form.signup label { display: block; margin-bottom: var(--space-xs); font-size: var(--text-sm); font-weight: 500; }
+    .signup__row { display: flex; gap: var(--space-xs); }
+    form.signup input { flex: 1; min-width: 0; min-height: 48px; padding: 0 var(--space-md); border: var(--rule-hair) solid var(--color-ink); border-radius: var(--radius-pill); background: var(--color-paper); color: var(--color-ink); outline: 2px solid transparent; outline-offset: -3px; }
+    form.signup input:focus-visible { outline-color: var(--color-focus); }
+    form.signup input[aria-invalid] { border-color: var(--color-error); }
+    .form-msg { min-height: 1lh; margin-top: var(--space-xs); font-size: var(--text-sm); color: var(--color-muted); }
+    .foot-links { grid-column: 8 / span 5; display: flex; flex-direction: column; gap: var(--space-xs); }
+    .foot-links a { text-decoration: none; }
+    .foot-links a:hover { text-decoration: underline; text-decoration-color: var(--color-accent); }
+    .colophon { margin-top: var(--space-2xl); padding-top: var(--space-md); border-top: var(--rule-hair) solid var(--color-rule); display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-md); font-size: var(--text-sm); color: var(--color-muted); }
+    .colophon p { max-width: 72ch; }
+
+    /* Toast */
+    .toast {
+      position: fixed; left: 50%; bottom: var(--space-lg); z-index: var(--z-toast);
+      transform: translate(-50%, 200%);
+      padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-pill);
+      background: var(--color-ink); color: var(--color-paper); font-size: var(--text-sm);
+      transition: transform var(--dur-short) var(--ease-out);
+    }
+    .toast:not(.show) { visibility: hidden; }
+    .toast.show { transform: translate(-50%, 0); }
+
+    @media (max-width: 60rem) {
+      :root { --nav-h: 64px; }
+      .nav { grid-template-columns: minmax(0, 1fr) auto; }
+      .nav ul { grid-column: 1 / -1; grid-row: 2; overflow-x: auto; padding-bottom: var(--space-sm); }
+      .logo { font-size: var(--text-xl); }
+      .hero { min-height: 0; padding-block: var(--space-xl) var(--space-2xl); }
+      .hero-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-xl); }
+      .hero-photo { height: auto; aspect-ratio: 4 / 3; }
+      .head h2, .head .lead, .week-facts, .week-intro, .steps, .pin__photo, .story-text, .story-photo, .sub-text, .plans, .visit-head, .hours, .letter, .foot-links, .quote blockquote { grid-column: 1 / -1; }
+      .pin__photo { position: static; height: auto; aspect-ratio: 4 / 5; margin-top: var(--space-xl); }
+      .step { min-height: 0; }
+      .story-photo { margin-top: var(--space-xl); min-height: 0; }
+      .plans { margin-top: var(--space-xl); }
+      .hours { margin-top: var(--space-xl); }
+    }
+    @media (max-width: 48rem) {
+      .ledger thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+      .ledger, .ledger tbody { display: block; }
+      .ledger tr { display: grid; grid-template-columns: var(--space-xl) minmax(0, 1fr) auto; column-gap: var(--space-sm); padding-block: var(--space-lg); border-bottom: var(--rule-hair) solid var(--color-rule); }
+      .ledger td { display: block; padding: 0; border: 0; }
+      .ledger .idx { grid-row: 1 / span 3; padding-left: 0; }
+      .ledger .name { grid-column: 2 / -1; }
+      .ledger .notes, .ledger .roast { grid-column: 2 / -1; margin-top: var(--space-xs); font-size: var(--text-sm); }
+      .ledger .price { grid-column: 2; margin-top: var(--space-md); text-align: left; }
+      .ledger .act { grid-column: 3; margin-top: var(--space-md); width: auto; }
+      .plan-cells { grid-template-columns: minmax(0, 1fr); }
+      .plan + .plan { border-left: 0; border-top: var(--rule-hair) solid var(--color-accent-ink); }
+      .plan { min-height: 0; flex-direction: row; align-items: center; }
+      .timer { gap: var(--space-md); }
+    }
+    @media (max-width: 40rem) {
+      .week-facts, .facts { grid-template-columns: minmax(0, 1fr); }
+      .week-facts div, .facts div { padding: var(--space-sm) 0; border-left: 0; border-top: var(--rule-hair) solid var(--color-rule); }
+      .week-facts div:first-child, .facts div:first-child { border-top: 0; }
+      .hours { grid-template-columns: minmax(0, 1fr); }
+      .hours dt { padding-bottom: 0; border-bottom: 0; }
+      .hours dd { padding-top: var(--space-2xs); }
+      .signup__row { flex-direction: column; }
+      .quote blockquote p { text-indent: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .btn, .plan, .ledger tbody tr, .toast { transition: none; }
+      .btn:active { transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="roast-bar" id="roastBar">
+    <div class="container">Fresh roast every <strong>Tuesday</strong>. Order by Monday 23:59 (Lisbon) to make this week’s batch.</div>
+  </div>
+
+  <header class="site">
+    <div class="container nav">
+      <ul>
+        <li><a href="#beans">Beans</a></li>
+        <li><a href="#roast-week">Roast week</a></li>
+        <li><a href="#story">Our story</a></li>
+        <li><a href="#visit">Visit</a></li>
+      </ul>
+      <a href="#" class="logo" aria-label="Ember &amp; Oak home">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <circle class="mark-ground" cx="16" cy="16" r="15"/>
+          <path class="mark-flame" d="M16 6c3 4 6 7 6 11a6 6 0 0 1-12 0c0-2 1-3.5 2-4.5 0 2 1 3 2 3-1-3 0-6.5 2-9.5z"/>
+        </svg>
+        Ember &amp; Oak
+      </a>
+      <a href="#beans" class="btn">Shop beans <span class="cart-count" id="cartCount" hidden></span></a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-head">
+      <div class="container hero-grid">
+        <div>
+          <h1 id="hero-head">Roasted Tuesday, in your cup by Friday.</h1>
+          <p class="lead">We roast once a week, in small batches, in Lisbon.</p>
+          <div class="hero-actions">
+            <a href="#beans" class="btn btn--primary">Shop this week’s beans</a>
+            <a href="#subscribe" class="btn">Start a subscription</a>
+          </div>
+          <div class="countdown" role="timer">
+            <span class="label" id="countdownLabel">Next order cut-off for Tuesday’s roast</span>
+            <div class="timer">
+              <div><b id="cdD">0</b><span>days</span></div>
+              <div><b id="cdH">00</b><span>hrs</span></div>
+              <div><b id="cdM">00</b><span>min</span></div>
+              <div><b id="cdS">00</b><span>sec</span></div>
+            </div>
+          </div>
+        </div>
+        <figure class="hero-photo" data-slot="hero" data-alt="This week’s beans coming out of the Ember &amp; Oak drum onto the cooling tray, Tuesday morning">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Cooling_time_for_coffee.jpg/1280px-Cooling_time_for_coffee.jpg" srcset="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Cooling_time_for_coffee.jpg/960px-Cooling_time_for_coffee.jpg 960w, https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Cooling_time_for_coffee.jpg/1280px-Cooling_time_for_coffee.jpg 1280w, https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Cooling_time_for_coffee.jpg/1920px-Cooling_time_for_coffee.jpg 1920w" sizes="(min-width: 60rem) 55vw, 100vw" width="5699" height="4000" alt="Roasted coffee beans swept round a steel cooling tray by its paddle arm" fetchpriority="high">
+        </figure>
+      </div>
+    </section>
+
+    <section class="week" id="roast-week" aria-labelledby="week-head">
+      <div class="container">
+        <div class="grid head">
+          <h2 id="week-head">One roast day. Zero stale beans.</h2>
+          <dl class="week-facts">
+            <div><dt>1×</dt><dd>roast day a week</dd></div>
+            <div><dt>12 kg</dt><dd>per batch, max</dd></div>
+            <div><dt>EU</dt><dd>wide shipping</dd></div>
+          </dl>
+          <p class="week-intro">Every bag is roasted to order on Tuesday, so what you get is as fresh as it comes.</p>
+        </div>
+        <div class="grid pin">
+          <ol class="steps">
+            <li class="step" data-day="3">
+              <div class="step__head"><h3>You order</h3><span class="today-pill">Today</span></div>
+              <p class="when">Wednesday to Monday</p>
+              <p>Orders open all week. Get yours in by Monday at 23:59 Lisbon time.</p>
+            </li>
+            <li class="step" data-day="2">
+              <div class="step__head"><h3>We roast</h3><span class="today-pill">Today</span></div>
+              <p class="when">Tuesday</p>
+              <p>Green beans go in the drum at dawn. Each batch is cupped before it’s bagged.</p>
+            </li>
+            <li class="step" data-day="3b">
+              <div class="step__head"><h3>We ship</h3><span class="today-pill">Today</span></div>
+              <p class="when">Wednesday</p>
+              <p>Beans rest overnight to de-gas, then get packed in valve bags and sent out.</p>
+            </li>
+            <li class="step" data-day="5">
+              <div class="step__head"><h3>You brew</h3><span class="today-pill">Today</span></div>
+              <p class="when">Thursday to Friday</p>
+              <p>Portugal in 1 to 2 days, most of the EU in 2 to 4. Best enjoyed 5 to 30 days off roast.</p>
+            </li>
+          </ol>
+          <figure class="pin__photo" data-slot="roaster" data-alt="The Ember &amp; Oak drum roaster in the Lisbon workshop">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Coffee_roasting_machine%2C_The_Roastery%2C_Coaltown_Coffee%2C_Ammanford%2C_Wales.jpg/1280px-Coffee_roasting_machine%2C_The_Roastery%2C_Coaltown_Coffee%2C_Ammanford%2C_Wales.jpg" srcset="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Coffee_roasting_machine%2C_The_Roastery%2C_Coaltown_Coffee%2C_Ammanford%2C_Wales.jpg/960px-Coffee_roasting_machine%2C_The_Roastery%2C_Coaltown_Coffee%2C_Ammanford%2C_Wales.jpg 960w, https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Coffee_roasting_machine%2C_The_Roastery%2C_Coaltown_Coffee%2C_Ammanford%2C_Wales.jpg/1280px-Coffee_roasting_machine%2C_The_Roastery%2C_Coaltown_Coffee%2C_Ammanford%2C_Wales.jpg 1280w, https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Coffee_roasting_machine%2C_The_Roastery%2C_Coaltown_Coffee%2C_Ammanford%2C_Wales.jpg/1920px-Coffee_roasting_machine%2C_The_Roastery%2C_Coaltown_Coffee%2C_Ammanford%2C_Wales.jpg 1920w" sizes="(min-width: 60rem) 45vw, 100vw" width="3024" height="4032" alt="A drum coffee roaster with a copper cooling tray" loading="lazy">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="beans" id="beans" aria-labelledby="beans-head">
+      <div class="container">
+        <div class="grid head">
+          <h2 id="beans-head">This week’s beans</h2>
+          <p class="lead">A short, rotating list of seasonal single origins and one house blend. Whole bean or ground to order.</p>
+        </div>
+        <table class="ledger">
+          <thead>
+            <tr>
+              <th scope="col"><span class="visually-hidden">Number</span></th>
+              <th scope="col">Coffee</th>
+              <th scope="col">Tasting notes</th>
+              <th scope="col">Roast</th>
+              <th scope="col" class="num">Price</th>
+              <th scope="col"><span class="visually-hidden">Add</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="bean">
+              <td class="idx">1</td>
+              <td class="name">
+                <h3>Alfama</h3>
+                <p class="bean-origin">House blend, Brazil and Colombia</p>
+                <p class="bean-line">Our everyday espresso. Built for a proper bica, and forgiving in a moka pot.</p>
+              </td>
+              <td class="notes">Milk chocolate, hazelnut, toffee</td>
+              <td class="roast">Medium-dark</td>
+              <td class="price">€12 <small>per 250g</small></td>
+              <td class="act"><button type="button" class="btn add" data-name="Alfama">Add to bag</button></td>
+            </tr>
+            <tr class="bean">
+              <td class="idx">2</td>
+              <td class="name">
+                <h3>Shakiso</h3>
+                <p class="bean-origin">Single origin, Ethiopia, Guji</p>
+                <p class="bean-line">A natural-process coffee that’s bright and floral. Lovely as a pour-over.</p>
+              </td>
+              <td class="notes">Peach, jasmine, bergamot</td>
+              <td class="roast">Light</td>
+              <td class="price">€15 <small>per 250g</small></td>
+              <td class="act"><button type="button" class="btn add" data-name="Shakiso">Add to bag</button></td>
+            </tr>
+            <tr class="bean">
+              <td class="idx">3</td>
+              <td class="name">
+                <h3>La Plata</h3>
+                <p class="bean-origin">Single origin, Colombia, Huila</p>
+                <p class="bean-line">Washed and super balanced. Equally good as filter or espresso.</p>
+              </td>
+              <td class="notes">Red apple, panela, cocoa nib</td>
+              <td class="roast">Medium</td>
+              <td class="price">€14 <small>per 250g</small></td>
+              <td class="act"><button type="button" class="btn add" data-name="La Plata">Add to bag</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="quote" aria-label="From the roastery">
+      <div class="container grid">
+        <blockquote>
+          <p>“We’d rather roast a little less, a little better, and get it to you while it still tastes like something.”</p>
+          <footer>The Ember &amp; Oak team</footer>
+        </blockquote>
+      </div>
+    </section>
+
+    <section class="story" id="story" aria-labelledby="story-head">
+      <div class="container grid story-grid">
+        <div class="story-text">
+          <h2 id="story-head">A small roaster, a slow rhythm.</h2>
+          <p>Ember &amp; Oak started in a tiny workshop in Lisbon with one secondhand drum roaster and a stubborn idea: coffee should arrive fresh, not months later.</p>
+          <p>So we roast just one day a week. Every bean we sell was roasted for someone who ordered it. We buy from importers who work directly with farms, and we pay for quality.</p>
+          <dl class="facts">
+            <div><dt>Tue</dt><dd>Our only roast day</dd></div>
+            <div><dt>100%</dt><dd>Roasted to order</dd></div>
+            <div><dt>0</dt><dd>Shelves of old stock</dd></div>
+          </dl>
+        </div>
+        <figure class="story-photo" data-slot="green-beans" data-alt="Green coffee from your importer, in the sack, at the Lisbon workshop">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Green_Bean_Coffee.jpg/1280px-Green_Bean_Coffee.jpg" srcset="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Green_Bean_Coffee.jpg/960px-Green_Bean_Coffee.jpg 960w, https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Green_Bean_Coffee.jpg/1280px-Green_Bean_Coffee.jpg 1280w, https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Green_Bean_Coffee.jpg/1920px-Green_Bean_Coffee.jpg 1920w" sizes="(min-width: 60rem) 45vw, 100vw" width="3456" height="2298" alt="A burlap sack spilling green coffee beans across a wooden table" style="object-position: 55% 60%" loading="lazy">
+        </figure>
+      </div>
+    </section>
+
+    <section class="subscribe" id="subscribe" aria-labelledby="sub-head">
+      <div class="container grid sub-grid">
+        <div class="sub-text">
+          <h2 id="sub-head">Never run out on a Monday.</h2>
+          <p>Get a fresh bag from each Tuesday roast, delivered on your schedule. Pause, skip or cancel anytime.</p>
+          <ul class="perks">
+            <li>Roaster’s choice or pick your favourite</li>
+            <li>Free shipping in Portugal</li>
+            <li>10% off every bag</li>
+          </ul>
+        </div>
+        <form class="plans" id="planForm">
+          <fieldset>
+            <legend>How often</legend>
+            <div class="plan-cells">
+              <label class="plan">
+                <input type="radio" name="plan" value="Weekly" checked>
+                <span class="plan-name">Weekly <small>Every Tuesday roast</small></span>
+                <span class="plan-price">€10.80</span>
+              </label>
+              <label class="plan">
+                <input type="radio" name="plan" value="Fortnightly">
+                <span class="plan-name">Fortnightly <small>Every other Tuesday</small></span>
+                <span class="plan-price">€10.80</span>
+              </label>
+              <label class="plan">
+                <input type="radio" name="plan" value="Monthly">
+                <span class="plan-name">Monthly <small>First Tuesday of the month</small></span>
+                <span class="plan-price">€10.80</span>
+              </label>
+            </div>
+          </fieldset>
+          <output class="plan-answer" id="planAnswer" for="planForm">Weekly, €10.80 a bag</output>
+          <button type="submit" class="btn btn--paper">Start my subscription</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="visit" id="visit" aria-labelledby="visit-head">
+      <div class="container grid">
+        <div class="visit-head">
+          <h2 id="visit-head">Pick up at the roastery</h2>
+          <p>Skip the shipping and collect your order fresh from the roastery in Lisbon. Pop in on a Tuesday and you’ll smell us before you see us.</p>
+        </div>
+        <dl class="hours">
+          <dt>Tuesday</dt><dd>Roast day, pickup 14:00 to 19:00</dd>
+          <dt>Wednesday to Saturday</dt><dd>10:00 to 18:00</dd>
+          <dt>Sunday and Monday</dt><dd>Closed</dd>
+        </dl>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site">
+    <div class="container">
+      <span class="mast" aria-hidden="true">Ember &amp; Oak</span>
+      <div class="grid foot-grid">
+        <div class="letter">
+          <h3>Know what’s roasting before anyone else</h3>
+          <p>One short email a week: what’s going in the drum, new arrivals, and the odd brew tip. No spam.</p>
+          <form class="signup" id="signup" data-endpoint="" novalidate>
+            <label for="email">Email address</label>
+            <div class="signup__row">
+              <input type="email" id="email" name="email" autocomplete="email" placeholder="you@example.com" required>
+              <button type="submit" class="btn">Subscribe</button>
+            </div>
+            <p class="form-msg" id="formMsg" role="status"></p>
+          </form>
+        </div>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="#beans">Shop</a>
+          <a href="#subscribe">Subscribe</a>
+          <a href="#visit">Visit</a>
+          <a href="#">Instagram</a>
+        </nav>
+      </div>
+      <div class="colophon">
+        <span>© <span id="year">2026</span> Ember &amp; Oak Coffee Roasters, Lisbon, Portugal</span>
+        <p data-credits>Photographs: <a href="https://commons.wikimedia.org/wiki/File:Cooling_time_for_coffee.jpg">Jameswasswa</a> (CC BY-SA 4.0), <a href="https://commons.wikimedia.org/wiki/File:Coffee_roasting_machine,_The_Roastery,_Coaltown_Coffee,_Ammanford,_Wales.jpg">Vouliagmeni</a> (CC BY-SA 4.0), <a href="https://commons.wikimedia.org/wiki/File:Green_Bean_Coffee.jpg">DeaPeaJay</a> (CC BY-SA 2.0), Wikimedia Commons</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      const TZ = "Europe/Lisbon";
+
+      // Current Lisbon wall-clock time as a Date whose UTC fields hold Lisbon values.
+      function lisbonNow() {
+        const parts = new Intl.DateTimeFormat("en-GB", {
+          timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit",
+          hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23"
+        }).formatToParts(new Date()).reduce((o, p) => (o[p.type] = p.value, o), {});
+        return new Date(Date.UTC(+parts.year, parts.month - 1, +parts.day, +parts.hour, +parts.minute, +parts.second));
+      }
+
+      // Highlight today's step in the roast week.
+      const dow = lisbonNow().getUTCDay(); // 0 = Sun
+      const stepIndex = dow === 2 ? 1 : dow === 3 ? 2 : (dow === 4 || dow === 5) ? 3 : 0;
+      document.querySelectorAll(".step")[stepIndex].classList.add("is-today");
+
+      if (dow === 2) {
+        document.getElementById("roastBar").innerHTML =
+          "<div class=\"container\"><strong>It’s roast day.</strong> The drum is hot, so orders placed now go into next Tuesday’s batch.</div>";
+      }
+
+      // Countdown to next Monday 23:59:59 Lisbon time (the order cut-off).
+      const els = ["cdD", "cdH", "cdM", "cdS"].map(id => document.getElementById(id));
+      function tick() {
+        const now = lisbonNow();
+        const cutoff = new Date(now);
+        const daysUntilMon = (1 - now.getUTCDay() + 7) % 7;
+        cutoff.setUTCDate(now.getUTCDate() + daysUntilMon);
+        cutoff.setUTCHours(23, 59, 59, 999);
+        if (cutoff <= now) cutoff.setUTCDate(cutoff.getUTCDate() + 7);
+        let s = Math.floor((cutoff - now) / 1000);
+        const d = Math.floor(s / 86400); s %= 86400;
+        const h = Math.floor(s / 3600); s %= 3600;
+        const m = Math.floor(s / 60); s %= 60;
+        els[0].textContent = d;
+        els[1].textContent = String(h).padStart(2, "0");
+        els[2].textContent = String(m).padStart(2, "0");
+        els[3].textContent = String(s).padStart(2, "0");
+      }
+      tick();
+      setInterval(tick, 1000);
+
+      // Toast helper
+      const toast = document.getElementById("toast");
+      let toastTimer;
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
+      }
+
+      // Add to bag (demo cart)
+      let count = 0;
+      const cartCount = document.getElementById("cartCount");
+      document.querySelectorAll(".add").forEach(btn => {
+        btn.addEventListener("click", () => {
+          count++;
+          cartCount.hidden = false;
+          cartCount.textContent = "(" + count + ")";
+          btn.textContent = "Added";
+          btn.classList.add("added");
+          setTimeout(() => { btn.textContent = "Add to bag"; btn.classList.remove("added"); }, 1500);
+          showToast(btn.dataset.name + " added, roasting Tuesday");
+        });
+      });
+
+      // Subscription
+      const planForm = document.getElementById("planForm");
+      const planAnswer = document.getElementById("planAnswer");
+      planForm.addEventListener("change", () => {
+        planAnswer.textContent = new FormData(planForm).get("plan") + ", €10.80 a bag";
+      });
+      planForm.addEventListener("submit", e => {
+        e.preventDefault();
+        const plan = new FormData(e.target).get("plan");
+        showToast(plan + " subscription selected, checkout coming soon");
+      });
+
+      // Newsletter: no endpoint yet, so nothing is sent and no success is shown.
+      document.getElementById("signup").addEventListener("submit", e => {
+        e.preventDefault();
+        const form = e.target;
+        const input = document.getElementById("email");
+        const msg = document.getElementById("formMsg");
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim())) {
+          input.setAttribute("aria-invalid", "true");
+          input.setAttribute("aria-describedby", "formMsg");
+          msg.textContent = "That address looks incomplete. Write it as name@example.com.";
+          input.focus();
+          return;
+        }
+        input.removeAttribute("aria-invalid");
+        if (!form.dataset.endpoint) {
+          msg.textContent = "Nothing was sent: this form is not connected yet.";
+          return;
+        }
+        fetch(form.dataset.endpoint, { method: "POST", body: new FormData(form) })
+          .then(r => { msg.textContent = r.ok ? "Obrigado! See you next Tuesday." : "That did not go through. Try again in a minute."; })
+          .catch(() => { msg.textContent = "That did not go through. Try again in a minute."; });
+      });
+
+      document.getElementById("year").textContent = new Date().getFullYear();
+    })();
+  </script>
+  <script>window.hallmarkSlots = (m) => { for (const [k, v] of Object.entries(m)) { const s = document.querySelector(`[data-slot="${k}"]`); if (!s) continue; const im = new Image(); im.src = typeof v === 'string' ? v : v.src; im.alt = (typeof v === 'object' && v.alt) || s.dataset.alt || ''; s.querySelectorAll(':scope > img').forEach((o) => o.remove()); s.prepend(im); } };
+  document.querySelectorAll('[data-slot] img').forEach((i) => { if (i.complete && !i.naturalWidth) i.remove(); else i.addEventListener('error', () => i.remove(), { once: true }); });</script>
+</body>
+</html>
