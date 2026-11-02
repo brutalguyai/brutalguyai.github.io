@@ -9,5 +9,6 @@ Each test is a real headless Claude Code run (`claude -p`), recorded as it happe
 | 2 | [Nutlope/hallmark](https://github.com/Nutlope/hallmark) | [day02-hallmark](day02-hallmark) |
 | 3 | [cloudflare/security-audit-skill](https://github.com/cloudflare/security-audit-skill) | [day03-security-audit](day03-security-audit) |
 | 4 | [blixvip/html-anime](https://github.com/blixvip/html-anime) | [day04-html-anime](day04-html-anime) |
+| 5 | [wheresryan22/anatomy](https://github.com/wheresryan22/anatomy) | [day05-anatomy](day05-anatomy) |
 
 Spotted a mistake or want a test rerun differently? Open an issue or comment on the video.
