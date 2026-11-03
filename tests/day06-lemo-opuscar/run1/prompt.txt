@@ -1,0 +1,3 @@
+Make a 20-second film in the swiss-motion style about how a cup of coffee travels from the farm to your cup. Warm male narrator.
+
+This is a non-interactive run: nobody can answer questions. Film language English, no storyboard, no material of my own. Pick sensible defaults for anything else and go straight to the finished film. ffmpeg 7 is first on PATH; Chrome is at /usr/bin/google-chrome.
