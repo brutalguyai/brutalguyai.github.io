@@ -1,0 +1,23 @@
+1
+00:00:00,400 --> 00:00:03,500
+Every cup begins as a cherry.
+
+2
+00:00:03,700 --> 00:00:06,500
+Picked by hand, high on a farm.
+
+3
+00:00:06,700 --> 00:00:09,500
+Dried, hulled, packed in sacks.
+
+4
+00:00:09,700 --> 00:00:12,500
+Shipped across the sea, in weeks.
+
+5
+00:00:12,700 --> 00:00:15,500
+Roasted until it turns dark.
+
+6
+00:00:15,700 --> 00:00:19,000
+Then brewed, and poured for you.
