@@ -1,0 +1,3 @@
+Continue the film in films/coffee/: a 20-second film in the swiss-motion style about how a cup of coffee travels from the farm to your cup, warm male narrator. A previous session already wrote TREATMENT.md and lines.json there and installed the core and voice dependencies; it stopped only because .venv/bin/python wasn't allowed. That is allowed now. Use the Inter font already installed on the machine (no downloads). Carry on from voice to the finished, rendered film.
+
+This is a non-interactive run: nobody can answer questions. Film language English, no storyboard, no material of my own. Pick sensible defaults for anything else. ffmpeg 7 is first on PATH; Chrome is at /usr/bin/google-chrome.
