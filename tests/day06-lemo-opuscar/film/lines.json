@@ -1,0 +1,8 @@
+[
+  {"id": "l1", "text": "Every cup begins as a cherry.", "voice": "am_michael", "speed": 0.9},
+  {"id": "l2", "text": "Picked by hand, high on a farm.", "voice": "am_michael", "speed": 0.9},
+  {"id": "l3", "text": "Dried, hulled, packed in sacks.", "voice": "am_michael", "speed": 0.9},
+  {"id": "l4", "text": "Shipped across the sea, in weeks.", "voice": "am_michael", "speed": 0.9},
+  {"id": "l5", "text": "Roasted until it turns dark.", "voice": "am_michael", "speed": 0.9},
+  {"id": "l6", "text": "Then brewed, and poured for you.", "voice": "am_michael", "speed": 0.9}
+]
