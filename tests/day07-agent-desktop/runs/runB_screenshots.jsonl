@@ -1,0 +1,22 @@
+{"t": 2.0, "type": "screenshot"}
+{"turn": 1, "in": 618, "out": 27}
+{"t": 5.1, "type": "cmd", "cmd": "xdotool mousemove 600 400 click 1 type --delay 20 \"Brutal guy was here\"", "out": ""}
+{"t": 5.1, "type": "cmd", "cmd": "xdotool key ctrl+s", "out": ""}
+{"t": 5.3, "type": "screenshot"}
+{"turn": 2, "in": 2380, "out": 152}
+{"t": 8.9, "type": "text", "text": "Dialog may not have appeared yet."}
+{"t": 9.0, "type": "screenshot"}
+{"turn": 3, "in": 4342, "out": 41}
+{"t": 12.7, "type": "cmd", "cmd": "xdotool type --delay 20 \"/home/claude/d7/out/b.txt\\n\"", "out": ""}
+{"t": 12.9, "type": "screenshot"}
+{"turn": 4, "in": 6118, "out": 97}
+{"t": 16.3, "type": "text", "text": "The \"\\n\" was typed literally. Remove it and press Enter."}
+{"t": 16.4, "type": "cmd", "cmd": "xdotool key BackSpace BackSpace Return", "out": ""}
+{"t": 16.5, "type": "screenshot"}
+{"turn": 5, "in": 7997, "out": 106}
+{"t": 19.1, "type": "text", "text": "Possibly screenshot predates the Enter."}
+{"t": 19.3, "type": "screenshot"}
+{"turn": 6, "in": 9885, "out": 43}
+{"t": 21.4, "type": "text", "text": "DONE"}
+{"turn": 7, "in": 11663, "out": 5}
+{"summary": {"mode": "shot", "turns": 7, "input_tokens": 43003, "output_tokens": 471, "seconds": 21.4, "file_ok": true, "file_content": "Brutal guy was here"}}
