@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>EmberAI Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /*
+        Direction
+        Product: invoicing and revenue dashboard for businesses that bill customers on plans
+        Character: calm, exact, a little warm
+        World: ledgers and paper receipts, ember glow of a workshop at night
+        Moments: a paper receipt inside the Paid card, one main revenue chart with a single ember bar
+        Signature: a small ember dot that marks where you are (active page, peak day)
+      */
+      :root {
+        --backdrop: #0a0a0b;
+        --bg-deep: #0f0f10;
+        --bg: #141415;
+        --card: #19191b;
+        --raised: #232325;
+        --line: rgba(237, 237, 237, 0.08);
+        --line-strong: rgba(237, 237, 237, 0.14);
+        --text: #ededed;
+        --text-2: #a1a1a6;
+        --text-3: #85858b;
+        --accent: #e8863a;
+        --pos: #4cc38a;
+        --ease: cubic-bezier(0.22, 1, 0.36, 1);
+        --mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        padding: 40px 32px;
+        background: var(--backdrop);
+        color: var(--text);
+        font-family: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        font-variant-numeric: tabular-nums;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button {
+        font: inherit;
+        color: inherit;
+      }
+
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      .i {
+        width: 16px;
+        height: 16px;
+        flex: none;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      /* Window */
+      .window {
+        display: flex;
+        max-width: 1440px;
+        min-height: max(880px, calc(100vh - 80px));
+        margin: 0 auto;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--bg);
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+      }
+
+      /* Sidebar */
+      .side {
+        display: flex;
+        flex-direction: column;
+        flex: none;
+        width: 256px;
+        padding: 16px 12px;
+        background: var(--bg-deep);
+        border-right: 1px solid var(--line);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 40px;
+        padding: 0 8px;
+      }
+
+      .brand .mark {
+        width: 20px;
+        height: 20px;
+        stroke: var(--accent);
+      }
+
+      .brand .name {
+        font-size: 17px;
+        line-height: 1;
+        font-weight: 500;
+      }
+
+      .icon-btn {
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        margin-left: auto;
+        padding: 0;
+        border: 0;
+        border-radius: 8px;
+        background: none;
+        color: var(--text-3);
+        cursor: pointer;
+        transition: background-color 150ms var(--ease), color 150ms var(--ease);
+      }
+
+      .icon-btn:hover {
+        background: rgba(237, 237, 237, 0.06);
+        color: var(--text);
+      }
+
+      .search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        height: 36px;
+        margin-top: 16px;
+        padding: 0 8px 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--raised);
+        color: var(--text-3);
+        text-align: left;
+        cursor: pointer;
+        transition: border-color 150ms var(--ease);
+      }
+
+      .search:hover {
+        border-color: var(--line-strong);
+      }
+
+      .search .hint {
+        flex: 1;
+        font-size: 14px;
+      }
+
+      .keys {
+        display: flex;
+        gap: 4px;
+      }
+
+      kbd {
+        min-width: 20px;
+        padding: 0 5px;
+        border: 1px solid var(--line-strong);
+        border-radius: 4px;
+        background: var(--card);
+        color: var(--text-2);
+        font-family: var(--mono);
+        font-size: 12px;
+        line-height: 18px;
+        text-align: center;
+      }
+
+      .label {
+        margin: 24px 0 8px;
+        padding: 0 8px;
+        color: var(--text-3);
+        font-size: 12px;
+        line-height: 16px;
+        letter-spacing: 0.01em;
+      }
+
+      .list {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 32px;
+        padding: 0 8px;
+        border-radius: 8px;
+        color: var(--text-2);
+        font-size: 14px;
+        font-weight: 400;
+        white-space: nowrap;
+        transition: background-color 150ms var(--ease), color 150ms var(--ease);
+      }
+
+      .row .i {
+        color: var(--text-3);
+        transition: color 150ms var(--ease);
+      }
+
+      .row:hover {
+        background: rgba(237, 237, 237, 0.05);
+        color: var(--text);
+      }
+
+      .row:hover .i {
+        color: var(--text-2);
+      }
+
+      .row.is-active {
+        background: var(--raised);
+        color: var(--text);
+        font-weight: 500;
+        box-shadow: inset 0 0 0 1px var(--line), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      }
+
+      .row.is-active .i {
+        color: var(--text-2);
+      }
+
+      .row.plain {
+        padding-left: 34px;
+      }
+
+      .count {
+        margin-left: auto;
+        color: var(--text-3);
+        font-family: var(--mono);
+        font-size: 12px;
+      }
+
+      .pip {
+        width: 6px;
+        height: 6px;
+        margin-left: auto;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+
+      /* Main */
+      .main {
+        flex: 1;
+        min-width: 0;
+        padding: 32px;
+      }
+
+      .rise {
+        animation: rise 450ms var(--ease) both;
+        animation-delay: calc(var(--i, 0) * 50ms);
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      .crumb {
+        margin: 0;
+        color: var(--text-2);
+        font-size: 13px;
+        line-height: 20px;
+      }
+
+      h1 {
+        margin: 8px 0 0;
+        font-size: 32px;
+        line-height: 1.15;
+        font-weight: 500;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: 5fr 3fr;
+        gap: 16px;
+        margin-top: 32px;
+      }
+
+      .card {
+        position: relative;
+        overflow: hidden;
+        padding: 24px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--card);
+      }
+
+      .stat {
+        min-height: 184px;
+      }
+
+      .stat-label {
+        margin: 0;
+        color: var(--text-2);
+        font-size: 13px;
+        line-height: 20px;
+      }
+
+      .figure {
+        margin: 12px 0 0;
+        font-size: 32px;
+        line-height: 1;
+        font-weight: 500;
+      }
+
+      .figure .unit {
+        margin-left: 8px;
+        color: var(--text-3);
+        font-size: 14px;
+        font-weight: 400;
+      }
+
+      .delta {
+        margin: 12px 0 0;
+        color: var(--text-3);
+        font-size: 13px;
+        line-height: 20px;
+      }
+
+      .delta .pos {
+        color: var(--pos);
+        font-weight: 500;
+      }
+
+      /* Receipt, the moment inside the Paid card */
+      .receipt {
+        position: absolute;
+        right: 32px;
+        bottom: -28px;
+        width: 216px;
+        padding: 16px 16px 44px;
+        border-radius: 8px;
+        background: #f1eadc;
+        color: #1f1b16;
+        font-family: var(--mono);
+        font-size: 12px;
+        line-height: 16px;
+        transform: rotate(3deg);
+        transform-origin: bottom right;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.2);
+      }
+
+      .receipt .r-head {
+        display: flex;
+        justify-content: space-between;
+        color: #6b6256;
+      }
+
+      .receipt .r-to {
+        margin: 8px 0 12px;
+        font-family: "Geist", ui-sans-serif, system-ui, sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 20px;
+      }
+
+      .receipt .r-line,
+      .receipt .r-total {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .receipt .r-line + .r-line {
+        margin-top: 4px;
+      }
+
+      .receipt .r-total {
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px dashed rgba(31, 27, 22, 0.3);
+        font-weight: 500;
+      }
+
+      .receipt .r-total b {
+        color: #a14a12;
+        font-weight: 500;
+      }
+
+      /* Chart */
+      .chart {
+        margin-top: 16px;
+        padding: 24px 24px 20px;
+      }
+
+      .chart-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+      }
+
+      .chart-note {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        color: var(--text-2);
+        font-size: 13px;
+        line-height: 20px;
+      }
+
+      .chart-note .pip {
+        margin: 0;
+      }
+
+      .chart-body {
+        margin-top: 32px;
+        padding-left: 48px;
+      }
+
+      .plot {
+        position: relative;
+        height: 264px;
+      }
+
+      .gl {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .gl.base {
+        border-top-color: var(--line-strong);
+      }
+
+      .gl span {
+        position: absolute;
+        top: -8px;
+        left: -48px;
+        width: 40px;
+        color: var(--text-3);
+        font-family: var(--mono);
+        font-size: 12px;
+        line-height: 16px;
+      }
+
+      .bars {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 24px;
+        align-items: end;
+      }
+
+      .col {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        height: 100%;
+      }
+
+      .bar {
+        position: relative;
+        width: 100%;
+        max-width: 56px;
+        border-radius: 6px 6px 0 0;
+        background: #36363a;
+        transition: background-color 150ms var(--ease);
+      }
+
+      .col:hover .bar {
+        background: #45454a;
+      }
+
+      .bar.peak {
+        background: var(--accent);
+      }
+
+      .col:hover .bar.peak {
+        background: #ef9450;
+      }
+
+      .bar .val {
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        margin-bottom: 8px;
+        transform: translateX(-50%);
+        color: var(--text);
+        font-family: var(--mono);
+        font-size: 12px;
+        line-height: 16px;
+        white-space: nowrap;
+      }
+
+      .days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 24px;
+        margin-top: 12px;
+      }
+
+      .days span {
+        color: var(--text-3);
+        font-family: var(--mono);
+        font-size: 12px;
+        line-height: 16px;
+        text-align: center;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .rise {
+          animation: none;
+        }
+      }
+
+      /* Small screens */
+      @media (max-width: 900px) {
+        body {
+          padding: 0;
+        }
+        .window {
+          flex-direction: column;
+          min-height: 100vh;
+          border: 0;
+          border-radius: 0;
+        }
+        .side {
+          width: auto;
+          padding: 8px 12px;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .search,
+        .label,
+        .plans {
+          display: none;
+        }
+        .side .list {
+          flex-direction: row;
+          margin-top: 8px;
+          overflow-x: auto;
+        }
+        .main {
+          padding: 24px 16px;
+        }
+        h1 {
+          font-size: 28px;
+        }
+        .stats {
+          grid-template-columns: 1fr;
+        }
+        .chart {
+          padding: 20px 16px 16px;
+        }
+        .chart-head {
+          flex-direction: column;
+        }
+        .chart-body {
+          padding-left: 40px;
+        }
+        .gl span {
+          left: -40px;
+          width: 32px;
+        }
+        .bars,
+        .days {
+          gap: 8px;
+        }
+        .plot {
+          height: 220px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .receipt {
+          display: none;
+        }
+        .stat {
+          min-height: 0;
+        }
+        .figure {
+          font-size: 28px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="window">
+      <aside class="side">
+        <div class="brand">
+          <svg class="i mark" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
+          </svg>
+          <span class="name">EmberAI</span>
+          <button class="icon-btn" type="button" aria-label="Notifications">
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+              <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+            </svg>
+          </button>
+        </div>
+
+        <button class="search" type="button">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+          <span class="hint">Search</span>
+          <span class="keys"><kbd>⌘</kbd><kbd>K</kbd></span>
+        </button>
+
+        <p class="label">Navigation</p>
+        <ul class="list">
+          <li>
+            <a class="row is-active" href="#" aria-current="page">
+              <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
+                <rect width="7" height="9" x="3" y="3" rx="1" />
+                <rect width="7" height="5" x="14" y="3" rx="1" />
+                <rect width="7" height="9" x="14" y="12" rx="1" />
+                <rect width="7" height="5" x="3" y="16" rx="1" />
+              </svg>
+              Overview
+              <span class="pip"></span>
+            </a>
+          </li>
+          <li>
+            <a class="row" href="#">
+              <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
+                <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+                <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+              </svg>
+              Inbox
+              <span class="count">12</span>
+            </a>
+          </li>
+          <li>
+            <a class="row" href="#">
+              <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />
+              </svg>
+              Projects
+            </a>
+          </li>
+          <li>
+            <a class="row" href="#">
+              <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+              Customers
+            </a>
+          </li>
+          <li>
+            <a class="row" href="#">
+              <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                <path d="M10 9H8" />
+                <path d="M16 13H8" />
+                <path d="M16 17H8" />
+              </svg>
+              Invoices
+            </a>
+          </li>
+          <li>
+            <a class="row" href="#">
+              <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 3v18h18" />
+                <path d="M18 17V9" />
+                <path d="M13 17V5" />
+                <path d="M8 17v-3" />
+              </svg>
+              Reports
+            </a>
+          </li>
+        </ul>
+
+        <div class="plans">
+          <p class="label">Plans</p>
+          <ul class="list">
+            <li><a class="row plain" href="#">Enterprise<span class="count">18</span></a></li>
+            <li><a class="row plain" href="#">Business<span class="count">64</span></a></li>
+            <li><a class="row plain" href="#">Pro<span class="count">210</span></a></li>
+            <li><a class="row plain" href="#">Starter<span class="count">480</span></a></li>
+            <li><a class="row plain" href="#">Free<span class="count">1,200</span></a></li>
+          </ul>
+        </div>
+      </aside>
+
+      <main class="main">
+        <p class="crumb rise" style="--i: 0">Overview</p>
+        <h1 class="rise" style="--i: 1">October 2026</h1>
+
+        <section class="stats rise" style="--i: 2" aria-label="Summary">
+          <div class="card stat">
+            <p class="stat-label">Paid this month</p>
+            <p class="figure">$48,210</p>
+            <p class="delta"><span class="pos">+12%</span> vs last month</p>
+
+            <div class="receipt" aria-hidden="true">
+              <div class="r-head"><span>Receipt</span><span>INV-0142</span></div>
+              <div class="r-to">Northwind Studio</div>
+              <div class="r-line"><span>Design retainer</span><span>$3,600</span></div>
+              <div class="r-line"><span>Hosting</span><span>$1,200</span></div>
+              <div class="r-total"><span><b>Paid</b> Oct 14</span><span>$4,800</span></div>
+            </div>
+          </div>
+
+          <div class="card stat">
+            <p class="stat-label">Overdue</p>
+            <p class="figure">7<span class="unit">invoices</span></p>
+            <p class="delta"><span class="pos">3 fewer</span> vs last month</p>
+          </div>
+        </section>
+
+        <section class="card chart rise" style="--i: 3" aria-label="Revenue">
+          <div class="chart-head">
+            <div>
+              <p class="stat-label">Revenue, last 7 days</p>
+              <p class="figure">$12,480</p>
+              <p class="delta"><span class="pos">+4.2%</span> vs previous 7 days</p>
+            </div>
+            <p class="chart-note"><span class="pip"></span>Peak on Thursday</p>
+          </div>
+
+          <div
+            class="chart-body"
+            role="img"
+            aria-label="Daily revenue for the last 7 days. Monday $1,420, Tuesday $2,040, Wednesday $1,580, Thursday $2,670, Friday $1,910, Saturday $1,150, Sunday $1,710."
+          >
+            <div class="plot">
+              <div class="gl" style="top: 0%"><span>$3k</span></div>
+              <div class="gl" style="top: 33.333%"><span>$2k</span></div>
+              <div class="gl" style="top: 66.666%"><span>$1k</span></div>
+              <div class="gl base" style="top: 100%"><span>$0</span></div>
+
+              <div class="bars">
+                <div class="col"><div class="bar" style="height: 47.3%" title="Mon, $1,420"></div></div>
+                <div class="col"><div class="bar" style="height: 68%" title="Tue, $2,040"></div></div>
+                <div class="col"><div class="bar" style="height: 52.7%" title="Wed, $1,580"></div></div>
+                <div class="col">
+                  <div class="bar peak" style="height: 89%" title="Thu, $2,670"><span class="val">$2,670</span></div>
+                </div>
+                <div class="col"><div class="bar" style="height: 63.7%" title="Fri, $1,910"></div></div>
+                <div class="col"><div class="bar" style="height: 38.3%" title="Sat, $1,150"></div></div>
+                <div class="col"><div class="bar" style="height: 57%" title="Sun, $1,710"></div></div>
+              </div>
+            </div>
+
+            <div class="days">
+              <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
