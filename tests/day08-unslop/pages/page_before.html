@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Streakly — Build habits that actually stick</title>
+  <meta name="description" content="Streakly is the habit tracker that makes consistency addictive. Build streaks, beat procrastination, and become the person you want to be." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Space Grotesk', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            ink: '#07070d',
+            panel: '#0f0f1a',
+            flame: '#ff6a3d',
+            rose: { 450: '#ff4d7e' },
+            violet: { 450: '#8b5cf6' },
+          },
+          keyframes: {
+            float: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-14px)' } },
+            flicker: {
+              '0%,100%': { transform: 'scale(1) rotate(-2deg)' },
+              '50%': { transform: 'scale(1.1) rotate(2deg)' },
+            },
+            marquee: { from: { transform: 'translateX(0)' }, to: { transform: 'translateX(-50%)' } },
+            pop: { '0%': { transform: 'scale(.6)' }, '60%': { transform: 'scale(1.2)' }, '100%': { transform: 'scale(1)' } },
+          },
+          animation: {
+            float: 'float 6s ease-in-out infinite',
+            'float-slow': 'float 9s ease-in-out infinite',
+            flicker: 'flicker 1.6s ease-in-out infinite',
+            marquee: 'marquee 30s linear infinite',
+            pop: 'pop .35s ease-out',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { background: #07070d; color: #e7e7f0; -webkit-font-smoothing: antialiased; }
+    .grad-text {
+      background: linear-gradient(100deg, #ffb347 0%, #ff6a3d 35%, #ff4d7e 65%, #8b5cf6 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .grad-bg { background: linear-gradient(100deg, #ff8a3d, #ff4d7e 55%, #8b5cf6); }
+    .grid-bg {
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 56px 56px;
+      -webkit-mask-image: radial-gradient(ellipse at 50% 0%, #000 30%, transparent 75%);
+      mask-image: radial-gradient(ellipse at 50% 0%, #000 30%, transparent 75%);
+    }
+    .glass { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); backdrop-filter: blur(14px); }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.08);
+      transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+    }
+    .card:hover { transform: translateY(-4px); border-color: rgba(255,106,61,.4); box-shadow: 0 20px 60px -20px rgba(255,106,61,.35); }
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
+    .reveal.in { opacity: 1; transform: none; }
+    .blob { position: absolute; border-radius: 9999px; filter: blur(90px); opacity: .5; pointer-events: none; }
+    details > summary { list-style: none; cursor: pointer; }
+    details > summary::-webkit-details-marker { display: none; }
+    details[open] .plus { transform: rotate(45deg); }
+    .plus { transition: transform .25s ease; }
+    .habit-check { transition: all .25s ease; }
+    .habit-row.done .habit-check { background: linear-gradient(135deg,#ff8a3d,#ff4d7e); border-color: transparent; }
+    .habit-row.done .habit-name { text-decoration: line-through; color: #8a8aa0; }
+    .habit-row .tick { opacity: 0; transform: scale(.4); transition: all .25s ease; }
+    .habit-row.done .tick { opacity: 1; transform: scale(1); }
+    .ring { transition: stroke-dashoffset .6s cubic-bezier(.2,.7,.2,1); }
+    ::selection { background: #ff4d7e; color: white; }
+    @media (prefers-reduced-motion: reduce) {
+      .animate-float, .animate-float-slow, .animate-flicker, .animate-marquee { animation: none !important; }
+      .reveal { transition: none; opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body class="font-sans overflow-x-hidden">
+
+  <!-- NAV -->
+  <header class="fixed top-0 inset-x-0 z-50">
+    <div class="mx-auto max-w-6xl px-4 pt-4">
+      <nav class="glass rounded-2xl px-4 sm:px-6 py-3 flex items-center justify-between">
+        <a href="#top" class="flex items-center gap-2 font-display font-bold text-xl tracking-tight">
+          <span class="grid place-items-center w-8 h-8 rounded-xl grad-bg shadow-lg shadow-flame/30">
+            <svg viewBox="0 0 24 24" class="w-5 h-5" fill="white"><path d="M12 2c.5 3-1 4.8-2.5 6.5C8 10.200 7 11.700 7 14a5 5 0 0 0 10 0c0-1.600-.7-2.900-1.600-4-.3 1.200-1 2-2 2.300C14 9 13.700 4.500 12 2Z"/></svg>
+          </span>
+          Streakly
+        </a>
+        <div class="hidden md:flex items-center gap-8 text-sm text-zinc-300">
+          <a href="#features" class="hover:text-white transition">Features</a>
+          <a href="#how" class="hover:text-white transition">How it works</a>
+          <a href="#reviews" class="hover:text-white transition">Reviews</a>
+          <a href="#pricing" class="hover:text-white transition">Pricing</a>
+          <a href="#faq" class="hover:text-white transition">FAQ</a>
+        </div>
+        <div class="flex items-center gap-2">
+          <a href="#pricing" class="hidden sm:inline-flex text-sm text-zinc-300 hover:text-white px-3 py-2 transition">Log in</a>
+          <a href="#cta" class="grad-bg text-white text-sm font-semibold px-4 py-2 rounded-xl shadow-lg shadow-rose-500/20 hover:scale-105 transition">Get started</a>
+          <button id="menuBtn" class="md:hidden ml-1 p-2 rounded-lg hover:bg-white/10" aria-label="Menu">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </button>
+        </div>
+      </nav>
+      <div id="mobileMenu" class="hidden md:hidden glass rounded-2xl mt-2 p-4 text-sm space-y-1">
+        <a href="#features" class="block px-3 py-2 rounded-lg hover:bg-white/10">Features</a>
+        <a href="#how" class="block px-3 py-2 rounded-lg hover:bg-white/10">How it works</a>
+        <a href="#reviews" class="block px-3 py-2 rounded-lg hover:bg-white/10">Reviews</a>
+        <a href="#pricing" class="block px-3 py-2 rounded-lg hover:bg-white/10">Pricing</a>
+        <a href="#faq" class="block px-3 py-2 rounded-lg hover:bg-white/10">FAQ</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section id="top" class="relative pt-36 pb-24 sm:pt-44">
+    <div class="absolute inset-0 grid-bg"></div>
+    <div class="blob w-[480px] h-[480px] bg-flame/60 -top-24 -left-24"></div>
+    <div class="blob w-[520px] h-[520px] bg-violet-500/50 top-20 -right-40"></div>
+    <div class="blob w-[300px] h-[300px] bg-rose-500/40 top-[520px] left-1/3"></div>
+
+    <div class="relative mx-auto max-w-6xl px-4 grid lg:grid-cols-2 gap-16 items-center">
+      <div class="text-center lg:text-left">
+        <a href="#features" class="inline-flex items-center gap-2 glass rounded-full pl-2 pr-4 py-1.5 text-xs sm:text-sm text-zinc-300 hover:text-white transition">
+          <span class="grad-bg text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">New</span>
+          Streak Freeze &amp; Smart Reminders are here
+          <span aria-hidden="true">→</span>
+        </a>
+        <h1 class="mt-6 font-display text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.02] tracking-tight">
+          Don't break<br />the <span class="grad-text">chain.</span>
+        </h1>
+        <p class="mt-6 text-lg sm:text-xl text-zinc-400 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+          Streakly turns tiny daily wins into unstoppable momentum. Track habits, grow streaks, and finally become the person you keep promising to be.
+        </p>
+        <div class="mt-9 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+          <a href="#cta" class="grad-bg text-white font-semibold px-7 py-4 rounded-2xl shadow-xl shadow-rose-500/25 hover:scale-105 hover:shadow-rose-500/40 transition flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M16.400 12.600c0-2.500 2-3.700 2.100-3.800-1.200-1.700-3-1.900-3.600-1.900-1.500-.2-3 .9-3.800.9s-2-.9-3.300-.9c-1.700 0-3.300 1-4.200 2.500-1.800 3.100-.5 7.700 1.300 10.200.9 1.200 1.900 2.600 3.200 2.500 1.300-.1 1.800-.8 3.300-.8s2 .8 3.300.8c1.400 0 2.300-1.200 3.100-2.500 1-1.400 1.400-2.800 1.400-2.900-.1 0-2.800-1.100-2.800-4.100ZM13.900 5.200c.7-.9 1.200-2 1-3.200-1 0-2.300.7-3 1.600-.7.800-1.200 2-1.100 3.100 1.100.1 2.300-.6 3.100-1.500Z"/></svg>
+            Download for iOS
+          </a>
+          <a href="#how" class="glass text-white font-semibold px-7 py-4 rounded-2xl hover:bg-white/10 transition flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            See how it works
+          </a>
+        </div>
+        <div class="mt-10 flex items-center gap-4 justify-center lg:justify-start">
+          <div class="flex -space-x-3">
+            <span class="w-9 h-9 rounded-full border-2 border-ink grid place-items-center text-xs font-bold bg-gradient-to-br from-amber-400 to-orange-500">AM</span>
+            <span class="w-9 h-9 rounded-full border-2 border-ink grid place-items-center text-xs font-bold bg-gradient-to-br from-pink-400 to-rose-600">JK</span>
+            <span class="w-9 h-9 rounded-full border-2 border-ink grid place-items-center text-xs font-bold bg-gradient-to-br from-violet-400 to-indigo-600">SL</span>
+            <span class="w-9 h-9 rounded-full border-2 border-ink grid place-items-center text-xs font-bold bg-gradient-to-br from-emerald-400 to-teal-600">RT</span>
+            <span class="w-9 h-9 rounded-full border-2 border-ink grid place-items-center text-xs font-bold bg-gradient-to-br from-sky-400 to-blue-600">+</span>
+          </div>
+          <div class="text-sm text-left">
+            <div class="flex items-center gap-1 text-amber-400">
+              ★★★★★ <span class="text-white font-semibold ml-1">4.9</span>
+            </div>
+            <div class="text-zinc-400">Loved by 480,000+ habit builders</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phone mockup -->
+      <div class="relative mx-auto w-full max-w-[360px]">
+        <div class="absolute -inset-6 grad-bg opacity-30 blur-3xl rounded-full"></div>
+
+        <!-- floating chips -->
+        <div class="hidden sm:flex absolute -left-24 top-16 glass rounded-2xl px-4 py-3 items-center gap-3 animate-float z-20 shadow-2xl">
+          <span class="text-2xl">🏆</span>
+          <div class="text-xs leading-tight"><div class="font-semibold text-white">30-day badge</div><div class="text-zinc-400">Unlocked today</div></div>
+        </div>
+        <div class="hidden sm:flex absolute -right-20 bottom-28 glass rounded-2xl px-4 py-3 items-center gap-3 animate-float-slow z-20 shadow-2xl">
+          <span class="text-2xl">📈</span>
+          <div class="text-xs leading-tight"><div class="font-semibold text-white">+18% this week</div><div class="text-zinc-400">Consistency score</div></div>
+        </div>
+
+        <div class="relative rounded-[2.8rem] p-2.5 bg-gradient-to-b from-zinc-700 to-zinc-900 shadow-2xl shadow-black/60">
+          <div class="rounded-[2.3rem] bg-[#0b0b14] overflow-hidden relative">
+            <div class="absolute top-2 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-full z-10"></div>
+            <div class="px-5 pt-12 pb-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xs text-zinc-500" id="todayLabel">Today</p>
+                  <h3 class="font-display text-2xl font-bold">Good morning, Sam</h3>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-rose-500 grid place-items-center text-sm font-bold">S</div>
+              </div>
+
+              <div class="mt-5 rounded-3xl p-4 bg-gradient-to-br from-flame/20 via-rose-500/10 to-violet-500/20 border border-white/10 flex items-center gap-4">
+                <div class="relative w-20 h-20 shrink-0">
+                  <svg viewBox="0 0 80 80" class="w-20 h-20 -rotate-90">
+                    <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="8"/>
+                    <circle id="ring" class="ring" cx="40" cy="40" r="34" fill="none" stroke="url(#g)" stroke-width="8" stroke-linecap="round" stroke-dasharray="213.63" stroke-dashoffset="213.63"/>
+                    <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#ffb347"/><stop offset=".5" stop-color="#ff4d7e"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+                  </svg>
+                  <div class="absolute inset-0 grid place-items-center font-display font-bold text-lg" id="pct">0%</div>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-3xl inline-block animate-flicker">🔥</span>
+                    <span class="font-display text-4xl font-bold" id="streakNum">23</span>
+                    <span class="text-sm text-zinc-400">day streak</span>
+                  </div>
+                  <p class="text-xs text-zinc-400 mt-1" id="streakMsg">Finish all habits to extend it.</p>
+                </div>
+              </div>
+
+              <div class="mt-5 flex items-center justify-between">
+                <h4 class="font-semibold text-sm">Today's habits</h4>
+                <span class="text-xs text-zinc-500" id="countLabel">0 / 5</span>
+              </div>
+              <ul id="habitList" class="mt-3 space-y-2.5"></ul>
+              <p class="text-center text-[11px] text-zinc-500 mt-4">👆 Go on, tap them — it's interactive.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <section class="relative border-y border-white/5 bg-white/[0.02] py-6 overflow-hidden">
+    <p class="text-center text-xs uppercase tracking-[.25em] text-zinc-500 mb-4">As seen in</p>
+    <div class="flex w-max animate-marquee gap-16 text-zinc-500 font-display text-2xl font-bold whitespace-nowrap">
+      <span>TechCrunch</span><span>The Verge</span><span>Product Hunt</span><span>Wired</span><span>Fast Company</span><span>Lifehacker</span><span>Mashable</span><span>Forbes</span>
+      <span>TechCrunch</span><span>The Verge</span><span>Product Hunt</span><span>Wired</span><span>Fast Company</span><span>Lifehacker</span><span>Mashable</span><span>Forbes</span>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="py-20">
+    <div class="mx-auto max-w-6xl px-4 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      <div class="reveal"><div class="font-display text-4xl sm:text-5xl font-bold grad-text" data-count="480" data-suffix="K+">0</div><p class="text-zinc-400 mt-2 text-sm">Active users</p></div>
+      <div class="reveal"><div class="font-display text-4xl sm:text-5xl font-bold grad-text" data-count="92" data-suffix="M">0</div><p class="text-zinc-400 mt-2 text-sm">Habits completed</p></div>
+      <div class="reveal"><div class="font-display text-4xl sm:text-5xl font-bold grad-text" data-count="3.4" data-suffix="x">0</div><p class="text-zinc-400 mt-2 text-sm">Higher 90-day retention</p></div>
+      <div class="reveal"><div class="font-display text-4xl sm:text-5xl font-bold grad-text" data-count="4.9" data-suffix="★">0</div><p class="text-zinc-400 mt-2 text-sm">App Store rating</p></div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="relative py-24">
+    <div class="blob w-[420px] h-[420px] bg-violet-600/30 right-0 top-40"></div>
+    <div class="relative mx-auto max-w-6xl px-4">
+      <div class="max-w-2xl mx-auto text-center reveal">
+        <p class="text-sm font-semibold uppercase tracking-widest text-flame">Features</p>
+        <h2 class="mt-3 font-display text-4xl sm:text-5xl font-bold tracking-tight">Everything you need to <span class="grad-text">stay consistent</span></h2>
+        <p class="mt-4 text-zinc-400 text-lg">Designed with behavioral science, wrapped in an interface you'll actually want to open every day.</p>
+      </div>
+
+      <div class="mt-16 grid md:grid-cols-6 gap-5">
+        <!-- Heatmap -->
+        <div class="card reveal rounded-3xl p-7 md:col-span-4">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h3 class="font-display text-2xl font-bold">Your year, at a glance</h3>
+              <p class="text-zinc-400 mt-2 max-w-md">A beautiful heatmap shows every day you showed up. Watch it fill with color — it's weirdly satisfying.</p>
+            </div>
+            <span class="shrink-0 text-xs glass rounded-full px-3 py-1 text-zinc-300">Insights</span>
+          </div>
+          <div id="heatmap" class="mt-6 grid grid-flow-col grid-rows-7 gap-1.5 overflow-hidden"></div>
+          <div class="mt-4 flex items-center justify-end gap-2 text-xs text-zinc-500">
+            Less
+            <span class="w-3 h-3 rounded-[4px]" style="background:rgba(255,255,255,.07)"></span>
+            <span class="w-3 h-3 rounded-[4px]" style="background:rgba(255,106,61,.35)"></span>
+            <span class="w-3 h-3 rounded-[4px]" style="background:rgba(255,106,61,.6)"></span>
+            <span class="w-3 h-3 rounded-[4px]" style="background:rgba(255,77,126,.85)"></span>
+            <span class="w-3 h-3 rounded-[4px]" style="background:#8b5cf6"></span>
+            More
+          </div>
+        </div>
+
+        <!-- Streak freeze -->
+        <div class="card reveal rounded-3xl p-7 md:col-span-2 relative overflow-hidden">
+          <div class="text-5xl animate-float">🧊</div>
+          <h3 class="font-display text-2xl font-bold mt-5">Streak Freeze</h3>
+          <p class="text-zinc-400 mt-2">Life happens. Earn freezes by staying consistent and protect your streak on the days you can't.</p>
+          <div class="mt-5 flex gap-2">
+            <span class="px-3 py-1 rounded-full text-xs bg-sky-400/15 text-sky-300 border border-sky-400/20">2 available</span>
+            <span class="px-3 py-1 rounded-full text-xs bg-white/5 text-zinc-300 border border-white/10">Auto-use</span>
+          </div>
+        </div>
+
+        <!-- Smart reminders -->
+        <div class="card reveal rounded-3xl p-7 md:col-span-2">
+          <div class="w-12 h-12 rounded-2xl grad-bg grid place-items-center text-2xl shadow-lg shadow-rose-500/30">⏰</div>
+          <h3 class="font-display text-2xl font-bold mt-5">Smart reminders</h3>
+          <p class="text-zinc-400 mt-2">Streakly learns when you're most likely to follow through and nudges you at exactly the right moment.</p>
+          <div class="mt-5 glass rounded-2xl p-3 flex items-center gap-3 text-sm">
+            <span class="text-xl">🔔</span>
+            <div><div class="font-medium">Time to stretch!</div><div class="text-xs text-zinc-400">You usually crush this at 7:40 AM</div></div>
+          </div>
+        </div>
+
+        <!-- Widgets -->
+        <div class="card reveal rounded-3xl p-7 md:col-span-2">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-500 grid place-items-center text-2xl shadow-lg shadow-violet-500/30">🧩</div>
+          <h3 class="font-display text-2xl font-bold mt-5">Widgets &amp; Watch</h3>
+          <p class="text-zinc-400 mt-2">Check in from your lock screen, home screen, or wrist. One tap and you're done — no app opening required.</p>
+          <div class="mt-5 grid grid-cols-3 gap-2">
+            <div class="aspect-square rounded-2xl bg-gradient-to-br from-flame/30 to-rose-500/20 border border-white/10 grid place-items-center text-2xl">🔥</div>
+            <div class="aspect-square rounded-2xl bg-white/5 border border-white/10 grid place-items-center text-2xl">💧</div>
+            <div class="aspect-square rounded-2xl bg-white/5 border border-white/10 grid place-items-center text-2xl">📖</div>
+          </div>
+        </div>
+
+        <!-- Friends -->
+        <div class="card reveal rounded-3xl p-7 md:col-span-2">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 grid place-items-center text-2xl shadow-lg shadow-emerald-500/30">🤝</div>
+          <h3 class="font-display text-2xl font-bold mt-5">Accountability circles</h3>
+          <p class="text-zinc-400 mt-2">Invite friends, cheer each other on, and keep group streaks alive. Friendly competition, zero guilt trips.</p>
+          <div class="mt-5 space-y-2 text-sm">
+            <div class="flex items-center justify-between glass rounded-xl px-3 py-2"><span>🥇 Jordan</span><span class="text-flame font-semibold">112 🔥</span></div>
+            <div class="flex items-center justify-between glass rounded-xl px-3 py-2"><span>🥈 You</span><span class="text-flame font-semibold">23 🔥</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="py-24">
+    <div class="mx-auto max-w-6xl px-4">
+      <div class="max-w-2xl mx-auto text-center reveal">
+        <p class="text-sm font-semibold uppercase tracking-widest text-flame">How it works</p>
+        <h2 class="mt-3 font-display text-4xl sm:text-5xl font-bold tracking-tight">Start small. <span class="grad-text">Snowball big.</span></h2>
+      </div>
+      <div class="mt-16 grid md:grid-cols-3 gap-6 relative">
+        <div class="hidden md:block absolute top-12 left-[16%] right-[16%] h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+        <div class="reveal text-center px-4">
+          <div class="relative mx-auto w-24 h-24 rounded-3xl glass grid place-items-center text-4xl">🎯<span class="absolute -top-3 -right-3 w-8 h-8 rounded-full grad-bg text-sm font-bold grid place-items-center">1</span></div>
+          <h3 class="font-display text-xl font-bold mt-6">Pick your habits</h3>
+          <p class="text-zinc-400 mt-2">Choose from 100+ templates or create your own. We'll help you start tiny so success feels easy.</p>
+        </div>
+        <div class="reveal text-center px-4" style="transition-delay:.12s">
+          <div class="relative mx-auto w-24 h-24 rounded-3xl glass grid place-items-center text-4xl">✅<span class="absolute -top-3 -right-3 w-8 h-8 rounded-full grad-bg text-sm font-bold grid place-items-center">2</span></div>
+          <h3 class="font-display text-xl font-bold mt-6">Check in daily</h3>
+          <p class="text-zinc-400 mt-2">One tap from your phone, widget, or watch. Each check-in feeds your streak and earns XP.</p>
+        </div>
+        <div class="reveal text-center px-4" style="transition-delay:.24s">
+          <div class="relative mx-auto w-24 h-24 rounded-3xl glass grid place-items-center text-4xl">🚀<span class="absolute -top-3 -right-3 w-8 h-8 rounded-full grad-bg text-sm font-bold grid place-items-center">3</span></div>
+          <h3 class="font-display text-xl font-bold mt-6">Watch yourself grow</h3>
+          <p class="text-zinc-400 mt-2">Unlock badges, level up, and see insights that show exactly how far you've come.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="reviews" class="relative py-24">
+    <div class="blob w-[400px] h-[400px] bg-flame/25 left-0 top-20"></div>
+    <div class="relative mx-auto max-w-6xl px-4">
+      <div class="max-w-2xl mx-auto text-center reveal">
+        <p class="text-sm font-semibold uppercase tracking-widest text-flame">Reviews</p>
+        <h2 class="mt-3 font-display text-4xl sm:text-5xl font-bold tracking-tight">People are <span class="grad-text">actually sticking</span> with it</h2>
+      </div>
+      <div class="mt-14 grid md:grid-cols-3 gap-5">
+        <figure class="card reveal rounded-3xl p-7">
+          <div class="text-amber-400">★★★★★</div>
+          <blockquote class="mt-4 text-zinc-200 leading-relaxed">"I've tried every habit app out there. Streakly is the first one I've opened every single day for over a year. The streak freeze is genius."</blockquote>
+          <figcaption class="mt-6 flex items-center gap-3">
+            <span class="w-10 h-10 rounded-full grid place-items-center font-bold bg-gradient-to-br from-amber-400 to-orange-500">AM</span>
+            <div class="text-sm"><div class="font-semibold">Alex Martinez</div><div class="text-zinc-500">Product designer · 412-day streak</div></div>
+          </figcaption>
+        </figure>
+        <figure class="card reveal rounded-3xl p-7" style="transition-delay:.1s">
+          <div class="text-amber-400">★★★★★</div>
+          <blockquote class="mt-4 text-zinc-200 leading-relaxed">"The accountability circles changed everything. My running group keeps each other honest and we've logged 3,000 miles together."</blockquote>
+          <figcaption class="mt-6 flex items-center gap-3">
+            <span class="w-10 h-10 rounded-full grid place-items-center font-bold bg-gradient-to-br from-pink-400 to-rose-600">JK</span>
+            <div class="text-sm"><div class="font-semibold">Jordan Kim</div><div class="text-zinc-500">Marathoner · 268-day streak</div></div>
+          </figcaption>
+        </figure>
+        <figure class="card reveal rounded-3xl p-7" style="transition-delay:.2s">
+          <div class="text-amber-400">★★★★★</div>
+          <blockquote class="mt-4 text-zinc-200 leading-relaxed">"Gorgeous, fast, and it doesn't nag me. The smart reminders somehow know exactly when I need a push. Worth every penny of Pro."</blockquote>
+          <figcaption class="mt-6 flex items-center gap-3">
+            <span class="w-10 h-10 rounded-full grid place-items-center font-bold bg-gradient-to-br from-violet-400 to-indigo-600">SL</span>
+            <div class="text-sm"><div class="font-semibold">Sara Lindqvist</div><div class="text-zinc-500">Founder · 189-day streak</div></div>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing" class="py-24">
+    <div class="mx-auto max-w-6xl px-4">
+      <div class="max-w-2xl mx-auto text-center reveal">
+        <p class="text-sm font-semibold uppercase tracking-widest text-flame">Pricing</p>
+        <h2 class="mt-3 font-display text-4xl sm:text-5xl font-bold tracking-tight">Simple pricing. <span class="grad-text">Serious results.</span></h2>
+        <p class="mt-4 text-zinc-400 text-lg">Start free. Upgrade when you're ready to go all in.</p>
+
+        <div class="mt-8 inline-flex items-center glass rounded-full p-1 text-sm">
+          <button id="mBtn" class="px-5 py-2 rounded-full font-semibold transition">Monthly</button>
+          <button id="yBtn" class="px-5 py-2 rounded-full font-semibold transition flex items-center gap-2">Yearly <span class="text-[10px] bg-emerald-400/20 text-emerald-300 px-2 py-0.5 rounded-full">Save 33%</span></button>
+        </div>
+      </div>
+
+      <div class="mt-14 grid md:grid-cols-3 gap-6 items-stretch">
+        <div class="card reveal rounded-3xl p-8 flex flex-col">
+          <h3 class="font-display text-xl font-bold">Starter</h3>
+          <p class="text-zinc-400 text-sm mt-1">For getting your first streak going.</p>
+          <div class="mt-6 flex items-baseline gap-1"><span class="font-display text-5xl font-bold">$0</span><span class="text-zinc-500">/forever</span></div>
+          <ul class="mt-8 space-y-3 text-sm text-zinc-300 flex-1">
+            <li class="flex gap-3"><span class="text-emerald-400">✓</span> Up to 5 habits</li>
+            <li class="flex gap-3"><span class="text-emerald-400">✓</span> Daily streak tracking</li>
+            <li class="flex gap-3"><span class="text-emerald-400">✓</span> Basic reminders</li>
+            <li class="flex gap-3"><span class="text-emerald-400">✓</span> 30-day history</li>
+          </ul>
+          <a href="#cta" class="mt-8 text-center glass rounded-xl py-3 font-semibold hover:bg-white/10 transition">Get started free</a>
+        </div>
+
+        <div class="reveal relative rounded-3xl p-[1.5px] grad-bg shadow-2xl shadow-rose-500/20 md:-translate-y-4" style="transition-delay:.1s">
+          <div class="rounded-[22px] bg-panel p-8 h-full flex flex-col">
+            <div class="flex items-center justify-between">
+              <h3 class="font-display text-xl font-bold">Pro</h3>
+              <span class="grad-bg text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">Most popular</span>
+            </div>
+            <p class="text-zinc-400 text-sm mt-1">For people serious about change.</p>
+            <div class="mt-6 flex items-baseline gap-1"><span class="font-display text-5xl font-bold" id="proPrice">$5.99</span><span class="text-zinc-500">/month</span></div>
+            <p class="text-xs text-zinc-500 mt-1 h-4" id="proNote">Billed monthly</p>
+            <ul class="mt-6 space-y-3 text-sm text-zinc-300 flex-1">
+              <li class="flex gap-3"><span class="text-flame">✓</span> Unlimited habits</li>
+              <li class="flex gap-3"><span class="text-flame">✓</span> Streak Freeze &amp; Smart Reminders</li>
+              <li class="flex gap-3"><span class="text-flame">✓</span> Full-year heatmap &amp; insights</li>
+              <li class="flex gap-3"><span class="text-flame">✓</span> Widgets &amp; Apple Watch app</li>
+              <li class="flex gap-3"><span class="text-flame">✓</span> Accountability circles</li>
+            </ul>
+            <a href="#cta" class="mt-8 text-center grad-bg rounded-xl py-3 font-semibold hover:scale-[1.02] transition shadow-lg shadow-rose-500/30">Start 14-day free trial</a>
+          </div>
+        </div>
+
+        <div class="card reveal rounded-3xl p-8 flex flex-col" style="transition-delay:.2s">
+          <h3 class="font-display text-xl font-bold">Family</h3>
+          <p class="text-zinc-400 text-sm mt-1">Up to 6 people, one plan.</p>
+          <div class="mt-6 flex items-baseline gap-1"><span class="font-display text-5xl font-bold" id="famPrice">$9.99</span><span class="text-zinc-500">/month</span></div>
+          <p class="text-xs text-zinc-500 mt-1 h-4" id="famNote">Billed monthly</p>
+          <ul class="mt-6 space-y-3 text-sm text-zinc-300 flex-1">
+            <li class="flex gap-3"><span class="text-emerald-400">✓</span> Everything in Pro</li>
+            <li class="flex gap-3"><span class="text-emerald-400">✓</span> 6 individual accounts</li>
+            <li class="flex gap-3"><span class="text-emerald-400">✓</span> Shared family challenges</li>
+            <li class="flex gap-3"><span class="text-emerald-400">✓</span> Priority support</li>
+          </ul>
+          <a href="#cta" class="mt-8 text-center glass rounded-xl py-3 font-semibold hover:bg-white/10 transition">Choose Family</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="py-24">
+    <div class="mx-auto max-w-3xl px-4">
+      <div class="text-center reveal">
+        <p class="text-sm font-semibold uppercase tracking-widest text-flame">FAQ</p>
+        <h2 class="mt-3 font-display text-4xl sm:text-5xl font-bold tracking-tight">Questions? <span class="grad-text">Answered.</span></h2>
+      </div>
+      <div class="mt-12 space-y-3 reveal">
+        <details class="card rounded-2xl p-6 group" open>
+          <summary class="flex items-center justify-between gap-4 font-semibold text-lg">What happens if I miss a day?<span class="plus text-2xl text-flame">+</span></summary>
+          <p class="mt-3 text-zinc-400 leading-relaxed">No shame spirals here. If you have a Streak Freeze, it's used automatically. If not, your streak resets — but your longest streak and all your history stay safe, and we'll help you bounce back with a gentle "comeback" plan.</p>
+        </details>
+        <details class="card rounded-2xl p-6">
+          <summary class="flex items-center justify-between gap-4 font-semibold text-lg">Is the free plan really free?<span class="plus text-2xl text-flame">+</span></summary>
+          <p class="mt-3 text-zinc-400 leading-relaxed">Yes — forever. Track up to 5 habits with streaks and reminders at no cost, no credit card required. Upgrade only if you want unlimited habits and the advanced features.</p>
+        </details>
+        <details class="card rounded-2xl p-6">
+          <summary class="flex items-center justify-between gap-4 font-semibold text-lg">Does Streakly work on Android and web?<span class="plus text-2xl text-flame">+</span></summary>
+          <p class="mt-3 text-zinc-400 leading-relaxed">Streakly is available on iOS and Android, with a web dashboard and Apple Watch / Wear OS companions. Everything syncs instantly across your devices.</p>
+        </details>
+        <details class="card rounded-2xl p-6">
+          <summary class="flex items-center justify-between gap-4 font-semibold text-lg">Is my data private?<span class="plus text-2xl text-flame">+</span></summary>
+          <p class="mt-3 text-zinc-400 leading-relaxed">Absolutely. Your data is encrypted in transit and at rest, we never sell it, and you can export or delete everything with a single tap.</p>
+        </details>
+        <details class="card rounded-2xl p-6">
+          <summary class="flex items-center justify-between gap-4 font-semibold text-lg">Can I cancel anytime?<span class="plus text-2xl text-flame">+</span></summary>
+          <p class="mt-3 text-zinc-400 leading-relaxed">Of course. Cancel from your account settings in seconds. You'll keep Pro features until the end of your billing period and drop back to the free plan afterward.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="cta" class="py-24">
+    <div class="mx-auto max-w-5xl px-4">
+      <div class="reveal relative overflow-hidden rounded-[2rem] p-10 sm:p-16 text-center border border-white/10 bg-gradient-to-br from-flame/25 via-rose-500/15 to-violet-600/25">
+        <div class="absolute inset-0 grid-bg opacity-60"></div>
+        <div class="blob w-72 h-72 bg-flame/50 -top-20 -left-10"></div>
+        <div class="blob w-72 h-72 bg-violet-500/50 -bottom-20 -right-10"></div>
+        <div class="relative">
+          <div class="text-6xl animate-flicker inline-block">🔥</div>
+          <h2 class="mt-4 font-display text-4xl sm:text-6xl font-bold tracking-tight">Day one starts <span class="grad-text">today.</span></h2>
+          <p class="mt-5 text-lg text-zinc-300 max-w-xl mx-auto">Join 480,000+ people turning small daily actions into a life they're proud of. Free to start. Takes 30 seconds.</p>
+          <form id="waitForm" class="mt-9 flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+            <input id="email" type="email" required placeholder="you@email.com" class="flex-1 rounded-2xl bg-black/40 border border-white/15 px-5 py-4 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-rose-500/70" />
+            <button class="grad-bg font-semibold px-7 py-4 rounded-2xl shadow-xl shadow-rose-500/30 hover:scale-105 transition">Get the app</button>
+          </form>
+          <p id="formMsg" class="mt-4 text-sm text-zinc-400 h-5">We'll send a download link. No spam, ever.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-white/5 pt-14 pb-10">
+    <div class="mx-auto max-w-6xl px-4">
+      <div class="grid sm:grid-cols-2 md:grid-cols-5 gap-10">
+        <div class="md:col-span-2">
+          <a href="#top" class="flex items-center gap-2 font-display font-bold text-xl">
+            <span class="grid place-items-center w-8 h-8 rounded-xl grad-bg">
+              <svg viewBox="0 0 24 24" class="w-5 h-5" fill="white"><path d="M12 2c.5 3-1 4.8-2.5 6.5C8 10.200 7 11.700 7 14a5 5 0 0 0 10 0c0-1.600-.7-2.900-1.600-4-.3 1.200-1 2-2 2.300C14 9 13.700 4.500 12 2Z"/></svg>
+            </span>
+            Streakly
+          </a>
+          <p class="mt-4 text-zinc-400 text-sm max-w-xs">The habit tracker that makes consistency addictive. Built with care for people who want to grow.</p>
+        </div>
+        <div>
+          <h4 class="font-semibold text-sm">Product</h4>
+          <ul class="mt-4 space-y-2 text-sm text-zinc-400">
+            <li><a href="#features" class="hover:text-white">Features</a></li>
+            <li><a href="#pricing" class="hover:text-white">Pricing</a></li>
+            <li><a href="#how" class="hover:text-white">How it works</a></li>
+            <li><a href="#" class="hover:text-white">Changelog</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-sm">Company</h4>
+          <ul class="mt-4 space-y-2 text-sm text-zinc-400">
+            <li><a href="#" class="hover:text-white">About</a></li>
+            <li><a href="#" class="hover:text-white">Blog</a></li>
+            <li><a href="#" class="hover:text-white">Careers</a></li>
+            <li><a href="#" class="hover:text-white">Press kit</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-sm">Legal</h4>
+          <ul class="mt-4 space-y-2 text-sm text-zinc-400">
+            <li><a href="#" class="hover:text-white">Privacy</a></li>
+            <li><a href="#" class="hover:text-white">Terms</a></li>
+            <li><a href="#" class="hover:text-white">Security</a></li>
+            <li><a href="#" class="hover:text-white">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-12 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
+        <p>© <span id="year"></span> Streakly, Inc. Keep the streak alive.</p>
+        <div class="flex gap-5">
+          <a href="#" class="hover:text-white">Twitter / X</a>
+          <a href="#" class="hover:text-white">Instagram</a>
+          <a href="#" class="hover:text-white">TikTok</a>
+          <a href="#" class="hover:text-white">YouTube</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Year + date label
+    document.getElementById('year').textContent = new Date().getFullYear();
+    document.getElementById('todayLabel').textContent = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
+
+    // Mobile menu
+    const menuBtn = document.getElementById('menuBtn'), mobileMenu = document.getElementById('mobileMenu');
+    menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+    // Interactive habits
+    const habits = [
+      { icon: '💧', name: 'Drink 2L of water', meta: 'Health', done: true },
+      { icon: '📖', name: 'Read 20 pages', meta: 'Learning', done: true },
+      { icon: '🧘', name: 'Meditate 10 min', meta: 'Mindfulness', done: false },
+      { icon: '🏃', name: 'Run 5k', meta: 'Fitness', done: false },
+      { icon: '✍️', name: 'Write in journal', meta: 'Reflection', done: false },
+    ];
+    const list = document.getElementById('habitList');
+    const ring = document.getElementById('ring');
+    const C = 2 * Math.PI * 34;
+    const baseStreak = 23;
+
+    function render() {
+      list.innerHTML = '';
+      habits.forEach((h, i) => {
+        const li = document.createElement('li');
+        li.className = 'habit-row flex items-center gap-3 rounded-2xl bg-white/[0.04] border border-white/[0.07] p-3 cursor-pointer hover:bg-white/[0.08] transition select-none' + (h.done ? ' done' : '');
+        li.innerHTML = `
+          <span class="w-10 h-10 rounded-xl bg-white/5 grid place-items-center text-xl">${h.icon}</span>
+          <div class="flex-1 min-w-0">
+            <div class="habit-name text-sm font-medium truncate">${h.name}</div>
+            <div class="text-[11px] text-zinc-500">${h.meta}</div>
+          </div>
+          <span class="habit-check w-7 h-7 rounded-full border-2 border-white/20 grid place-items-center">
+            <svg class="tick w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+          </span>`;
+        li.addEventListener('click', () => { h.done = !h.done; update(); render(); });
+        list.appendChild(li);
+      });
+    }
+    function update() {
+      const done = habits.filter(h => h.done).length;
+      const pct = done / habits.length;
+      ring.style.strokeDashoffset = C * (1 - pct);
+      document.getElementById('pct').textContent = Math.round(pct * 100) + '%';
+      document.getElementById('countLabel').textContent = `${done} / ${habits.length}`;
+      const all = done === habits.length;
+      document.getElementById('streakNum').textContent = baseStreak + (all ? 1 : 0);
+      document.getElementById('streakMsg').textContent = all ? 'Streak extended — you\'re on fire! 🎉' : `${habits.length - done} to go to extend your streak.`;
+    }
+    render(); update();
+
+    // Heatmap
+    const hm = document.getElementById('heatmap');
+    const colors = ['rgba(255,255,255,.07)', 'rgba(255,106,61,.35)', 'rgba(255,106,61,.6)', 'rgba(255,77,126,.85)', '#8b5cf6'];
+    let seed = 7;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const weeks = 30;
+    for (let w = 0; w < weeks; w++) {
+      for (let d = 0; d < 7; d++) {
+        const trend = 0.35 + (w / weeks) * 0.6;
+        const r = rnd();
+        let lvl = r > trend + 0.2 ? 0 : r > trend ? 1 : r > trend * 0.6 ? 2 : r > trend * 0.3 ? 3 : 4;
+        if (rnd() < trend * 0.55) lvl = Math.max(lvl, 3 + (rnd() > .5 ? 1 : 0));
+        if (rnd() < 0.08) lvl = 0;
+        const cell = document.createElement('span');
+        cell.className = 'block aspect-square rounded-[4px] min-w-[10px] hover:scale-125 transition';
+        cell.style.background = colors[lvl];
+        hm.appendChild(cell);
+      }
+    }
+    hm.style.gridTemplateColumns = `repeat(${weeks}, minmax(0, 1fr))`;
+    hm.style.gridAutoFlow = 'column';
+
+    // Reveal on scroll
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // Count up
+    const cio = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const el = e.target, target = parseFloat(el.dataset.count), suffix = el.dataset.suffix || '';
+        const dec = String(target).includes('.') ? 1 : 0, start = performance.now(), dur = 1400;
+        const tick = (t) => {
+          const p = Math.min((t - start) / dur, 1), eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = (target * eased).toFixed(dec) + suffix;
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+        cio.unobserve(el);
+      });
+    }, { threshold: 0.6 });
+    document.querySelectorAll('[data-count]').forEach(el => cio.observe(el));
+
+    // Pricing toggle
+    const mBtn = document.getElementById('mBtn'), yBtn = document.getElementById('yBtn');
+    function setBilling(yearly) {
+      document.getElementById('proPrice').textContent = yearly ? '$3.99' : '$5.99';
+      document.getElementById('famPrice').textContent = yearly ? '$6.67' : '$9.99';
+      document.getElementById('proNote').textContent = yearly ? 'Billed $47.88 yearly' : 'Billed monthly';
+      document.getElementById('famNote').textContent = yearly ? 'Billed $80.00 yearly' : 'Billed monthly';
+      const on = 'grad-bg text-white shadow-lg', off = 'text-zinc-400 hover:text-white';
+      mBtn.className = 'px-5 py-2 rounded-full font-semibold transition ' + (yearly ? off : on);
+      yBtn.className = 'px-5 py-2 rounded-full font-semibold transition flex items-center gap-2 ' + (yearly ? on : off);
+    }
+    mBtn.addEventListener('click', () => setBilling(false));
+    yBtn.addEventListener('click', () => setBilling(true));
+    setBilling(true);
+
+    // Email form
+    document.getElementById('waitForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const msg = document.getElementById('formMsg');
+      msg.textContent = '🎉 You\'re in! Check your inbox for the download link.';
+      msg.classList.add('text-emerald-300');
+      e.target.reset();
+    });
+  </script>
+</body>
+</html>
