@@ -1,0 +1,7 @@
+{"mode": "make", "src": "-", "model": "claude-sonnet-5-5", "in": 82, "out": 20438, "secs": 110.9, "stop": "end_turn"}
+{"mode": "control", "src": "dash_before.html", "model": "claude-sonnet-5-5", "in": 5645, "out": 9954, "secs": 61.5, "stop": "end_turn"}
+{"mode": "skill", "src": "dash_before.html", "model": "claude-sonnet-5-5", "in": 23835, "out": 21733, "secs": 142.8, "stop": "end_turn"}
+{"mode": "control", "src": "page_before.html", "model": "claude-sonnet-5-5", "in": 19442, "out": 24000, "secs": 174.7, "stop": "max_tokens"}
+{"mode": "skill", "src": "page_before.html", "model": "claude-sonnet-5-5", "in": 37632, "out": 24000, "secs": 190.2, "stop": "max_tokens"}
+{"mode": "control", "src": "page_before.html", "model": "claude-sonnet-5-5", "in": 19442, "out": 25932, "secs": 151.9, "stop": "end_turn"}
+{"mode": "skill", "src": "page_before.html", "model": "claude-sonnet-5-5", "in": 37632, "out": 45833, "secs": 304.8, "stop": "end_turn"}

@@ -5,6 +5,11 @@ h1{font-size:40px;line-height:1.05;margin:0 0 8px}.hl{background:#C6F432;padding
 h2{margin:0 0 6px;font-size:22px}a{color:#111;font-weight:700}.tag{display:inline-block;background:#111;color:#C6F432;font-weight:800;font-size:13px;padding:3px 10px;border-radius:8px;letter-spacing:.5px}ul{padding-left:20px;margin:8px 0}</style></head>
 <body><main><span class="tag">BRUTAL GUY.AI</span><h1>Test <span class="hl">files</span></h1>
 <p>Everything behind the videos: the exact prompts, what the AI produced, and the full run transcripts, so you can check the results or rerun them yourself.</p>
+<div class="card"><span class="tag">DAY 8</span><h2>heydamir/unslop: a Claude skill that fixes AI-looking UI?</h2>
+<p>Claude Sonnet on both sides: the skill vs one plain prompt ("Make this look less AI-generated"), on the repo's own dashboard demo and on a fresh AI-made landing page. The skill removed every AI tell (gradients, emojis, caps labels, a fake "480,000 users" claim); the plain prompt left several. But the skill used 1.8x to 2.9x the tokens, and it changed a revenue number on the demo. Verdict: HALF-TRUE.</p>
+<ul><li>Open the pages yourself: <a href="day08-unslop/pages/page_before.html">before</a> · <a href="day08-unslop/pages/page_control.html">plain prompt</a> · <a href="day08-unslop/pages/page_skill.html">unslop skill</a></li>
+<li>Their demo: <a href="day08-unslop/pages/dash_before.html">before</a> · <a href="day08-unslop/pages/dash_control.html">plain prompt</a> · <a href="day08-unslop/pages/dash_skill.html">unslop skill</a></li>
+<li><a href="https://github.com/brutalguyai/brutalguyai.github.io/tree/main/tests/day08-unslop">Browse the files</a> (results, my harness, all run transcripts, screenshots)</li></ul></div>
 <div class="card"><span class="tag">DAY 7</span><h2>vercel-labs/agent-desktop: AI that uses your PC without screenshots?</h2>
 <p>Same task 3 ways on Claude Sonnet (type one line in a text editor and save the file). Screenshots: 43,003 input tokens. agent-desktop following its own skill: 282,010 (6.5x more). agent-desktop using only <code>find</code>: 47,338 and the fastest run. Verdict: HALF-TRUE.</p>
 <ul><li><a href="day07-agent-desktop/snapshots/shot.png">What a screenshot of the editor looks like</a></li>

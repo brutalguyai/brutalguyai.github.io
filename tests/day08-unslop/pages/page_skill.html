@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Streakly: a habit tracker built around daily streaks</title>
+  <meta name="description" content="Streakly is a habit tracker built around daily streaks. Check in with one tap, protect your streak with freezes and see every day you showed up." />
+  <meta name="theme-color" content="#f7f4ee" />
+  <!--
+    Direction
+    Product: a habit tracker for people who want to check in once a day and keep a streak going.
+    Character: calm, steady, a little warm.
+    World: a paper wall calendar with ink tick marks.
+    Moments: the streak ring and chain inside the phone, and the year heatmap.
+    Signature: the day mark, a small checked square used in habit rows, the 7-day chain and the closing block.
+
+    Content notes
+    - Press logos, user counts, ratings and retention claims were removed because they were not verifiable.
+    - The stats strip now uses facts already stated on this page.
+    - The three reviews below are unverified. Replace them with real, permissioned quotes before launch.
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Instrument Sans"', 'system-ui', 'sans-serif'],
+            serif: ['"Instrument Serif"', 'Georgia', 'serif'],
+          },
+          colors: {
+            paper: '#f7f4ee',
+            card: '#fdfbf7',
+            raised: '#efe9df',
+            ink: '#1f1b16',
+            ink2: '#5e554a',
+            ink3: '#73695d',
+            line: 'rgba(31,27,22,0.1)',
+            ember: '#c2410c',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    :root {
+      --paper: #f7f4ee; --card: #fdfbf7; --raised: #efe9df;
+      --ink: #1f1b16; --ink2: #5e554a; --ink3: #73695d;
+      --line: rgba(31,27,22,.1);
+      --ember: #c2410c; --ember-dark: #9f3509; --ember-light: #ea6a35;
+      --ease: cubic-bezier(.22,1,.36,1);
+    }
+    html { scroll-padding-top: 80px; }
+    body { background: var(--paper); color: var(--ink); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    ::selection { background: var(--ember); color: #fff; }
+    :focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+
+    /* Icons: one set, one size, one stroke */
+    .ic { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+    /* Type */
+    .display { font-family: 'Instrument Serif', Georgia, serif; font-weight: 400; letter-spacing: -.02em; line-height: 1.1; text-wrap: balance; }
+    .h1 { font-size: 44px; line-height: 1.04; }
+    .h2 { font-size: 36px; }
+    @media (min-width: 640px) { .h1 { font-size: 64px; letter-spacing: -.03em; } .h2 { font-size: 48px; } }
+    @media (min-width: 1024px) { .h1 { font-size: 72px; } }
+    .lede { font-size: 18px; line-height: 28px; color: var(--ink2); }
+    .tnum { font-variant-numeric: tabular-nums; }
+
+    /* Surfaces */
+    .panel { background: var(--card); border: 1px solid var(--line); border-radius: 16px; transition: border-color 160ms var(--ease); }
+    .panel:hover { border-color: rgba(31,27,22,.2); }
+    .panel-strong, .panel-strong:hover { border-color: var(--ink); }
+    .icon-box { width: 36px; height: 36px; border-radius: 10px; background: var(--raised); color: var(--ink2); display: grid; place-items: center; }
+
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 20px; border-radius: 10px; border: 1px solid transparent; font-size: 15px; font-weight: 500; white-space: nowrap;
+      transition: background-color 160ms var(--ease), border-color 160ms var(--ease), color 160ms var(--ease), transform 160ms var(--ease); }
+    .btn:active { transform: scale(.98); }
+    .btn-sm { height: 36px; padding: 0 16px; font-size: 14px; }
+    .btn-ember { background: var(--ember); color: #fff; }
+    .btn-ember:hover { background: var(--ember-dark); }
+    .btn-ink { background: var(--ink); color: var(--paper); }
+    .btn-ink:hover { background: #3a332b; }
+    .btn-ghost { border-color: var(--line); color: var(--ink); }
+    .btn-ghost:hover { background: var(--raised); }
+    .btn-light { background: #efe9de; color: var(--ink); }
+    .btn-light:hover { background: #fff; }
+
+    /* Signature: the day mark */
+    .box { --s: 24px; width: var(--s); height: var(--s); border-radius: 6px; border: 1.5px solid rgba(31,27,22,.25); display: grid; place-items: center; color: #fff; flex: none;
+      transition: background-color 160ms var(--ease), border-color 160ms var(--ease); }
+    .box .ic { width: 14px; height: 14px; stroke-width: 2.5; opacity: 0; transform: scale(.6); transition: opacity 160ms var(--ease), transform 160ms var(--ease); }
+    .box[data-on="true"], .habit[aria-checked="true"] .box { background: var(--ember); border-color: var(--ember); }
+    .box[data-on="true"] .ic, .habit[aria-checked="true"] .box .ic { opacity: 1; transform: none; }
+    .chain-dark .box { border-color: rgba(255,255,255,.25); }
+    .chain-dark .box[data-on="true"] { background: var(--ember-light); border-color: var(--ember-light); }
+
+    /* Phone */
+    .phone { border-radius: 44px; padding: 10px; background: var(--ink); box-shadow: 0 24px 48px -16px rgba(31,27,22,.3); }
+    .screen { position: relative; background: var(--card); border-radius: 34px; padding: 48px 20px 24px; color: var(--ink); }
+    .island { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 96px; height: 24px; border-radius: 12px; background: var(--ink); }
+    .ring { transition: stroke-dashoffset 500ms var(--ease); }
+    .day { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; color: var(--ink3); }
+    .habit { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 0; text-align: left; border-top: 1px solid var(--line); cursor: pointer; }
+    #habitList li:first-child .habit { border-top: 0; }
+    .hname { display: block; font-size: 15px; line-height: 20px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: color 160ms var(--ease); }
+    .hmeta { display: block; font-size: 12px; line-height: 16px; color: var(--ink3); }
+    .habit[aria-checked="true"] .hname { color: var(--ink3); text-decoration: line-through; }
+
+    /* Billing toggle */
+    .seg { height: 36px; padding: 0 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--ink2); transition: background-color 160ms var(--ease), color 160ms var(--ease); }
+    .seg:hover { color: var(--ink); }
+    .seg[aria-pressed="true"] { background: var(--card); color: var(--ink); box-shadow: 0 0 0 1px var(--line); }
+
+    /* FAQ */
+    details > summary { list-style: none; cursor: pointer; }
+    details > summary::-webkit-details-marker { display: none; }
+    .plus { transition: transform 200ms var(--ease); color: var(--ink3); }
+    details[open] .plus { transform: rotate(45deg); }
+
+    /* Form */
+    .field { height: 48px; padding: 0 16px; border-radius: 10px; background: #2a2520; border: 1px solid rgba(255,255,255,.14); color: var(--paper); font-size: 15px; width: 100%; transition: border-color 160ms var(--ease); }
+    .field::placeholder { color: #8a847a; }
+    .field:focus-visible { outline: 2px solid var(--ember-light); outline-offset: 2px; }
+
+    /* One entrance on load */
+    @keyframes enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .enter { animation: enter 400ms var(--ease) both; animation-delay: var(--d, 0ms); }
+    @media (prefers-reduced-motion: reduce) {
+      .enter { animation: none; }
+      .ring, .btn, .box, .box .ic, .plus { transition: none; }
+    }
+  </style>
+</head>
+<body class="font-sans overflow-x-hidden">
+
+  <!-- Icon sprite: one set, 24 grid, drawn at 18px with a 1.5 stroke -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="i-tick" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+      <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+      <symbol id="i-done" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+      <symbol id="i-trend" viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- NAV -->
+  <header class="fixed top-0 inset-x-0 z-50 bg-paper border-b border-line">
+    <div class="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
+      <a href="#top" class="flex items-center gap-2 text-[18px] font-medium">
+        <svg viewBox="0 0 24 24" class="w-5 h-5" fill="#c2410c" aria-hidden="true"><path d="M12 2c.5 3-1 4.8-2.5 6.5C8 10.2 7 11.7 7 14a5 5 0 0 0 10 0c0-1.6-.7-2.9-1.6-4-.3 1.2-1 2-2 2.3C14 9 13.7 4.5 12 2Z"/></svg>
+        Streakly
+      </a>
+      <nav class="hidden md:flex items-center gap-8 text-sm text-ink2" aria-label="Main">
+        <a href="#features" class="hover:text-ink transition-colors">Features</a>
+        <a href="#how" class="hover:text-ink transition-colors">How it works</a>
+        <a href="#reviews" class="hover:text-ink transition-colors">Reviews</a>
+        <a href="#pricing" class="hover:text-ink transition-colors">Pricing</a>
+        <a href="#faq" class="hover:text-ink transition-colors">FAQ</a>
+      </nav>
+      <div class="flex items-center gap-4">
+        <a href="#" class="hidden sm:inline text-sm text-ink2 hover:text-ink transition-colors">Log in</a>
+        <a href="#cta" class="btn btn-ink btn-sm">Get started</a>
+        <button id="menuBtn" class="md:hidden grid place-items-center w-9 h-9 rounded-[10px] text-ink2 hover:bg-raised transition-colors" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
+          <svg class="ic"><use href="#i-menu"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobileMenu" class="hidden md:hidden border-t border-line bg-paper px-6 py-2 text-[15px]">
+      <a href="#features" class="block py-3 text-ink2">Features</a>
+      <a href="#how" class="block py-3 text-ink2">How it works</a>
+      <a href="#reviews" class="block py-3 text-ink2">Reviews</a>
+      <a href="#pricing" class="block py-3 text-ink2">Pricing</a>
+      <a href="#faq" class="block py-3 text-ink2">FAQ</a>
+    </div>
+  </header>
+
+  <main>
+  <!-- HERO -->
+  <section id="top" class="pt-28 pb-20 lg:pt-32 lg:pb-24">
+    <div class="mx-auto max-w-6xl px-6 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div class="enter">
+        <h1 class="display h1">Don't break the chain</h1>
+        <p class="lede mt-6 max-w-xl">Streakly is a habit tracker built around daily streaks. Check in with one tap from your phone, widget or watch, and see every day you showed up.</p>
+        <div class="mt-8 flex flex-col sm:flex-row gap-3">
+          <a href="#cta" class="btn btn-ember">Download for iOS</a>
+          <a href="#how" class="btn btn-ghost">How it works</a>
+        </div>
+      </div>
+
+      <!-- Product view: the real streak card, interactive -->
+      <div class="enter relative overflow-hidden rounded-[24px] bg-raised border border-line h-[560px] lg:h-[640px] px-4 pt-10 flex justify-center" style="--d:80ms">
+        <div class="phone w-full max-w-[340px] self-start">
+          <div class="screen">
+            <div class="island" aria-hidden="true"></div>
+            <div class="flex items-center justify-between">
+              <h2 class="text-[22px] leading-7 font-medium" id="todayTitle">Today</h2>
+              <span class="w-8 h-8 rounded-full bg-raised grid place-items-center text-[13px] font-medium text-ink2" aria-hidden="true">S</span>
+            </div>
+
+            <div class="mt-5 rounded-[14px] bg-raised p-4">
+              <div class="flex items-center gap-4">
+                <div class="relative w-20 h-20 shrink-0">
+                  <svg viewBox="0 0 80 80" class="w-20 h-20 -rotate-90" aria-hidden="true">
+                    <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(31,27,22,.1)" stroke-width="8"/>
+                    <circle id="ring" class="ring" cx="40" cy="40" r="34" fill="none" stroke="#c2410c" stroke-width="8" stroke-linecap="round" stroke-dasharray="213.63" stroke-dashoffset="213.63"/>
+                  </svg>
+                  <div class="absolute inset-0 grid place-items-center text-[18px] font-medium tnum" id="pct">0%</div>
+                </div>
+                <div class="min-w-0">
+                  <p class="flex items-baseline gap-2"><span class="text-[36px] leading-none font-medium tnum" id="streakNum">23</span><span class="text-sm text-ink2">day streak</span></p>
+                  <p class="mt-2 text-[13px] leading-5 text-ink2" id="streakMsg">Finish all habits to extend the streak</p>
+                </div>
+              </div>
+              <div id="chain" class="mt-4 grid grid-cols-7 justify-items-center" aria-label="Last seven days"></div>
+            </div>
+
+            <div class="mt-5 flex items-center justify-between">
+              <h3 class="text-sm font-medium">Today's habits</h3>
+              <span class="text-xs text-ink3 tnum" id="countLabel">0 of 5</span>
+            </div>
+            <ul id="habitList" class="mt-2"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FACTS -->
+  <section class="border-y border-line">
+    <div class="mx-auto max-w-6xl px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-8">
+      <div><p class="text-[32px] leading-none font-medium tnum">100+</p><p class="mt-2 text-sm text-ink2">Habit templates</p></div>
+      <div><p class="text-[32px] leading-none font-medium tnum">5</p><p class="mt-2 text-sm text-ink2">Habits on the free plan</p></div>
+      <div><p class="text-[32px] leading-none font-medium tnum">14 days</p><p class="mt-2 text-sm text-ink2">Pro trial</p></div>
+      <div><p class="text-[32px] leading-none font-medium tnum">6</p><p class="mt-2 text-sm text-ink2">People on one Family plan</p></div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="py-24">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="max-w-2xl">
+        <h2 class="display h2">What keeps a streak alive</h2>
+        <p class="lede mt-4">Check-ins, reminders, widgets and friends, built around one tap a day</p>
+      </div>
+
+      <div class="mt-12 grid md:grid-cols-6 gap-4">
+        <!-- Heatmap: the main chart -->
+        <div class="panel p-6 md:col-span-4">
+          <h3 class="text-xl leading-7 font-medium">Your year, at a glance</h3>
+          <p class="mt-2 text-[15px] leading-[22px] text-ink2 max-w-md">Every day you showed up is filled in. The gaps show where the streak slipped.</p>
+          <div class="mt-6" role="img" aria-label="Heatmap of daily habit completions over the last 30 weeks">
+            <div id="months" class="grid gap-x-1 h-4 mb-2 text-xs leading-4 text-ink3"></div>
+            <div id="heatmap" class="grid gap-1"></div>
+          </div>
+          <div class="mt-4 flex items-center justify-end gap-1 text-xs text-ink3">
+            <span class="mr-1">Less</span>
+            <span class="w-3 h-3 rounded-[4px]" style="background:rgba(31,27,22,.07)"></span>
+            <span class="w-3 h-3 rounded-[4px]" style="background:#f3d6c2"></span>
+            <span class="w-3 h-3 rounded-[4px]" style="background:#e9aa82"></span>
+            <span class="w-3 h-3 rounded-[4px]" style="background:#d97a45"></span>
+            <span class="w-3 h-3 rounded-[4px]" style="background:#c2410c"></span>
+            <span class="ml-1">More</span>
+          </div>
+        </div>
+
+        <!-- Streak freeze -->
+        <div class="panel p-6 md:col-span-2 flex flex-col">
+          <span class="icon-box"><svg class="ic"><use href="#i-shield"/></svg></span>
+          <h3 class="mt-4 text-xl leading-7 font-medium">Streak Freeze</h3>
+          <p class="mt-2 text-[15px] leading-[22px] text-ink2">Earn freezes by staying consistent. A freeze covers a missed day so your streak holds.</p>
+          <div class="mt-auto pt-5">
+            <div class="pt-4 border-t border-line flex items-center justify-between text-[13px] text-ink3 tnum"><span>2 available</span><span>Used automatically</span></div>
+          </div>
+        </div>
+
+        <!-- Smart reminders -->
+        <div class="panel p-6 md:col-span-2">
+          <span class="icon-box"><svg class="ic"><use href="#i-bell"/></svg></span>
+          <h3 class="mt-4 text-xl leading-7 font-medium">Smart reminders</h3>
+          <p class="mt-2 text-[15px] leading-[22px] text-ink2">Streakly learns when you usually follow through and reminds you then.</p>
+          <div class="mt-5 rounded-[10px] bg-raised p-4">
+            <p class="text-sm font-medium">Time to stretch</p>
+            <p class="mt-1 text-[13px] leading-5 text-ink2">You usually do this around 7:40 AM</p>
+          </div>
+        </div>
+
+        <!-- Widgets -->
+        <div class="panel p-6 md:col-span-2">
+          <span class="icon-box"><svg class="ic"><use href="#i-grid"/></svg></span>
+          <h3 class="mt-4 text-xl leading-7 font-medium">Widgets and Watch</h3>
+          <p class="mt-2 text-[15px] leading-[22px] text-ink2">Check in from your lock screen, home screen or wrist. One tap and you're done, with no app opening required.</p>
+          <div class="mt-5 grid grid-cols-3 gap-2">
+            <div class="aspect-square rounded-[10px] bg-raised p-3 flex flex-col justify-between"><span class="text-xs text-ink3">Streak</span><span class="text-2xl leading-none font-medium tnum">23</span></div>
+            <div class="aspect-square rounded-[10px] bg-raised p-3 flex flex-col justify-between"><span class="text-xs text-ink3">Today</span><span class="text-2xl leading-none font-medium tnum">3/5</span></div>
+            <div class="aspect-square rounded-[10px] bg-raised p-3 flex flex-col justify-between"><span class="text-xs text-ink3">Freezes</span><span class="text-2xl leading-none font-medium tnum">2</span></div>
+          </div>
+        </div>
+
+        <!-- Circles -->
+        <div class="panel p-6 md:col-span-2">
+          <span class="icon-box"><svg class="ic"><use href="#i-users"/></svg></span>
+          <h3 class="mt-4 text-xl leading-7 font-medium">Accountability circles</h3>
+          <p class="mt-2 text-[15px] leading-[22px] text-ink2">Invite friends, cheer each other on and keep group streaks alive. Friendly competition, no guilt trips.</p>
+          <ul class="mt-5 text-sm">
+            <li class="flex items-center gap-3 rounded-[10px] px-3 py-2"><span class="w-4 text-ink3 tnum">1</span><span class="flex-1">Priya</span><span class="text-ink2 tnum">31 days</span></li>
+            <li class="flex items-center gap-3 rounded-[10px] px-3 py-2 bg-raised font-medium"><span class="w-4 text-ink3 tnum">2</span><span class="flex-1">You</span><span class="text-ink2 tnum">23 days</span></li>
+            <li class="flex items-center gap-3 rounded-[10px] px-3 py-2"><span class="w-4 text-ink3 tnum">3</span><span class="flex-1">Marco</span><span class="text-ink2 tnum">19 days</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="py-24 border-t border-line">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="max-w-2xl">
+        <h2 class="display h2">From first habit to long streak</h2>
+      </div>
+      <div class="mt-12 grid md:grid-cols-3 gap-8">
+        <div class="border-t border-line pt-6">
+          <div class="flex items-center gap-3"><span class="icon-box"><svg class="ic"><use href="#i-target"/></svg></span><span class="text-sm text-ink3">Step 1</span></div>
+          <h3 class="mt-5 text-xl leading-7 font-medium">Pick your habits</h3>
+          <p class="mt-2 text-[15px] leading-[22px] text-ink2">Choose from 100+ templates or create your own. Streakly suggests starting small so the first week is easy.</p>
+        </div>
+        <div class="border-t border-line pt-6">
+          <div class="flex items-center gap-3"><span class="icon-box"><svg class="ic"><use href="#i-done"/></svg></span><span class="text-sm text-ink3">Step 2</span></div>
+          <h3 class="mt-5 text-xl leading-7 font-medium">Check in daily</h3>
+          <p class="mt-2 text-[15px] leading-[22px] text-ink2">One tap from your phone, widget or watch. Each check-in adds to your streak and earns XP.</p>
+        </div>
+        <div class="border-t border-line pt-6">
+          <div class="flex items-center gap-3"><span class="icon-box"><svg class="ic"><use href="#i-trend"/></svg></span><span class="text-sm text-ink3">Step 3</span></div>
+          <h3 class="mt-5 text-xl leading-7 font-medium">See your progress</h3>
+          <p class="mt-2 text-[15px] leading-[22px] text-ink2">Unlock badges, level up and read insights that show how far you've come.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS (placeholder quotes: replace with verified, permissioned ones) -->
+  <section id="reviews" class="py-24 border-t border-line">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="max-w-2xl">
+        <h2 class="display h2">Reviews from people with long streaks</h2>
+      </div>
+      <div class="mt-12 grid md:grid-cols-5 gap-4">
+        <figure class="panel p-8 md:col-span-3 md:row-span-2 flex flex-col justify-between gap-10">
+          <blockquote class="display text-[28px] leading-[1.25]" style="letter-spacing:-.01em">I've tried every habit app out there. Streakly is the first one I've opened every single day for over a year. The streak freeze is genius.</blockquote>
+          <figcaption class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-full bg-raised grid place-items-center text-sm font-medium text-ink2" aria-hidden="true">AM</span>
+            <div class="text-sm"><div class="font-medium">Alex Martinez</div><div class="text-ink3 tnum">Product designer, 412-day streak</div></div>
+          </figcaption>
+        </figure>
+        <figure class="panel p-6 md:col-span-2 flex flex-col justify-between gap-6">
+          <blockquote class="text-[16px] leading-6 text-ink">The accountability circles changed everything. My running group keeps each other honest and we've logged 3,000 miles together.</blockquote>
+          <figcaption class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-full bg-raised grid place-items-center text-sm font-medium text-ink2" aria-hidden="true">JK</span>
+            <div class="text-sm"><div class="font-medium">Jordan Kim</div><div class="text-ink3 tnum">Marathoner, 268-day streak</div></div>
+          </figcaption>
+        </figure>
+        <figure class="panel p-6 md:col-span-2 flex flex-col justify-between gap-6">
+          <blockquote class="text-[16px] leading-6 text-ink">Gorgeous, fast, and it doesn't nag me. The smart reminders somehow know exactly when I need a push. Worth every penny of Pro.</blockquote>
+          <figcaption class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-full bg-raised grid place-items-center text-sm font-medium text-ink2" aria-hidden="true">SL</span>
+            <div class="text-sm"><div class="font-medium">Sara Lindqvist</div><div class="text-ink3 tnum">Founder, 189-day streak</div></div>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing" class="py-24 border-t border-line">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="max-w-2xl">
+        <h2 class="display h2">Start free, upgrade when you need more</h2>
+        <p class="lede mt-4">The free plan covers up to 5 habits. Pro adds unlimited habits and insights</p>
+        <div class="mt-8 inline-flex items-center gap-1 p-1 rounded-[12px] bg-raised" role="group" aria-label="Billing period">
+          <button id="mBtn" type="button" class="seg" aria-pressed="false">Monthly</button>
+          <button id="yBtn" type="button" class="seg" aria-pressed="true">Yearly<span class="ml-2 text-xs font-normal text-ink3">Save 33%</span></button>
+        </div>
+      </div>
+
+      <div class="mt-12 grid md:grid-cols-3 gap-4 items-stretch">
+        <div class="panel p-8 flex flex-col">
+          <h3 class="text-xl leading-7 font-medium">Starter</h3>
+          <p class="mt-1 text-sm text-ink2">For getting your first streak going</p>
+          <p class="mt-6 flex items-baseline gap-2"><span class="text-[36px] leading-none font-medium tnum">$0</span><span class="text-sm text-ink3">forever</span></p>
+          <p class="mt-2 h-5 text-[13px] text-ink3">Free</p>
+          <ul class="mt-6 space-y-3 text-sm text-ink2 flex-1">
+            <li class="flex gap-3"><svg class="ic text-ink3"><use href="#i-tick"/></svg>Up to 5 habits</li>
+            <li class="flex gap-3"><svg class="ic text-ink3"><use href="#i-tick"/></svg>Daily streak tracking</li>
+            <li class="flex gap-3"><svg class="ic text-ink3"><use href="#i-tick"/></svg>Basic reminders</li>
+            <li class="flex gap-3"><svg class="ic text-ink3"><use href="#i-tick"/></svg>30-day history</li>
+          </ul>
+          <a href="#cta" class="btn btn-ghost mt-8">Get started free</a>
+        </div>
+
+        <div class="panel panel-strong p-8 flex flex-col">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xl leading-7 font-medium">Pro</h3>
+            <span class="text-xs text-ink3">Recommended</span>
+          </div>
+          <p class="mt-1 text-sm text-ink2">For people serious about change</p>
+          <p class="mt-6 flex items-baseline gap-2"><span class="text-[36px] leading-none font-medium tnum" id="proPrice">$3.99</span><span class="text-sm text-ink3">/month</span></p>
+          <p class="mt-2 h-5 text-[13px] text-ink3 tnum" id="proNote">Billed $47.88 yearly</p>
+          <ul class="mt-6 space-y-3 text-sm text-ink2 flex-1">
+            <li class="flex gap-3"><svg class="ic text-ink3"><use href="#i-tick"/></svg>Unlimited habits</li>
+            <li class="flex gap-3"><svg class="ic text-ink3"><use href="#i-tick"/></svg>Streak Freeze and Smart Reminders</li>
+            <li class="flex gap-3"><svg class="ic text-ink3"><use href="#i-tick"/></svg>Full-year heatmap and insights</li>
+            <li class="flex gap-3"><svg class="ic text-ink3"><use href="#i-tick"/></svg>Widgets and Apple Watch app</li>
+            <li class="flex gap-3"><svg class="ic text-ink3"><use href="#i-tick"/></svg>Accountability circles</li>
+          </ul>
+          <a href="#cta" class="btn btn-ember mt-8">Start 14-day trial</a>
+        </div>
+
+        <div class="panel p-8 flex flex-col">
+          <h3 class="text-xl leading-7 font-medium">Family</h3>
+          <p class="mt-1 text-sm text-ink2">Up to 6 people, one plan</p>
+          <p class="mt-6 flex items-baseline gap-2"><span class="text-[36px] leading-none font-medium tnum" id="famPrice">$6.67</span><span class="text-sm text-ink3">/month</span></p>
+          <p class="mt-2 h-5 text-[13px] text-ink3 tnum" id="famNote">Billed $80.00 yearly</p>
+          <ul class="mt-6 space-y-3 text-sm text-ink2 flex-1">
+            <li class="flex gap-3"><svg class="ic text-ink3"><use href="#i-tick"/></svg>Everything in Pro</li>
+            <li class="flex gap-3"><svg class="ic text-ink3"><use href="#i-tick"/></svg>6 individual accounts</li>
+            <li class="flex gap-3"><svg class="ic text-ink3"><use href="#i-tick"/></svg>Shared family challenges</li>
+            <li class="flex gap-3"><svg class="ic text-ink3"><use href="#i-tick"/></svg>Priority support</li>
+          </ul>
+          <a href="#cta" class="btn btn-ghost mt-8">Choose Family</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="py-24 border-t border-line">
+    <div class="mx-auto max-w-3xl px-6">
+      <h2 class="display h2">Questions about Streakly</h2>
+      <div class="mt-12 space-y-3">
+        <details class="panel px-6 py-5" open>
+          <summary class="flex items-center justify-between gap-4 text-[17px] leading-6 font-medium">What happens if I miss a day?<svg class="ic plus"><use href="#i-plus"/></svg></summary>
+          <p class="mt-3 text-[15px] leading-6 text-ink2">If you have a Streak Freeze, it's used automatically. If not, your streak resets, but your longest streak and all your history stay safe. Streakly then suggests a gentle comeback plan.</p>
+        </details>
+        <details class="panel px-6 py-5">
+          <summary class="flex items-center justify-between gap-4 text-[17px] leading-6 font-medium">Is the free plan really free?<svg class="ic plus"><use href="#i-plus"/></svg></summary>
+          <p class="mt-3 text-[15px] leading-6 text-ink2">Yes, forever. Track up to 5 habits with streaks and reminders at no cost and with no credit card. Upgrade only if you want unlimited habits and the advanced features.</p>
+        </details>
+        <details class="panel px-6 py-5">
+          <summary class="flex items-center justify-between gap-4 text-[17px] leading-6 font-medium">Does Streakly work on Android and web?<svg class="ic plus"><use href="#i-plus"/></svg></summary>
+          <p class="mt-3 text-[15px] leading-6 text-ink2">Streakly is available on iOS and Android, with a web dashboard and Apple Watch and Wear OS companions. Everything syncs instantly across your devices.</p>
+        </details>
+        <details class="panel px-6 py-5">
+          <summary class="flex items-center justify-between gap-4 text-[17px] leading-6 font-medium">Is my data private?<svg class="ic plus"><use href="#i-plus"/></svg></summary>
+          <p class="mt-3 text-[15px] leading-6 text-ink2">Your data is encrypted in transit and at rest, we never sell it, and you can export or delete everything with a single tap.</p>
+        </details>
+        <details class="panel px-6 py-5">
+          <summary class="flex items-center justify-between gap-4 text-[17px] leading-6 font-medium">Can I cancel anytime?<svg class="ic plus"><use href="#i-plus"/></svg></summary>
+          <p class="mt-3 text-[15px] leading-6 text-ink2">Cancel from your account settings in seconds. You keep Pro features until the end of your billing period, then drop back to the free plan.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="cta" class="pb-24">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="rounded-[24px] bg-ink px-6 py-16 sm:px-16 sm:py-20">
+        <div class="max-w-xl">
+          <div class="chain-dark flex gap-2" aria-hidden="true">
+            <span class="box" data-on="true" style="--s:32px"><svg class="ic"><use href="#i-tick"/></svg></span>
+            <span class="box" style="--s:32px"><svg class="ic"><use href="#i-tick"/></svg></span>
+            <span class="box" style="--s:32px"><svg class="ic"><use href="#i-tick"/></svg></span>
+            <span class="box" style="--s:32px"><svg class="ic"><use href="#i-tick"/></svg></span>
+            <span class="box" style="--s:32px"><svg class="ic"><use href="#i-tick"/></svg></span>
+            <span class="box" style="--s:32px"><svg class="ic"><use href="#i-tick"/></svg></span>
+            <span class="box" style="--s:32px"><svg class="ic"><use href="#i-tick"/></svg></span>
+          </div>
+          <h2 class="display h2 mt-8" style="color:#f7f4ee">Start your first streak</h2>
+          <p class="mt-4 text-[18px] leading-7" style="color:#aaa398">Free to start. We'll email you a download link</p>
+          <form id="waitForm" class="mt-8 flex flex-col sm:flex-row gap-3 max-w-lg">
+            <label for="email" class="sr-only">Email</label>
+            <input id="email" type="email" required placeholder="Email" class="field flex-1" />
+            <button class="btn btn-light" type="submit">Get the app</button>
+          </form>
+          <p id="formMsg" class="mt-4 h-5 text-sm" style="color:#aaa398" aria-live="polite">No spam</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-line pt-16 pb-10">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid sm:grid-cols-2 md:grid-cols-5 gap-10">
+        <div class="md:col-span-2">
+          <a href="#top" class="flex items-center gap-2 text-[18px] font-medium">
+            <svg viewBox="0 0 24 24" class="w-5 h-5" fill="#c2410c" aria-hidden="true"><path d="M12 2c.5 3-1 4.8-2.5 6.5C8 10.2 7 11.7 7 14a5 5 0 0 0 10 0c0-1.6-.7-2.9-1.6-4-.3 1.2-1 2-2 2.3C14 9 13.7 4.5 12 2Z"/></svg>
+            Streakly
+          </a>
+          <p class="mt-4 text-sm leading-5 text-ink2 max-w-xs">A habit tracker built around daily streaks.</p>
+        </div>
+        <div>
+          <h4 class="text-sm font-medium">Product</h4>
+          <ul class="mt-4 space-y-2 text-sm text-ink2">
+            <li><a href="#features" class="hover:text-ink transition-colors">Features</a></li>
+            <li><a href="#pricing" class="hover:text-ink transition-colors">Pricing</a></li>
+            <li><a href="#how" class="hover:text-ink transition-colors">How it works</a></li>
+            <li><a href="#" class="hover:text-ink transition-colors">Changelog</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-sm font-medium">Company</h4>
+          <ul class="mt-4 space-y-2 text-sm text-ink2">
+            <li><a href="#" class="hover:text-ink transition-colors">About</a></li>
+            <li><a href="#" class="hover:text-ink transition-colors">Blog</a></li>
+            <li><a href="#" class="hover:text-ink transition-colors">Careers</a></li>
+            <li><a href="#" class="hover:text-ink transition-colors">Press kit</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-sm font-medium">Legal</h4>
+          <ul class="mt-4 space-y-2 text-sm text-ink2">
+            <li><a href="#" class="hover:text-ink transition-colors">Privacy</a></li>
+            <li><a href="#" class="hover:text-ink transition-colors">Terms</a></li>
+            <li><a href="#" class="hover:text-ink transition-colors">Security</a></li>
+            <li><a href="#" class="hover:text-ink transition-colors">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-12 pt-6 border-t border-line flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-ink3">
+        <p>© <span id="year"></span> Streakly, Inc.</p>
+        <div class="flex gap-6">
+          <a href="#" class="hover:text-ink transition-colors">Twitter / X</a>
+          <a href="#" class="hover:text-ink transition-colors">Instagram</a>
+          <a href="#" class="hover:text-ink transition-colors">TikTok</a>
+          <a href="#" class="hover:text-ink transition-colors">YouTube</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const TICK = '<svg class="ic" aria-hidden="true"><use href="#i-tick"/></svg>';
+    document.getElementById('year').textContent = new Date().getFullYear();
+    document.getElementById('todayTitle').textContent = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
+
+    // Mobile menu
+    const menuBtn = document.getElementById('menuBtn'), mobileMenu = document.getElementById('mobileMenu');
+    menuBtn.addEventListener('click', () => {
+      const open = mobileMenu.classList.toggle('hidden') === false;
+      menuBtn.setAttribute('aria-expanded', String(open));
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      mobileMenu.classList.add('hidden');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    }));
+
+    // Phone: 7-day chain
+    const chain = document.getElementById('chain');
+    let todayMark = null;
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(); d.setDate(d.getDate() - (6 - i));
+      const cell = document.createElement('div');
+      cell.className = 'day';
+      cell.innerHTML = `<span class="box" style="--s:28px" data-on="${i < 6}">${TICK}</span><span>${d.toLocaleDateString(undefined, { weekday: 'narrow' })}</span>`;
+      chain.appendChild(cell);
+      if (i === 6) todayMark = cell.querySelector('.box');
+    }
+
+    // Phone: interactive habits
+    const habits = [
+      { name: 'Drink 2L of water', meta: 'Health', done: true },
+      { name: 'Read 20 pages', meta: 'Learning', done: true },
+      { name: 'Meditate 10 min', meta: 'Mindfulness', done: false },
+      { name: 'Run 5k', meta: 'Fitness', done: false },
+      { name: 'Write in journal', meta: 'Reflection', done: false },
+    ];
+    const list = document.getElementById('habitList');
+    const ring = document.getElementById('ring');
+    const C = 2 * Math.PI * 34, baseStreak = 23;
+
+    habits.forEach(h => {
+      const li = document.createElement('li');
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'habit';
+      b.setAttribute('role', 'checkbox');
+      b.setAttribute('aria-checked', String(h.done));
+      b.innerHTML = `<span class="box" aria-hidden="true">${TICK}</span><span class="min-w-0 flex-1"><span class="hname">${h.name}</span><span class="hmeta">${h.meta}</span></span>`;
+      b.addEventListener('click', () => {
+        h.done = !h.done;
+        b.setAttribute('aria-checked', String(h.done));
+        update();
+      });
+      li.appendChild(b);
+      list.appendChild(li);
+    });
+
+    function update() {
+      const n = habits.length, done = habits.filter(h => h.done).length, all = done === n;
+      ring.style.strokeDashoffset = C * (1 - done / n);
+      document.getElementById('pct').textContent = Math.round(done / n * 100) + '%';
+      document.getElementById('countLabel').textContent = `${done} of ${n}`;
+      document.getElementById('streakNum').textContent = baseStreak + (all ? 1 : 0);
+      document.getElementById('streakMsg').textContent = all
+        ? `Streak extended to ${baseStreak + 1} days`
+        : `${n - done} ${n - done === 1 ? 'habit' : 'habits'} left to extend the streak`;
+      todayMark.setAttribute('data-on', String(all));
+    }
+    update();
+
+    // Heatmap: one series, five steps, ending this week
+    const hm = document.getElementById('heatmap'), months = document.getElementById('months');
+    const colors = ['rgba(31,27,22,.07)', '#f3d6c2', '#e9aa82', '#d97a45', '#c2410c'];
+    const weeks = 30;
+    const cols = `repeat(${weeks}, minmax(0, 1fr))`;
+    hm.style.gridTemplateColumns = cols;
+    hm.style.gridTemplateRows = 'repeat(7, auto)';
+    hm.style.gridAutoFlow = 'column';
+    months.style.gridTemplateColumns = cols;
+
+    let seed = 7;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const start = new Date(today); start.setDate(start.getDate() - start.getDay() - (weeks - 1) * 7);
+
+    const labels = [];
+    for (let w = 0; w < weeks; w++) {
+      for (let d = 0; d < 7; d++) {
+        const date = new Date(start); date.setDate(start.getDate() + w * 7 + d);
+        if (date > today) continue;
+        if (date.getDate() === 1) labels.push({ w, text: date.toLocaleDateString(undefined, { month: 'short' }) });
+        const p = 0.45 + (w / weeks) * 0.45;
+        let lvl = 0;
+        if (rnd() < p) lvl = Math.min(4, 1 + Math.floor((rnd() * 0.7 + (w / weeks) * 0.5) * 4));
+        const cell = document.createElement('span');
+        cell.className = 'block aspect-square rounded-[4px]';
+        cell.style.background = colors[lvl];
+        cell.title = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        hm.appendChild(cell);
+      }
+    }
+    if (labels.length && labels[0].w > 0) {
+      const first = new Date(start);
+      if (labels[0].w >= 3) labels.unshift({ w: 0, text: first.toLocaleDateString(undefined, { month: 'short' }) });
+    }
+    labels.forEach(l => {
+      const s = document.createElement('span');
+      s.className = 'whitespace-nowrap';
+      s.style.gridColumn = String(l.w + 1);
+      s.textContent = l.text;
+      months.appendChild(s);
+    });
+
+    // Pricing toggle
+    const mBtn = document.getElementById('mBtn'), yBtn = document.getElementById('yBtn');
+    function setBilling(yearly) {
+      document.getElementById('proPrice').textContent = yearly ? '$3.99' : '$5.99';
+      document.getElementById('famPrice').textContent = yearly ? '$6.67' : '$9.99';
+      document.getElementById('proNote').textContent = yearly ? 'Billed $47.88 yearly' : 'Billed monthly';
+      document.getElementById('famNote').textContent = yearly ? 'Billed $80.00 yearly' : 'Billed monthly';
+      mBtn.setAttribute('aria-pressed', String(!yearly));
+      yBtn.setAttribute('aria-pressed', String(yearly));
+    }
+    mBtn.addEventListener('click', () => setBilling(false));
+    yBtn.addEventListener('click', () => setBilling(true));
+    setBilling(true);
+
+    // Email form
+    document.getElementById('waitForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      document.getElementById('formMsg').textContent = 'Check your inbox for the download link';
+      e.target.reset();
+    });
+  </script>
+</body>
+</html>
