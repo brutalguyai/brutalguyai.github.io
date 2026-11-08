@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EmberAI Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --page: #e6e1d6;
+        --surface: #faf8f4;
+        --sidebar: #f2efe8;
+        --card: #ffffff;
+        --line: #ddd8cc;
+        --line-soft: #e9e5db;
+        --ink: #1c1915;
+        --ink-2: #4a453c;
+        --muted: #81796b;
+        --ember: #d9480f;
+        --ember-soft: #fbe9e0;
+        --green: #2c7a4b;
+        --green-soft: #e3f1e8;
+        --bar: #d4cdbd;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        font-family: "Instrument Sans", system-ui, sans-serif;
+        font-size: 14px;
+        line-height: 1.4;
+        color: var(--ink);
+        background: var(--page);
+        min-height: 100vh;
+        padding: 40px 24px;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a { color: inherit; text-decoration: none; }
+      button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+      .icon { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+      .num { font-variant-numeric: tabular-nums; }
+
+      :focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; border-radius: 6px; }
+
+      .app {
+        display: flex;
+        max-width: 1040px;
+        min-height: 880px;
+        margin: 0 auto;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgba(28, 25, 21, 0.06), 0 24px 60px -24px rgba(28, 25, 21, 0.28);
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 256px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        background: var(--sidebar);
+        border-right: 1px solid var(--line);
+        padding: 18px 14px 14px;
+      }
+
+      .brand { display: flex; align-items: center; gap: 10px; padding: 0 6px; height: 32px; }
+      .brand-mark {
+        width: 28px; height: 28px; border-radius: 8px;
+        background: var(--ink); color: #fff;
+        display: grid; place-items: center;
+      }
+      .brand-mark svg { width: 15px; height: 15px; fill: var(--ember); }
+      .brand-name { font-weight: 700; font-size: 16px; letter-spacing: -0.01em; }
+      .tag {
+        font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
+        padding: 2px 6px; border-radius: 4px;
+        border: 1px solid var(--line); color: var(--ink-2); background: var(--surface);
+      }
+      .icon-btn {
+        margin-left: auto; position: relative;
+        width: 30px; height: 30px; border-radius: 8px;
+        display: grid; place-items: center; color: var(--ink-2);
+        transition: background 0.15s;
+      }
+      .icon-btn:hover { background: var(--line-soft); }
+      .icon-btn .dot {
+        position: absolute; top: 6px; right: 7px; width: 7px; height: 7px;
+        background: var(--ember); border-radius: 50%; border: 1.5px solid var(--sidebar);
+      }
+
+      .search {
+        margin: 20px 0 6px;
+        display: flex; align-items: center; gap: 8px;
+        height: 36px; padding: 0 8px 0 10px;
+        background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+        color: var(--muted); cursor: text;
+        transition: border-color 0.15s;
+      }
+      .search:hover { border-color: #c9c2b2; }
+      .search span { font-size: 13.5px; }
+      .kbd {
+        margin-left: auto; font-size: 11px; font-weight: 500; color: var(--muted);
+        border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; background: var(--sidebar);
+      }
+
+      .group-label {
+        margin: 22px 8px 6px;
+        font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .nav a {
+        display: flex; align-items: center; gap: 10px;
+        height: 34px; padding: 0 8px; margin-bottom: 2px;
+        border-radius: 8px; color: var(--ink-2); font-weight: 500;
+        transition: background 0.15s, color 0.15s;
+      }
+      .nav a:hover { background: var(--line-soft); color: var(--ink); }
+      .nav a.active { background: var(--card); color: var(--ink); box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgba(28,25,21,0.05); }
+      .nav a.active .icon { color: var(--ember); }
+      .nav .count { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--muted); }
+      .nav .count.alert { color: #fff; background: var(--ember); border-radius: 999px; padding: 0 7px; line-height: 18px; }
+      .nav .new { margin-left: auto; font-size: 11px; font-weight: 600; color: var(--ember); background: var(--ember-soft); border-radius: 4px; padding: 1px 6px; }
+
+      .divider { height: 1px; background: var(--line); margin: 18px -14px 0; }
+
+      .plans li {
+        display: flex; align-items: center; gap: 10px;
+        height: 32px; padding: 0 8px; list-style: none; color: var(--ink-2); font-weight: 500;
+      }
+      .plans .sw { width: 8px; height: 8px; border-radius: 2px; }
+      .plans .n { margin-left: auto; font-size: 13px; color: var(--muted); }
+
+      .profile {
+        margin-top: auto; display: flex; align-items: center; gap: 10px;
+        padding: 10px 8px 2px; border-top: 1px solid var(--line);
+      }
+      .avatar {
+        width: 30px; height: 30px; border-radius: 50%;
+        background: var(--ember-soft); color: var(--ember);
+        display: grid; place-items: center; font-weight: 700; font-size: 12px;
+      }
+      .profile b { display: block; font-weight: 600; font-size: 13px; }
+      .profile small { color: var(--muted); font-size: 12px; }
+
+      /* Main */
+      main { flex: 1; min-width: 0; padding: 18px 32px 32px; }
+
+      .topbar { display: flex; align-items: center; height: 32px; color: var(--muted); font-size: 13px; gap: 8px; }
+      .topbar .here { color: var(--ink); font-weight: 600; }
+      .topbar .range {
+        margin-left: auto; display: flex; align-items: center; gap: 8px;
+        height: 32px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px;
+        background: var(--card); color: var(--ink-2); font-weight: 500;
+        transition: border-color 0.15s;
+      }
+      .topbar .range:hover { border-color: #c9c2b2; }
+
+      h1 {
+        margin-top: 36px;
+        font-family: "Instrument Serif", Georgia, serif;
+        font-weight: 400; font-size: 44px; line-height: 1.05; letter-spacing: -0.015em;
+      }
+      h1 em { color: var(--ember); }
+      .lede { margin-top: 10px; color: var(--muted); font-size: 15px; }
+
+      .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px; }
+
+      .card {
+        background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px;
+      }
+      .card-head { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 13px; font-weight: 500; }
+      .card-head a { color: var(--ink-2); font-size: 12.5px; font-weight: 500; border-bottom: 1px solid var(--line); }
+      .card-head a:hover { color: var(--ember); border-color: var(--ember); }
+      .figure { margin-top: 14px; font-size: 36px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; }
+      .figure.lg { font-size: 40px; }
+      .delta-row { margin-top: 14px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+      .delta {
+        display: inline-flex; align-items: center; gap: 4px;
+        font-weight: 600; font-size: 12.5px; color: var(--green); background: var(--green-soft);
+        border-radius: 999px; padding: 2px 8px 2px 6px;
+      }
+      .delta .icon { width: 12px; height: 12px; stroke-width: 2; }
+
+      .revenue { margin-top: 16px; }
+      .revenue-top { display: flex; justify-content: space-between; align-items: flex-start; }
+      .legend { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted); }
+      .legend i { width: 8px; height: 8px; border-radius: 2px; background: var(--ember); display: inline-block; }
+
+      .chart { position: relative; margin-top: 28px; height: 250px; padding-left: 40px; }
+      .grid-lines { position: absolute; left: 0; right: 0; top: 0; height: 220px; }
+      .grid-lines div {
+        position: absolute; left: 0; right: 0; border-top: 1px dashed var(--line-soft);
+      }
+      .grid-lines div:last-child { border-top: 1px solid var(--line); }
+      .grid-lines span {
+        position: absolute; left: 0; top: -8px; width: 32px; text-align: right;
+        font-size: 11.5px; color: var(--muted); background: var(--card); line-height: 16px;
+      }
+      .bars {
+        position: absolute; left: 40px; right: 0; top: 0; height: 220px;
+        display: grid; grid-template-columns: repeat(7, 1fr); align-items: end;
+      }
+      .col { height: 100%; display: flex; align-items: flex-end; justify-content: center; position: relative; }
+      .bar {
+        width: 44px; max-width: 70%; background: var(--bar);
+        border-radius: 5px 5px 0 0; position: relative;
+        transition: background 0.15s;
+      }
+      .col:hover .bar { background: #bfb7a4; }
+      .col.hi .bar, .col.hi:hover .bar { background: var(--ember); }
+      .tip {
+        position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%);
+        background: var(--ink); color: #fff; font-size: 12px; font-weight: 600;
+        padding: 3px 8px; border-radius: 6px; white-space: nowrap;
+        opacity: 0; transition: opacity 0.15s; pointer-events: none;
+      }
+      .col.hi .tip, .col:hover .tip { opacity: 1; }
+      .xlabels {
+        position: absolute; left: 40px; right: 0; bottom: 0;
+        display: grid; grid-template-columns: repeat(7, 1fr);
+        font-size: 12px; color: var(--muted); text-align: center;
+      }
+      .xlabels .on { color: var(--ink); font-weight: 600; }
+
+      @media (max-width: 860px) {
+        body { padding: 0; }
+        .app { flex-direction: column; border-radius: 0; border: 0; }
+        .sidebar { width: 100%; border-right: 0; border-bottom: 1px solid var(--line); }
+        main { padding: 18px 20px 28px; }
+        .stats { grid-template-columns: 1fr; }
+        h1 { font-size: 36px; }
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+        <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></symbol>
+        <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M3 13h5l1.5 3h5L16 13h5"/><path d="M5.5 5h13L21 13v6H3v-6z"/></symbol>
+        <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6.5A1.5 1.5 0 0 1 4.500 5H9l2 2.500h8.500A1.500 1.500 0 0 1 21 9v9.500a1.500 1.500 0 0 1-1.500 1.500h-15A1.500 1.500 0 0 1 3 18.500z"/></symbol>
+        <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.500 20c0-3.500 3-6 6.500-6s6.500 2.500 6.500 6"/><path d="M16 4.700a3.500 3.500 0 0 1 0 6.600"/><path d="M18 14.300c2.200.8 3.500 2.700 3.500 5.700"/></symbol>
+        <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.500 8h5"/><path d="M9.500 12h5"/></symbol>
+        <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></symbol>
+        <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.500" y="5" width="17" height="15.500" rx="2"/><path d="M3.500 10h17M8 3v4M16 3v4"/></symbol>
+        <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+        <symbol id="i-up" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></symbol>
+        <symbol id="i-down" viewBox="0 0 24 24"><path d="M7 7l10 10M17 8v9H8"/></symbol>
+      </defs>
+    </svg>
+
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12.500 2c.4 3.200-1.300 4.800-3 6.700C7.800 10.500 6 12.600 6 15.500A6 6 0 0 0 18 15.500c0-2-.9-3.600-2-4.800-.2 1.400-.9 2.300-1.800 2.800.6-3.700-.1-8.300-1.700-11.500Z"/></svg>
+          </div>
+          <span class="brand-name">EmberAI</span>
+          <span class="tag">PRO</span>
+          <button class="icon-btn" aria-label="Notifications">
+            <svg class="icon"><use href="#i-bell"/></svg>
+            <span class="dot"></span>
+          </button>
+        </div>
+
+        <label class="search">
+          <svg class="icon"><use href="#i-search"/></svg>
+          <span>Search</span>
+          <span class="kbd">⌘K</span>
+        </label>
+
+        <p class="group-label">Navigation</p>
+        <nav class="nav">
+          <a href="#" class="active"><svg class="icon"><use href="#i-home"/></svg>Overview</a>
+          <a href="#"><svg class="icon"><use href="#i-inbox"/></svg>Inbox<span class="count alert num">12</span></a>
+          <a href="#"><svg class="icon"><use href="#i-folder"/></svg>Projects<span class="new">New</span></a>
+          <a href="#"><svg class="icon"><use href="#i-users"/></svg>Customers</a>
+          <a href="#"><svg class="icon"><use href="#i-receipt"/></svg>Invoices</a>
+          <a href="#"><svg class="icon"><use href="#i-chart"/></svg>Reports</a>
+        </nav>
+
+        <p class="group-label">Customers by plan</p>
+        <ul class="plans">
+          <li><span class="sw" style="background:#1c1915"></span>Enterprise<span class="n num">18</span></li>
+          <li><span class="sw" style="background:#5b4a3a"></span>Business<span class="n num">64</span></li>
+          <li><span class="sw" style="background:var(--ember)"></span>Pro<span class="n num">210</span></li>
+          <li><span class="sw" style="background:#e59a73"></span>Starter<span class="n num">480</span></li>
+          <li><span class="sw" style="background:#d4cdbd"></span>Free<span class="n num">1.2k</span></li>
+        </ul>
+
+        <div class="profile">
+          <div class="avatar">D</div>
+          <div>
+            <b>Damir</b>
+            <small>Workspace owner</small>
+          </div>
+        </div>
+      </aside>
+
+      <main>
+        <div class="topbar">
+          <span>Workspace</span>
+          <span>/</span>
+          <span class="here">Overview</span>
+          <button class="range">
+            <svg class="icon"><use href="#i-cal"/></svg>
+            This month
+            <svg class="icon" style="width:14px;height:14px"><use href="#i-chev"/></svg>
+          </button>
+        </div>
+
+        <h1>Welcome back, <em>Damir</em></h1>
+        <p class="lede">Here’s where your invoices and revenue stand today.</p>
+
+        <section class="stats">
+          <article class="card">
+            <div class="card-head"><span>Paid this month</span><a href="#">View</a></div>
+            <p class="figure num">$48,210</p>
+            <div class="delta-row">
+              <span class="delta"><svg class="icon"><use href="#i-up"/></svg>12%</span>
+              vs last month
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-head"><span>Overdue invoices</span><a href="#">Review</a></div>
+            <p class="figure num">7</p>
+            <div class="delta-row">
+              <span class="delta"><svg class="icon"><use href="#i-down"/></svg>3</span>
+              fewer than last month
+            </div>
+          </article>
+        </section>
+
+        <section class="card revenue">
+          <div class="revenue-top">
+            <div>
+              <div class="card-head"><span>Total revenue</span></div>
+              <p class="figure lg num">$124,860.40</p>
+              <div class="delta-row">
+                <span class="delta"><svg class="icon"><use href="#i-up"/></svg>4.2%</span>
+                this month
+              </div>
+            </div>
+            <div class="legend"><i></i>Daily revenue, this week</div>
+          </div>
+
+          <div class="chart" role="img" aria-label="Bar chart of daily revenue this week. Thursday is highest at $22.5k.">
+            <div class="grid-lines">
+              <div style="top:0"><span class="num">$24k</span></div>
+              <div style="top:25%"><span class="num">$18k</span></div>
+              <div style="top:50%"><span class="num">$12k</span></div>
+              <div style="top:75%"><span class="num">$6k</span></div>
+              <div style="top:100%"><span class="num">$0</span></div>
+            </div>
+            <div class="bars">
+              <div class="col"><div class="bar" style="height:50%"><span class="tip num">$12.0k</span></div></div>
+              <div class="col"><div class="bar" style="height:71.7%"><span class="tip num">$17.2k</span></div></div>
+              <div class="col"><div class="bar" style="height:55.4%"><span class="tip num">$13.3k</span></div></div>
+              <div class="col hi"><div class="bar" style="height:93.8%"><span class="tip num">$22.5k</span></div></div>
+              <div class="col"><div class="bar" style="height:67.1%"><span class="tip num">$16.1k</span></div></div>
+              <div class="col"><div class="bar" style="height:40.4%"><span class="tip num">$9.7k</span></div></div>
+              <div class="col"><div class="bar" style="height:59.6%"><span class="tip num">$14.3k</span></div></div>
+            </div>
+            <div class="xlabels">
+              <span>Mon</span><span>Tue</span><span>Wed</span><span class="on">Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
