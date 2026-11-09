@@ -14,14 +14,14 @@ a{color:var(--deep);font-weight:700}img{max-width:100%;border-radius:12px;border
 </style></head><body><main>
 <span class="tag">BRUTAL GUY.AI · TEST KIT · NOV 9 2026</span>
 <h1>"Complete games with <em>one free plugin</em>"?</h1>
-<p><b>Repo:</b> <a href="https://github.com/gamedev-skills/awesome-gamedev-agent-skills">gamedev-skills/awesome-gamedev-agent-skills</a> (Apache-2.0, ~8k stars).<br><b>The reel's claim:</b> Claude Code builds complete video games with one free plugin: 77 game-dev skills for Godot, Unity, Unreal and browser games, picks the skills itself, art direction, Steam publishing. "Comment GAME for the repo."<br><small>You don't need to comment anything: the repo is public and the install is two commands (below).</small></p>
+<p><b>Repo:</b> <a href="https://github.com/gamedev-skills/awesome-gamedev-agent-skills">gamedev-skills/awesome-gamedev-agent-skills</a> (Apache-2.0, ~8k stars).<br><b>The reel's claim</b> (caption, verbatim): "Your Claude Code can now help you build complete video games with just one free plugin." Also: 77 skills for Godot, Unity, Unreal and browser games; "Just describe what you want to build, and Claude Code picks the relevant skills"; art direction skills; help with Steam publishing; "Comment GAME and I'll send you the GitHub repo and my setup guide." The reel shows no specific prompt.<br><small>You don't need to comment anything: the repo is public and the install is two commands (below).</small></p>
 <div class="card"><span class="verdict">HALF-TRUE</span>
-<p>The plugin is real and well made: 77 skills + a router, exactly as claimed. And when the skills load, the game gets better (coyote time, jump buffering, variable jump height, a title screen, a death counter). <b>But on the reel's own prompt, Claude Code (Sonnet) loaded zero skills.</b> All 77 were installed and visible, and it just wrote the game from its own knowledge. The router only ran when the prompt said "use the gamedev plugin skills". Art stays code-drawn rectangles without an image tool, and "publish on Steam" gets you a checklist, not a published game.</p></div>
+<p>The plugin is real and well made: 77 skills + a router, exactly as claimed. And when the skills load, the game gets better (coyote time, jump buffering, variable jump height, a title screen, a death counter). <b>But when we just described the game (as the caption says to), Claude Code loaded zero skills in 7 of 7 runs.</b> All 77 were installed and visible, and it just wrote the game from its own knowledge. The router only ran when the prompt said "use the gamedev plugin skills". Art stays code-drawn rectangles without an image tool, and "publish on Steam" gets you a checklist, not a published game.</p></div>
 
 <div class="card"><h2>Claims checked</h2><table>
 <tr><th>Claim</th><th>What we found</th><th>Call</th></tr>
 <tr><td>77 game-dev skills</td><td>78 SKILL.md files in the repo = 77 skills + 1 router. Godot 16, Unity 8, Unreal 6, web 6, other engines 12, Ebitengine 1, disciplines 15, genres 9, workflows 4.</td><td class="ok">TRUE</td></tr>
-<tr><td>You don't pick skills, Claude does</td><td>Reel prompt, plugin installed, fresh folder: all 78 gamedev skills listed, <b>0 loaded in 7 of 7 runs</b> (6 Sonnet, 1 Opus; 6 of them with the reel's exact prompt, <a href="files/prompt_exact.txt">prompt_exact.txt</a>). Adding "Use the gamedev plugin skills (start with its router)": router → phaser-core, phaser-arcade-physics, platformer in <b>3 of 3 runs</b>. <a href="files/verify/">Rerun transcripts</a>: sonnet_r1–r5, opus_r1, sonnetB_r1–r2.</td><td class="no">NOT ON ITS OWN</td></tr>
+<tr><td>You don't pick skills, Claude does</td><td>Plain "describe the game" prompt, plugin installed, fresh folder: all 78 gamedev skills listed, <b>0 loaded in 7 of 7 runs</b> (6 Sonnet, 1 Opus; 6 of them with only the one-line prompt, <a href="files/prompt_exact.txt">prompt_exact.txt</a>). Adding "Use the gamedev plugin skills (start with its router)": router → phaser-core, phaser-arcade-physics, platformer in <b>3 of 3 runs</b>. <a href="files/verify/">Rerun transcripts</a>: sonnet_r1–r5, opus_r1, sonnetB_r1–r2.</td><td class="no">NOT ON ITS OWN</td></tr>
 <tr><td>Builds a complete game</td><td>Both runs made a playable 2-level platformer with double jump, coins, a stomping enemy and a win screen. The skills version adds game feel and a title screen. Neither has art, sound or a menu beyond that.</td><td>HALF</td></tr>
 <tr><td>Art-direction skills</td><td><code>create-game-assets</code> plans briefs, manifests and QA. Its own fallback: with no image tool, "keep explicit greybox placeholders". Both games: shapes drawn in code.</td><td>HALF</td></tr>
 <tr><td>Steam publishing</td><td><code>steam-publish</code> is a SteamPipe/steamcmd checklist. You still need a Steamworks partner account, the USD $100 Steam Direct fee per app, tax verification and (for first titles) a 21-day wait. Asked to "publish this on Steam", Claude gave a checklist without even loading the skill: <a href="files/steam_answer.md">its reply</a>.</td><td>CHECKLIST ONLY</td></tr>
@@ -35,7 +35,7 @@ claude plugin list        # gamedev@awesome-gamedev-agent-skills ✔ enabled</pr
 <p><b>The fix that matters:</b> start your prompt with <code>Use the gamedev plugin skills (start with its router).</code> Otherwise they may never load.</p></div>
 
 <div class="card"><h2>The exact prompts</h2><ul>
-<li>Run A (the reel's prompt): <a href="files/prompt.txt">prompt.txt</a>, then <code>publish this on Steam</code> in the same session</li>
+<li>Run A (just describing the game): <a href="files/prompt.txt">prompt.txt</a> (with a note about our test setup), then <code>publish this on Steam</code> in the same session. Reruns used only the first line: <a href="files/prompt_exact.txt">prompt_exact.txt</a></li>
 <li>Run B (same + one line asking for the plugin): <a href="files/prompt_B.txt">prompt_B.txt</a></li></ul>
 <small>Both: <code>claude -p</code>, model claude-sonnet-5-5, fresh empty folder, plugin installed. The environment note in the prompts is there because our test shell can't run a dev server.</small></div>
 
@@ -62,7 +62,7 @@ claude plugin list        # gamedev@awesome-gamedev-agent-skills ✔ enabled</pr
 <li><b>Neither run tested its own game</b> (no browser in the agent's sandbox); we played both to the win screen ourselves.</li></ul></div>
 
 <div class="card"><h2>Fine print</h2><ul>
-<li>Skill loading checked over 7 runs (Sonnet + one Opus) and 3 runs with the plugin named. Game quality and tokens are from one run each (A and B). Other agents (Cursor, Codex) weren't tested.</li>
+<li>All 7 runs were headless (<code>claude -p</code>); interactive Claude Code was not tested (our API credit ran low). Skill loading checked over 7 runs (Sonnet + one Opus) and 3 runs with the plugin named. Game quality and tokens are from one run each (A and B). Other agents (Cursor, Codex) weren't tested.</li>
 <li>Steam numbers are from the repo's steam-publish skill (Nov 2026). Check Steamworks for current terms.</li></ul></div>
 
 <div class="card"><h2>Who it's for / what to use instead</h2><ul>
