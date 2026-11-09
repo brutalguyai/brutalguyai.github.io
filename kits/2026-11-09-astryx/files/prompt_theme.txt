@@ -1,0 +1,6 @@
+This is a working React dashboard built with Meta's Astryx design system (see AGENTS.md). Rebrand it for a coffee brand using Astryx's own theming system (read `npx astryx docs theme` first):
+- primary/accent color #C8553D (terracotta) everywhere the theme uses the accent (primary button, switch when on, focus rings, selected states)
+- square corners: no border radius on any component
+- no shadows anywhere
+- headings in a serif font (Georgia is fine)
+Do it through the theme (defineTheme / theme tokens), not by restyling individual components or adding raw CSS to them. Don't start a dev server. Done when `npm run build` passes. At the end, list exactly which of the four requirements the theme system could and couldn't express.
