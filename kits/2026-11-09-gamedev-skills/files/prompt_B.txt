@@ -1,0 +1,5 @@
+Use the gamedev plugin skills for this (start with its router).
+
+Make a small Phaser browser platformer: player with double jump, coins, one enemy, 2 levels, win screen.
+
+(Environment notes: this folder is empty. Each shell command must finish within 2 minutes and nothing can run in the background, so don't start a dev server. The finished game must run by serving this folder with any static file server and opening index.html.)

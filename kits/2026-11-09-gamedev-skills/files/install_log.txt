@@ -1,0 +1,17 @@
+$ claude plugin marketplace add gamedev-skills/awesome-gamedev-agent-skills
+Adding marketplace…SSH not configured, cloning via HTTPS: https://github.com/gamedev-skills/awesome-gamedev-agent-skills.git
+Refreshing marketplace cache (timeout: 120s)…
+Cloning repository (timeout: 120s): https://github.com/gamedev-skills/awesome-gamedev-agent-skills.git
+Clone complete, validating marketplace…
+Cleaning up old marketplace cache…
+✔ Successfully added marketplace: awesome-gamedev-agent-skills (declared in user settings)
+$ claude plugin install gamedev@awesome-gamedev-agent-skills
+Installing plugin "gamedev@awesome-gamedev-agent-skills"...✔ Successfully installed plugin: gamedev@awesome-gamedev-agent-skills (scope: user)
+$ claude plugin list
+Installed plugins:
+
+  ❯ gamedev@awesome-gamedev-agent-skills
+    Version: 4cce500ce1a7
+    Scope: user
+    Status: ✔ enabled
+
