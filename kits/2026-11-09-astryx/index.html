@@ -1,0 +1,67 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Astryx test kit · brutal guy.ai</title>
+<style>
+:root{--blue:#b4c6d6;--white:#d7d5d7;--paper:#f3f3f4;--ink:#1b2733;--deep:#2f4a63;--red:#c2272d}
+*{box-sizing:border-box}body{margin:0;background:var(--blue);color:var(--ink);font:17px/1.6 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:780px;margin:0 auto;padding:28px 16px 64px}
+.tag{display:inline-block;background:var(--ink);color:var(--white);font-weight:800;font-size:13px;letter-spacing:.6px;padding:4px 12px;border-radius:999px}
+h1{font-size:clamp(30px,7vw,44px);line-height:1.08;margin:12px 0 6px}h1 em{font-family:Georgia,serif;color:var(--deep)}
+h2{font-size:22px;margin:0 0 8px}.card{background:var(--paper);border-radius:18px;padding:18px 20px;margin:18px 0;box-shadow:0 10px 30px rgba(27,39,51,.12)}
+.verdict{display:inline-block;font-weight:900;font-size:20px;letter-spacing:1px;color:var(--paper);background:var(--deep);padding:4px 14px;border-radius:10px}
+pre{background:var(--ink);color:var(--white);padding:14px;border-radius:12px;overflow-x:auto;font-size:14px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92em}table{width:100%;border-collapse:collapse;font-size:15px}td,th{text-align:left;padding:8px 6px;border-bottom:1px solid var(--white);vertical-align:top}
+a{color:var(--deep);font-weight:700}img{max-width:100%;border-radius:12px;border:1px solid var(--white)}.no{color:var(--red);font-weight:800}.ok{color:var(--deep);font-weight:800}small{color:#4a5a69}
+</style></head><body><main>
+<span class="tag">BRUTAL GUY.AI · TEST KIT · NOV 9 2026</span>
+<h1>Meta's Astryx: is it <em>really</em> agent-ready?</h1>
+<p><b>Repo:</b> <a href="https://github.com/meta/astryx">meta/astryx</a> (MIT, beta 0.7.11) · #2 on GitHub Trending today, +3.3k stars in a day.<br><b>Claim:</b> "An open source design system that's fully customizable and agent ready."</p>
+<div class="card"><span class="verdict">LEGIT</span> <b>with fine print</b>
+<p>Claude Code (Claude Sonnet, direct API) built a working dashboard with Astryx in one session: 18 turns, one TypeScript error that it fixed itself, build passing, zero console errors, every control works. The fine print: in our fresh project <code>init</code> wrote <code>AGENTS.md</code> and <code>GEMINI.md</code> but <b>no CLAUDE.md</b>, so Claude Code won't see the guide unless you point it there (fix below). It's beta, the JS bundle was 723 kB for one page, and Meta's own benchmark (issue #2182) shows agents drifting off the system when they read the long theme docs.</p></div>
+
+<div class="card"><h2>Claims checked</h2><table>
+<tr><th>Claim</th><th>What we found</th><th>Call</th></tr>
+<tr><td>150+ accessible components</td><td>The guide <code>init</code> writes says <b>174 components</b> (v0.7.11).</td><td class="ok">TRUE</td></tr>
+<tr><td>Agents build with it, from the docs, not guessing</td><td>Agent used the CLI (<code>build</code>, <code>template</code>, <code>component</code>, <code>search</code>), built header, 3 metric cards, a table with status badges, a switch and a select. 1 type error (<code>justify="space-between"</code> should be <code>"between"</code>), 1 wrong name guess (<code>Select</code> is <code>Selector</code>, the CLI's error suggested it).</td><td class="ok">TRUE</td></tr>
+<tr><td><code>init</code> writes the guide into AGENTS.md / CLAUDE.md</td><td>Wrote AGENTS.md + GEMINI.md. No CLAUDE.md, which is the file Claude Code reads automatically.</td><td class="no">HALF</td></tr>
+<tr><td>No build plugin, just CSS imports + a provider</td><td>Two CSS imports + <code>&lt;Theme&gt;</code> in main.tsx; vite.config untouched.</td><td class="ok">TRUE</td></tr>
+<tr><td>Grew inside Meta for 8 years, 13,000+ apps</td><td>Meta's own statement; can't be checked from outside.</td><td>UNVERIFIED</td></tr>
+</table></div>
+
+<div class="card"><h2>Install commands that worked</h2>
+<pre>npm create vite@latest my-app -- --template react-ts
+cd my-app
+npm i @astryxdesign/core @astryxdesign/theme-neutral @stylexjs/stylex
+npm i -D @astryxdesign/cli
+npx @astryxdesign/cli init        # writes AGENTS.md (+ GEMINI.md)
+echo "@AGENTS.md" > CLAUDE.md     # the fix: lets Claude Code load the guide
+npx astryx theme add neutral
+npm run build</pre>
+<small>Always use the scoped name <code>@astryxdesign/cli</code> until it's installed: plain <code>astryx</code> on npm is an unrelated package.</small></div>
+
+<div class="card"><h2>The exact prompt</h2><p><a href="files/prompt.txt">prompt.txt</a> (Claude Code, <code>claude -p</code>, model claude-sonnet-5-5, max 45 turns).</p></div>
+
+<div class="card"><h2>The result</h2><img src="files/dashboard_built.png" alt="Dashboard the agent built with Astryx: header, three metric cards, video table with status badges, settings with a switch and a select">
+<ul><li><a href="files/App.tsx">App.tsx</a> · <a href="files/main.tsx">main.tsx</a> (the agent's code, unedited)</li>
+<li>Full run transcripts: <a href="files/transcript_part0.jsonl">part 1</a> · <a href="files/transcript_part1.jsonl">part 2</a> (resumed; our shell has a time limit per command)</li>
+<li>Tokens for the successful session: 18 turns, ~6.9k output tokens, ~25k fresh input, ~432k cached input re-reads.</li></ul></div>
+
+<div class="card"><h2>What broke + fixes</h2><ul>
+<li><b>No CLAUDE.md after init.</b> Add a one-line <a href="files/CLAUDE.md">CLAUDE.md</a> with <code>@AGENTS.md</code>, or tell the agent to read AGENTS.md.</li>
+<li><b>Type error:</b> HStack wants <code>justify="between"</code>, not CSS's <code>"space-between"</code>.</li>
+<li><b>Component names differ from the usual:</b> it's <code>Selector</code>, not <code>Select</code>. Run <code>npx astryx search "&lt;thing&gt;"</code> first.</li>
+<li><b>The dashboard template pulls in recharts + heroicons.</b> The agent skipped it and built from the <code>TableInCard</code> and <code>SwitchSettingsPanel</code> blocks.</li>
+<li><b>Bundle:</b> 723 kB JS (Vite warns). Fine for apps, heavy for a landing page.</li>
+<li><b>Not done:</b> the agent didn't run <code>astryx doctor --built dist</code>, which the guide asks for. Run it yourself.</li></ul></div>
+
+<div class="card"><h2>Fine print</h2><ul>
+<li>One task, one model (Sonnet), one run. Not a benchmark.</li>
+<li>The page looks clean but plain: the -3% delta isn't coloured red, for example. Astryx gives you correct, consistent UI; the design taste is still yours.</li>
+<li>Beta: five releases in the week before this test (0.7.7 → 0.7.11). Pin your version.</li>
+<li>Meta's own issue <a href="https://github.com/meta/astryx/issues/2182">#2182</a>: in their benchmark, agents that read the dense theme doc dropped to 20-45% compliance (94% when they didn't). Brand theming beyond buttons/cards/inputs is reported as limited (Evangeline Ng's July test).</li></ul></div>
+
+<div class="card"><h2>Who it's for / what to use instead</h2><ul>
+<li><b>Use Astryx</b> if you build React 19 apps (dashboards, settings, admin, chat UIs) with Claude Code / Cursor and want the agent to use one consistent, accessible component set.</li>
+<li><b>Use shadcn/ui</b> if you want to own and edit every component's source, need heavy brand customisation, or care about bundle size.</li>
+<li><b>Skip it</b> for marketing pages and non-React stacks.</li></ul></div>
+<p><a href="../">All test kits</a> · <a href="https://instagram.com/brutal_guy.ai">Instagram</a> · <a href="https://youtube.com/@brutal_guy_ai">YouTube</a> · Spotted a mistake? Comment on the video.</p>
+</main></body></html>

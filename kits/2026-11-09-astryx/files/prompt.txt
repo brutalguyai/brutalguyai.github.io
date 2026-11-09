@@ -1,0 +1,13 @@
+This folder has a fresh Vite + React 19 + TypeScript scaffold with @astryxdesign/core, @astryxdesign/theme-neutral and @stylexjs/stylex already installed (Meta's Astryx design system).
+
+Follow Astryx's own agent setup: install @astryxdesign/cli as a dev dependency, run `npx @astryxdesign/cli init` so it writes its component guide into CLAUDE.md / AGENTS.md, read that, and use the Astryx CLI (component, template, search, docs) to look things up instead of guessing APIs.
+
+Build ONE page in src/App.tsx: a "Creator Dashboard" for a small YouTube channel called "Brutal Guy":
+- a page header with the channel name and a primary button "Upload video"
+- 3 metric cards: Views 48.2K (+12%), Subscribers 3,140 (+4%), Watch hours 1,205 (-3%)
+- a table of 5 recent videos (title, views, status badge: Published / Draft / Scheduled)
+- a settings panel with a toggle "Email me weekly stats" and a select "Default visibility" (Public / Unlisted / Private)
+
+Rules: use Astryx components for all UI (layout-only CSS at most). Do not start a dev server. Each shell command must finish within 2 minutes and nothing runs in the background. You are done when `npm run build` (tsc -b && vite build) passes with zero errors. Keep it efficient.
+
+At the very end, print a short report: Astryx components used, Astryx CLI commands you ran, and anything that broke and how you fixed it.
