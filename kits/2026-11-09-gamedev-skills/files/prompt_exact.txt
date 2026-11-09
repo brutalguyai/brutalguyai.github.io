@@ -1,0 +1,1 @@
+Make a small Phaser browser platformer: player with double jump, coins, one enemy, 2 levels, win screen.

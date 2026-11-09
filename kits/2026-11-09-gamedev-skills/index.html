@@ -21,7 +21,7 @@ a{color:var(--deep);font-weight:700}img{max-width:100%;border-radius:12px;border
 <div class="card"><h2>Claims checked</h2><table>
 <tr><th>Claim</th><th>What we found</th><th>Call</th></tr>
 <tr><td>77 game-dev skills</td><td>78 SKILL.md files in the repo = 77 skills + 1 router. Godot 16, Unity 8, Unreal 6, web 6, other engines 12, Ebitengine 1, disciplines 15, genres 9, workflows 4.</td><td class="ok">TRUE</td></tr>
-<tr><td>You don't pick skills, Claude does</td><td>Run A (reel prompt, plugin installed): all 78 gamedev skills listed in the session, <b>0 loaded</b>. Run B ("use the gamedev plugin skills"): router → phaser-core, phaser-arcade-physics, platformer.</td><td class="no">NOT ON ITS OWN</td></tr>
+<tr><td>You don't pick skills, Claude does</td><td>Reel prompt, plugin installed, fresh folder: all 78 gamedev skills listed, <b>0 loaded in 7 of 7 runs</b> (6 Sonnet, 1 Opus; 6 of them with the reel's exact prompt, <a href="files/prompt_exact.txt">prompt_exact.txt</a>). Adding "Use the gamedev plugin skills (start with its router)": router → phaser-core, phaser-arcade-physics, platformer in <b>3 of 3 runs</b>. <a href="files/verify/">Rerun transcripts</a>: sonnet_r1–r5, opus_r1, sonnetB_r1–r2.</td><td class="no">NOT ON ITS OWN</td></tr>
 <tr><td>Builds a complete game</td><td>Both runs made a playable 2-level platformer with double jump, coins, a stomping enemy and a win screen. The skills version adds game feel and a title screen. Neither has art, sound or a menu beyond that.</td><td>HALF</td></tr>
 <tr><td>Art-direction skills</td><td><code>create-game-assets</code> plans briefs, manifests and QA. Its own fallback: with no image tool, "keep explicit greybox placeholders". Both games: shapes drawn in code.</td><td>HALF</td></tr>
 <tr><td>Steam publishing</td><td><code>steam-publish</code> is a SteamPipe/steamcmd checklist. You still need a Steamworks partner account, the USD $100 Steam Direct fee per app, tax verification and (for first titles) a 21-day wait. Asked to "publish this on Steam", Claude gave a checklist without even loading the skill: <a href="files/steam_answer.md">its reply</a>.</td><td>CHECKLIST ONLY</td></tr>
@@ -47,7 +47,7 @@ claude plugin list        # gamedev@awesome-gamedev-agent-skills ✔ enabled</pr
 <table><tr><th></th><th>A: no skills</th><th>B: with skills</th></tr>
 <tr><td>Turns</td><td>4</td><td>14</td></tr>
 <tr><td>Output tokens</td><td>6,687</td><td>13,237</td></tr>
-<tr><td>All tokens (incl. cached reads)</td><td>~102k</td><td>~339k (3.3x)</td></tr>
+<tr><td>All tokens (incl. cached reads)</td><td>~102k</td><td>~339k (3.3x; B also built more features)</td></tr>
 <tr><td>Jump</td><td>double jump</td><td>double jump + coyote time + jump buffer + variable height</td></tr>
 <tr><td>Screens</td><td>levels + win</td><td>title + levels + win (coins, deaths, time)</td></tr>
 <tr><td>Enemies</td><td>1 per level</td><td>1 in level 1, 2 in level 2</td></tr>
@@ -62,7 +62,7 @@ claude plugin list        # gamedev@awesome-gamedev-agent-skills ✔ enabled</pr
 <li><b>Neither run tested its own game</b> (no browser in the agent's sandbox); we played both to the win screen ourselves.</li></ul></div>
 
 <div class="card"><h2>Fine print</h2><ul>
-<li>One prompt, one model (Sonnet), one run each. Other models or agents may call the router more often.</li>
+<li>Skill loading checked over 7 runs (Sonnet + one Opus) and 3 runs with the plugin named. Game quality and tokens are from one run each (A and B). Other agents (Cursor, Codex) weren't tested.</li>
 <li>Steam numbers are from the repo's steam-publish skill (Nov 2026). Check Steamworks for current terms.</li></ul></div>
 
 <div class="card"><h2>Who it's for / what to use instead</h2><ul>
