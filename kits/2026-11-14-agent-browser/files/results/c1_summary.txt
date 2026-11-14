@@ -1,0 +1,12 @@
+page                                             n    html   ab-i ab-full      PW red-i% red-full%   png B
+https://example.com                              3    1974     29    1104    1288   97.7      14.3   64620
+https://en.wikipedia.org/wiki/Web_browser        3  611479  30423   95278  141810   78.5      32.8  158837
+https://developer.mozilla.org/en-US/docs/Web/HT  3  104415   6546   24493   35611   81.6      31.2  129841
+https://docs.python.org/3/tutorial/index.html    3   41923  16135   35252   40144   59.8      12.2  109844
+https://the-internet.herokuapp.com/login         3    2722    628    1369    1486   57.7       7.9   47268
+https://pypi.org/project/requests/               3  353634   5479   18588   28176   80.6      34.0   62947
+http://127.0.0.1:8801/index.html                 3    2123    583     709    1049   44.4      32.4   22792
+https://news.ycombinator.com                     1   34087  20343   32116   49015   58.5      34.5  135557
+median red-i 69.17692051158667 median red-full 31.81625550892992
+max red-i 97.74844720496894 min 44.4232602478551
+sum ab_i 80166 sum pw 298579 => overall red 73.15082440493136

@@ -1,0 +1,5 @@
+{"url": "https://example.com", "snap_ms_med": 8.4, "shot_ms_med": 49.6, "snap_ms_max": 16.1, "shot_ms_max": 54.1, "snap_tokens": 7.2, "shot_tokens_est": 984.7, "snap_faster": true, "snap_fewer_tokens": true}
+{"url": "https://en.wikipedia.org/wiki/Web_browser", "snap_ms_med": 191.7, "shot_ms_med": 78.7, "snap_ms_max": 243.2, "shot_ms_max": 98.5, "snap_tokens": 7605.8, "shot_tokens_est": 984.7, "snap_faster": false, "snap_fewer_tokens": false}
+{"url": "https://developer.mozilla.org/en-US/docs/Web/HTML", "snap_ms_med": 51.9, "shot_ms_med": 48.0, "snap_ms_max": 69.9, "shot_ms_max": 63.3, "snap_tokens": 1643.0, "shot_tokens_est": 984.7, "snap_faster": false, "snap_fewer_tokens": false}
+{"url": "https://docs.python.org/3/tutorial/index.html", "snap_ms_med": 62.6, "shot_ms_med": 50.3, "snap_ms_max": 73.8, "shot_ms_max": 53.3, "snap_tokens": 4033.8, "shot_tokens_est": 984.7, "snap_faster": false, "snap_fewer_tokens": false}
+{"url": "http://127.0.0.1:8801/index.html", "snap_ms_med": 12.5, "shot_ms_med": 38.3, "snap_ms_max": 13.3, "shot_ms_max": 50.2, "snap_tokens": 145.8, "shot_tokens_est": 984.7, "snap_faster": true, "snap_fewer_tokens": true}

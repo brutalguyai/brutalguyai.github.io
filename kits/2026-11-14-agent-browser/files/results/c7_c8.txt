@@ -1,0 +1,45 @@
+{
+ "warm_after_cold": [
+  11.3,
+  12.8,
+  9.3,
+  9.4,
+  9.1
+ ],
+ "c7_cold_open_about_blank_ms": [
+  1451,
+  1472,
+  1252,
+  1290,
+  1207
+ ],
+ "c7_warm_open_about_blank_ms": 35,
+ "c8_version": {
+  "n": 200,
+  "median": 1.67,
+  "p95": 1.95,
+  "min": 1.46,
+  "max": 2.32
+ },
+ "c8_snapshot_help": {
+  "n": 200,
+  "median": 1.81,
+  "p95": 2.2,
+  "min": 1.46,
+  "max": 2.36
+ },
+ "c8_bin_true": {
+  "n": 200,
+  "median": 1.24,
+  "p95": 1.45,
+  "min": 1.01,
+  "max": 2.43
+ },
+ "c8_node_e0": {
+  "n": 50,
+  "median": 22.56,
+  "p95": 28.18,
+  "min": 17.64,
+  "max": 32.49
+ }
+}

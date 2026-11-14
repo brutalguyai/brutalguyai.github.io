@@ -1,0 +1,29 @@
+<!doctype html><html><head><title>Fixture</title><style>
+body{font-family:sans-serif} #overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;display:none;color:#fff}
+#overlay button{position:relative}
+.sp{height:3000px}
+</style></head><body>
+<h1>Fixture page</h1>
+<a href="/other.html" id="l1">Go other</a> <a href="https://example.org/" id="l2">External</a>
+<p><button id="b1" onclick="c('b1')">Alpha</button> <button id="b2" onclick="c('b2')">Beta</button> <button id="b3" onclick="c('b3')">Gamma</button></p>
+<input id="in1" type="text" placeholder="Your name" aria-label="Name"> <label><input id="cb1" type="checkbox"> Agree</label>
+<select id="sel1" aria-label="Color"><option>red</option><option>green</option></select>
+<p>Counters: <span id="out"></span></p>
+<p><button id="hidden" style="display:none" onclick="c('hidden')">HiddenBtn</button>
+<button id="disabled" disabled onclick="c('disabled')">DisabledBtn</button>
+<button id="covered" onclick="c('covered')">CoveredBtn</button>
+<button id="addtop" onclick="addTop()">AddTop</button>
+<button id="replace" onclick="repl()">ReplaceBtn</button>
+<button id="toggle" onclick="document.getElementById('msg').textContent='Changed '+Date.now()">ToggleMsg</button> <span id="msg">initial</span>
+</p>
+<div id="slot"><button id="swap" onclick="c('swap')">SwapMe</button></div>
+<div id="overlay"><p>We use cookies (consent banner)</p><button id="accept" onclick="document.getElementById('overlay').style.display='none'">Accept cookies</button></div>
+<div class="sp"></div>
+<button id="far" onclick="c('far')">FarBelow</button>
+<script>
+window.counts={};
+function c(k){counts[k]=(counts[k]||0)+1;document.getElementById('out').textContent=JSON.stringify(counts)}
+function addTop(){var b=document.createElement('button');b.textContent='NewTop'+Date.now()%1000;b.onclick=function(){c('newtop')};document.body.insertBefore(b,document.body.firstChild)}
+function repl(){document.getElementById('slot').innerHTML='<button id="swap2" onclick="c(\'swap2\')">SwapMe</button>'}
+function showBanner(){document.getElementById('overlay').style.display='block'}
+</script></body></html>

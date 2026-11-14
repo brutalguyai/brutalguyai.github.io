@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>agent-browser test kit · brutal guy.ai</title>
+<style>
+:root{--blue:#b4c6d6;--white:#d7d5d7;--paper:#f3f3f4;--ink:#1b2733;--deep:#2f4a63;--red:#c2272d}
+*{box-sizing:border-box}body{margin:0;background:var(--blue);color:var(--ink);font:17px/1.6 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:780px;margin:0 auto;padding:28px 16px 64px}
+.tag{display:inline-block;background:var(--ink);color:var(--white);font-weight:800;font-size:13px;letter-spacing:.6px;padding:4px 12px;border-radius:999px}
+h1{font-size:clamp(30px,7vw,44px);line-height:1.08;margin:12px 0 6px}h1 em{font-family:Georgia,serif;color:var(--deep)}
+h2{font-size:22px;margin:0 0 8px}.card{background:var(--paper);border-radius:18px;padding:18px 20px;margin:18px 0;box-shadow:0 10px 30px rgba(27,39,51,.12)}
+.verdict{display:inline-block;font-weight:900;font-size:20px;letter-spacing:1px;color:var(--paper);background:var(--deep);padding:4px 14px;border-radius:10px}
+pre{background:var(--ink);color:var(--white);padding:14px;border-radius:12px;overflow-x:auto;font-size:14px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92em}table{width:100%;border-collapse:collapse;font-size:15px}td,th{text-align:left;padding:8px 6px;border-bottom:1px solid var(--white);vertical-align:top}
+a{color:var(--deep);font-weight:700}.no{color:var(--red);font-weight:800}.ok{color:var(--deep);font-weight:800}small{color:#4a5a69}
+</style></head><body><main>
+<span class="tag">BRUTAL GUY.AI · TEST KIT · NOV 14 2026</span>
+<h1>agent-browser: <em>really</em> 93% less context?</h1>
+<p><b>Repo:</b> <a href="https://github.com/vercel-labs/agent-browser">vercel-labs/agent-browser</a> (v0.43.0, Apache-2.0) · about 50.8k stars, +4.4k this week on GitHub Trending.<br>
+<b>Claim:</b> the author's launch post (<a href="https://x.com/ctatedev/status/2010400005887082907">Chris Tate on X</a>): "Up to 93% less context than Playwright MCP."</p>
+
+<div class="card"><span class="verdict">HALF-TRUE</span>
+<p>The snapshots really are smaller than Playwright MCP's, but the 93% only showed up on example.com, a page with one link and no text. On real pages the compact snapshot (<code>snapshot -i</code>) was 44–82% smaller (median 69%), and it gets there partly by dropping non-interactive text. The full snapshot, the closest like-for-like comparison, was a median 32% smaller. The docs' "about 200–400 tokens" was not met on any of our 8 pages. Its safety checks mostly work, but a stale ref after navigating reported "Done" with exit code 0.</p>
+<p><small>We measured output size, not whether an agent finishes tasks better. Tokens are estimated as characters ÷ 4; no model read the snapshots. 8 pages chosen by us, one day, one Playwright MCP version (0.0.85).</small></p></div>
+
+<div class="card"><h2>Claims checked</h2><table>
+<tr><th>Claim</th><th>What we found</th><th>Call</th></tr>
+<tr><td>Up to 93% less context than Playwright MCP</td><td><code>snapshot -i</code> vs Playwright MCP snapshot: median 69%, range 44–98%. Only example.com (29 characters: one link) beat 93%. Full <code>snapshot</code>: median 32% (8–35%). 7 pages × 3 runs, Hacker News 1 valid run (throttled).</td><td>PARTLY</td></tr>
+<tr><td>Text output ~200–400 tokens</td><td>Estimated tokens for <code>snapshot -i</code> on 8 pages: ~7, 146, 157, 1,370, 1,636, 4,034, 5,086, 7,606. None in range.</td><td class="no">FALSE in our test</td></tr>
+<tr><td>A snapshot is faster and uses fewer tokens than a screenshot</td><td>True on example.com and our small test page. On Wikipedia, MDN and the Python docs the snapshot was slower and bigger than a ~985-token screenshot estimate (5 repeats each).</td><td class="no">FALSE on most pages</td></tr>
+<tr><td>Refs (@e1…) for each element</td><td>Unique refs, every tested ref resolved, hidden button got none. 3 runs, 5 pages.</td><td class="ok">TRUE</td></tr>
+<tr><td>Clicks fail on hidden / disabled / covered targets</td><td>All three refused with a clear message, 3 of 3 runs each. A below-the-fold target is scrolled and clicked (works, no error).</td><td class="ok">TRUE</td></tr>
+<tr><td>Refs survive snapshots and DOM updates</td><td>Stable across snapshots and inserts. But an old ref used after navigating to another page printed "✓ Done", exit 0, 3 of 3 (it clicked the new page's body).</td><td>PARTLY</td></tr>
+<tr><td>Browser stays open between commands</td><td>Same Chrome PID across 15 commands, localStorage and cookie kept. Warm commands ~6–8 ms median.</td><td class="ok">TRUE</td></tr>
+<tr><td>Sub-50 ms boot / native Rust CLI</td><td>CLI alone starts in ~1.7 ms median; a cold <code>open</code> that launches Chrome takes ~1.2–1.5 s. Native ELF binary; the npm JS is a 2.7 KB launcher.</td><td>MOSTLY</td></tr>
+<tr><td>MCP mode</td><td>33 tools / 25,960 characters of tool definitions vs Playwright MCP's 25 tools / 22,238. Both worked 3 of 3.</td><td>NOTE</td></tr>
+</table></div>
+
+<div class="card"><h2>Run it yourself</h2>
+<pre>npm install agent-browser @playwright/mcp@0.0.85
+npx agent-browser open https://example.com
+npx agent-browser snapshot -i        # compact: interactive elements only
+npx agent-browser snapshot           # full accessibility tree
+npx agent-browser click @e1
+npx agent-browser close</pre>
+<p>We pointed both tools at the same Chrome build (<code>AGENT_BROWSER_EXECUTABLE_PATH</code>, <code>--no-sandbox</code> in our Linux container). Scripts start the small test page with <code>python3 -m http.server 8801</code> inside <code>fixture/</code>.</p></div>
+
+<div class="card"><h2>Files</h2>
+<p><b>Scripts:</b> <a href="files/scripts/lib.py">lib.py</a> · <a href="files/scripts/c1_c2_c23.py">c1_c2_c23.py</a> (sizes) · <a href="files/scripts/analyze.py">analyze.py</a> · <a href="files/scripts/c23.py">c23.py</a> (vs screenshot) · <a href="files/scripts/c3.py">c3.py</a> · <a href="files/scripts/c4.py">c4.py</a> · <a href="files/scripts/c5.py">c5.py</a> · <a href="files/scripts/c5_pw.py">c5_pw.py</a> · <a href="files/scripts/c6.py">c6.py</a> · <a href="files/scripts/c7_c8.py">c7_c8.py</a> · <a href="files/scripts/c11.py">c11.py</a> · <a href="files/scripts/c16.py">c16.py</a> · <a href="files/scripts/hn_retry.py">hn_retry.py</a></p>
+<p><b>Results:</b> <a href="files/results/c1_summary.txt">size table (93% claim)</a> · <a href="files/results/c2_summary.txt">token estimates</a> · <a href="files/results/c23.txt">snapshot vs screenshot</a> · <a href="files/results/c5.txt">click refusals</a> · <a href="files/results/c5_playwright.txt">Playwright MCP click test</a> · <a href="files/results/c16.txt">stale refs</a> · <a href="files/results/c3.txt">refs</a> · <a href="files/results/c4.txt">act/re-read loop</a> · <a href="files/results/c6.txt">persistent browser</a> · <a href="files/results/c7_c8.txt">boot time</a> · <a href="files/results/c11.txt">MCP mode</a> · <a href="files/results/hn_retry.json">Hacker News retries</a></p>
+<p><b>Test page:</b> <a href="files/fixture/index.html">fixture/index.html</a> · <a href="files/fixture/other.html">other.html</a></p></div>
+
+<p><small>All kits: <a href="../">brutalguyai.github.io/kits</a> · <a href="https://instagram.com/brutal_guy.ai">Instagram</a> · <a href="https://youtube.com/@brutal_guy_ai">YouTube</a></small></p>
+</main></body></html>

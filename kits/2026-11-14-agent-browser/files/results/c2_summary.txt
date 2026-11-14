@@ -1,0 +1,9 @@
+C2: tokens ~ chars/4. snapshot -i tokens vs outerHTML tokens vs screenshot est (w*h/750, viewport 1280x577 -> 984)
+https://example.com                             n=3 snap-i      29 chars ~     7 tok | html    1974 chars ~   494 tok | in 800-1600 chars? False | PNG 64620 B
+https://en.wikipedia.org/wiki/Web_browser       n=3 snap-i   30423 chars ~  7606 tok | html  611479 chars ~152870 tok | in 800-1600 chars? False | PNG 158837 B
+https://developer.mozilla.org/en-US/docs/Web/H  n=3 snap-i    6546 chars ~  1636 tok | html  104415 chars ~ 26104 tok | in 800-1600 chars? False | PNG 129841 B
+https://docs.python.org/3/tutorial/index.html   n=3 snap-i   16135 chars ~  4034 tok | html   41923 chars ~ 10481 tok | in 800-1600 chars? False | PNG 109844 B
+https://the-internet.herokuapp.com/login        n=3 snap-i     628 chars ~   157 tok | html    2722 chars ~   680 tok | in 800-1600 chars? False | PNG 47268 B
+https://pypi.org/project/requests/              n=3 snap-i    5479 chars ~  1370 tok | html  353634 chars ~ 88408 tok | in 800-1600 chars? False | PNG 62947 B
+http://127.0.0.1:8801/index.html                n=3 snap-i     583 chars ~   146 tok | html    2123 chars ~   531 tok | in 800-1600 chars? False | PNG 22792 B
+pages in range: 0 / 7

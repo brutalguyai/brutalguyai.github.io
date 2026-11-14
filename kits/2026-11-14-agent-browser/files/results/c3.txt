@@ -1,0 +1,15 @@
+{"run": 0, "url": "http://127.0.0.1:8801/index.html", "refs": 18, "unique": 18, "json_refs": 18, "dom": 17, "tested": 18, "unresolved": 0, "bad": []}
+{"run": 0, "url": "https://example.com", "refs": 1, "unique": 1, "json_refs": 1, "dom": 1, "tested": 1, "unresolved": 0, "bad": []}
+{"run": 0, "url": "https://the-internet.herokuapp.com/login", "refs": 12, "unique": 12, "json_refs": 12, "dom": 8, "tested": 12, "unresolved": 0, "bad": []}
+{"run": 0, "url": "https://docs.python.org/3/tutorial/index.html", "refs": 265, "unique": 265, "json_refs": 265, "dom": 192, "tested": 40, "unresolved": 0, "bad": []}
+{"run": 0, "url": "https://developer.mozilla.org/en-US/docs/Web/HTML", "refs": 168, "unique": 168, "json_refs": 168, "dom": 466, "tested": 40, "unresolved": 0, "bad": []}
+{"run": 1, "url": "http://127.0.0.1:8801/index.html", "refs": 18, "unique": 18, "json_refs": 18, "dom": 17, "tested": 18, "unresolved": 0, "bad": []}
+{"run": 1, "url": "https://example.com", "refs": 1, "unique": 1, "json_refs": 1, "dom": 1, "tested": 1, "unresolved": 0, "bad": []}
+{"run": 1, "url": "https://the-internet.herokuapp.com/login", "refs": 12, "unique": 12, "json_refs": 12, "dom": 8, "tested": 12, "unresolved": 0, "bad": []}
+{"run": 1, "url": "https://docs.python.org/3/tutorial/index.html", "refs": 265, "unique": 265, "json_refs": 265, "dom": 192, "tested": 40, "unresolved": 0, "bad": []}
+{"run": 1, "url": "https://developer.mozilla.org/en-US/docs/Web/HTML", "refs": 168, "unique": 168, "json_refs": 168, "dom": 466, "tested": 40, "unresolved": 0, "bad": []}
+{"run": 2, "url": "http://127.0.0.1:8801/index.html", "refs": 18, "unique": 18, "json_refs": 18, "dom": 17, "tested": 18, "unresolved": 0, "bad": []}
+{"run": 2, "url": "https://example.com", "refs": 1, "unique": 1, "json_refs": 1, "dom": 1, "tested": 1, "unresolved": 0, "bad": []}
+{"run": 2, "url": "https://the-internet.herokuapp.com/login", "refs": 12, "unique": 12, "json_refs": 12, "dom": 8, "tested": 12, "unresolved": 0, "bad": []}
+{"run": 2, "url": "https://docs.python.org/3/tutorial/index.html", "refs": 265, "unique": 265, "json_refs": 265, "dom": 192, "tested": 40, "unresolved": 0, "bad": []}
+{"run": 2, "url": "https://developer.mozilla.org/en-US/docs/Web/HTML", "refs": 168, "unique": 168, "json_refs": 168, "dom": 466, "tested": 40, "unresolved": 0, "bad": []}

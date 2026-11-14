@@ -1,0 +1,18 @@
+{"run": 0, "case": "1_two_snapshots_same", "same": true, "n": 18}
+{"run": 0, "case": "2_add_top_old_refs_unchanged", "all_old_same": true, "changed": [], "new": {"e19": ["button", "NewTop678"]}}
+{"run": 0, "case": "2b_click_old_ref_after_insert", "exit": 0, "counts": "\"{\\\"b1\\\":1}\""}
+{"run": 0, "case": "4_replaced_element_old_ref", "exit": 0, "stdout": "\u2713 Done", "stderr": "", "counts": "\"{\\\"b1\\\":1,\\\"swap2\\\":1}\"", "swapme_after": [["e20", ["button", "SwapMe"]]], "old_ref": "e16"}
+{"run": 0, "case": "3_after_navigation_old_ref", "url": "http://127.0.0.1:8801/other.html", "exit": 0, "stdout": "\u2713 Done", "stderr": ""}
+{"run": 0, "case": "5_full_then_i_numbering", "first_refs": ["e21", "e22", "e23"], "click_e2_exit": 1, "msg": "\u2717 Unknown ref: e2"}
+{"run": 1, "case": "1_two_snapshots_same", "same": true, "n": 18}
+{"run": 1, "case": "2_add_top_old_refs_unchanged", "all_old_same": true, "changed": [], "new": {"e19": ["button", "NewTop843"]}}
+{"run": 1, "case": "2b_click_old_ref_after_insert", "exit": 0, "counts": "\"{\\\"b1\\\":1}\""}
+{"run": 1, "case": "4_replaced_element_old_ref", "exit": 0, "stdout": "\u2713 Done", "stderr": "", "counts": "\"{\\\"b1\\\":1,\\\"swap2\\\":1}\"", "swapme_after": [["e20", ["button", "SwapMe"]]], "old_ref": "e16"}
+{"run": 1, "case": "3_after_navigation_old_ref", "url": "http://127.0.0.1:8801/other.html", "exit": 0, "stdout": "\u2713 Done", "stderr": ""}
+{"run": 1, "case": "5_full_then_i_numbering", "first_refs": ["e21", "e22", "e23"], "click_e2_exit": 1, "msg": "\u2717 Unknown ref: e2"}
+{"run": 2, "case": "1_two_snapshots_same", "same": true, "n": 18}
+{"run": 2, "case": "2_add_top_old_refs_unchanged", "all_old_same": true, "changed": [], "new": {"e19": ["button", "NewTop127"]}}
+{"run": 2, "case": "2b_click_old_ref_after_insert", "exit": 0, "counts": "\"{\\\"b1\\\":1}\""}
+{"run": 2, "case": "4_replaced_element_old_ref", "exit": 0, "stdout": "\u2713 Done", "stderr": "", "counts": "\"{\\\"b1\\\":1,\\\"swap2\\\":1}\"", "swapme_after": [["e20", ["button", "SwapMe"]]], "old_ref": "e16"}
+{"run": 2, "case": "3_after_navigation_old_ref", "url": "http://127.0.0.1:8801/other.html", "exit": 0, "stdout": "\u2713 Done", "stderr": ""}
+{"run": 2, "case": "5_full_then_i_numbering", "first_refs": ["e21", "e22", "e23"], "click_e2_exit": 1, "msg": "\u2717 Unknown ref: e2"}

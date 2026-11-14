@@ -1,0 +1,25 @@
+0 example_learn_more PASS
+0 hn_new PASS
+0 wiki_mosaic PASS
+0 pydocs_appetite PASS
+0 fixture_go_other PASS
+0 fixture_form PASS
+0 login_ok PASS
+0 login_bad PASS
+1 example_learn_more PASS
+1 hn_new PASS
+1 wiki_mosaic PASS
+1 pydocs_appetite PASS
+1 fixture_go_other PASS
+1 fixture_form PASS
+1 login_ok PASS
+1 login_bad PASS
+2 example_learn_more PASS
+2 hn_new FAIL
+2 wiki_mosaic PASS
+2 pydocs_appetite PASS
+2 fixture_go_other PASS
+2 fixture_form PASS
+2 login_ok PASS
+2 login_bad PASS
+pass 23 / 24
