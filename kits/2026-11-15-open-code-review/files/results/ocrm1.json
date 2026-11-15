@@ -1,0 +1,297 @@
+{
+  "status": "complete",
+  "llm": {
+    "model": "claude-sonnet-5-5"
+  },
+  "message": "Review complete: 11 finding(s) across 8 selected item(s).",
+  "summary": {
+    "files_reviewed": 8,
+    "comments": 11,
+    "total_tokens": 143702,
+    "input_tokens": 137945,
+    "output_tokens": 5757,
+    "cache_read_tokens": 91278,
+    "cache_write_tokens": 46609,
+    "elapsed": "30s"
+  },
+  "tool_calls": {
+    "total": 15,
+    "by_tool": {
+      "code_comment": 4,
+      "code_search": 2,
+      "file_find": 1,
+      "file_read": 8
+    },
+    "failure": 2,
+    "failure_by_tool": {
+      "code_search": 2
+    },
+    "failure_details": [
+      {
+        "tool_call_number": 1,
+        "tool_name": "code_search",
+        "file_path": "svc/billing.py,svc/reports.py,svc/users.py",
+        "arguments": "{\"search_text\":\"list_users|ALLOWED_SORT\"}",
+        "error": "git grep failed: exit status 129: error: unknown option `max-count'"
+      },
+      {
+        "tool_call_number": 5,
+        "tool_name": "code_search",
+        "file_path": "svc/cache.py,svc/files.py,svc/worker.py",
+        "arguments": "{\"search_text\":\"save_upload\"}",
+        "error": "git grep failed: exit status 129: error: unknown option `max-count'"
+      }
+    ]
+  },
+  "comments": [
+    {
+      "path": "svc/users.py",
+      "content": "SQL injection: `sort` comes straight from the API parameter (`list_users_endpoint`) and is concatenated into the query. `ALLOWED_SORT` is defined but never used. Validate against the whitelist before building the query.",
+      "suggestion_code": "    if sort not in ALLOWED_SORT:\n        raise ValueError(\"invalid sort column\")\n    sql = \"SELECT id, name, email FROM users ORDER BY \" + sort + \" LIMIT ?\"",
+      "existing_code": "    sql = \"SELECT id, name, email FROM users ORDER BY \" + sort + \" LIMIT ?\"",
+      "start_line": 18,
+      "end_line": 18,
+      "category": "security",
+      "severity": "critical"
+    },
+    {
+      "path": "svc/billing.py",
+      "content": "Wrong discount calculation: this subtracts the percent value as an absolute amount (price 50, 10% gives 40) instead of reducing the price by a percentage.",
+      "suggestion_code": "    return to_money(Decimal(price) * (Decimal(100) - Decimal(percent)) / Decimal(100))",
+      "existing_code": "    return to_money(Decimal(price) - Decimal(percent))",
+      "start_line": 14,
+      "end_line": 14,
+      "category": "bug",
+      "severity": "high"
+    },
+    {
+      "path": "svc/reports.py",
+      "content": "Off-by-one: the loop starts at index 1, so the first amount is never counted and revenue is understated.",
+      "suggestion_code": "    for amount in amounts:\n        total += amount",
+      "existing_code": "    for i in range(1, len(amounts)):",
+      "start_line": 14,
+      "end_line": 14,
+      "category": "bug",
+      "severity": "high"
+    },
+    {
+      "path": "svc/worker.py",
+      "content": "`tries` is never incremented, so if `send` keeps raising ConnectionError this loops forever. The `RuntimeError` after the loop is unreachable. `attempts` has no effect.",
+      "suggestion_code": "    while tries \u003c attempts:\n        tries += 1",
+      "existing_code": "    while tries \u003c attempts:",
+      "start_line": 10,
+      "end_line": 10,
+      "category": "bug",
+      "severity": "high"
+    },
+    {
+      "path": "svc/files.py",
+      "content": "Path traversal. `filename` comes from the request (`api.upload_endpoint`) and is joined without validation. A name like `../../etc/x` or an absolute path escapes UPLOAD_DIR and allows arbitrary file writes. Reduce it to a basename and verify the resolved path stays inside UPLOAD_DIR.",
+      "suggestion_code": "    name = os.path.basename(filename)\n    if not name or name in (\".\", \"..\"):\n        raise ValueError(\"invalid filename\")\n    path = os.path.join(UPLOAD_DIR, name)",
+      "existing_code": "    path = os.path.join(UPLOAD_DIR, filename)",
+      "start_line": 10,
+      "end_line": 10,
+      "category": "security",
+      "severity": "critical"
+    },
+    {
+      "path": "svc/auth.py",
+      "content": "Token expiry check is wrong. `expires` is already `issued + TTL`, so `expires \u003c now + TTL` stays true until `now` passes the issue time plus 0, i.e. effectively always. Tokens never expire, and the `pop` branch is unreachable. Compare against the current time only.",
+      "suggestion_code": "    if entry[\"expires\"] \u003e time.time():",
+      "existing_code": "    if entry[\"expires\"] \u003c time.time() + TOKEN_TTL:",
+      "start_line": 32,
+      "end_line": 32,
+      "category": "bug",
+      "severity": "critical"
+    },
+    {
+      "path": "svc/api.py",
+      "content": "Missing authorization. Any authenticated user can delete any account. `list_users_endpoint` requires admin, but this destructive endpoint only checks that the caller is logged in. Require `users.is_admin(user)`, or restrict the caller to their own id.",
+      "suggestion_code": "    if user is None:\n        return 401, {\"error\": \"unauthorized\"}\n    if not users.is_admin(user) and user[\"id\"] != user_id:\n        return 403, {\"error\": \"forbidden\"}",
+      "existing_code": "    conn.execute(\"DELETE FROM users WHERE id = ?\", (user_id,))",
+      "start_line": 30,
+      "end_line": 30,
+      "category": "security",
+      "severity": "critical"
+    },
+    {
+      "path": "svc/api.py",
+      "content": "The user-controlled `filename` goes straight to `files.save_upload`, which does `os.path.join(UPLOAD_DIR, filename)` with no validation. Path traversal (`../../etc/x`) or an absolute path can write outside the upload dir. Sanitize here (e.g. `os.path.basename`, reject empty names) or in `save_upload`. Also, the `ValueError('file too large')` it raises isn't handled, so the endpoint returns a 500 instead of a 413 or 400.",
+      "existing_code": "    return 201, {\"path\": files.save_upload(filename, data)}",
+      "start_line": 39,
+      "end_line": 39,
+      "category": "security",
+      "severity": "high"
+    },
+    {
+      "path": "svc/api.py",
+      "content": "The client-supplied `sort` is passed to `users.list_users`, which concatenates it into the `ORDER BY` clause. This allows SQL injection. `ALLOWED_SORT` exists in `users.py` but is never enforced. Validate `sort` against the whitelist here, and ideally in `list_users` too. A non-numeric `limit` also raises an unhandled ValueError (500).",
+      "suggestion_code": "    if sort not in users.ALLOWED_SORT:\n        return 400, {\"error\": \"invalid sort\"}\n    return 200, users.list_users(conn, sort, limit)",
+      "existing_code": "    return 200, users.list_users(conn, sort, limit)",
+      "start_line": 22,
+      "end_line": 22,
+      "category": "security",
+      "severity": "high"
+    },
+    {
+      "path": "svc/api.py",
+      "content": "`quote_endpoint` only catches `ValueError`. A malformed `price` (e.g. \"abc\") makes `Decimal(price)` raise `decimal.InvalidOperation`, which is an `ArithmeticError` and not a `ValueError`. The client gets an unhandled 500 instead of a 400. A non-numeric `percent` raises `TypeError` in the range check, which is also uncaught. Also note that `billing.apply_discount` subtracts `percent` as an absolute amount (`price - percent`) instead of `price * (1 - percent/100)`. The quoted total is therefore wrong for every input.",
+      "suggestion_code": "    except (ValueError, TypeError, ArithmeticError) as e:",
+      "existing_code": "    except ValueError as e:",
+      "start_line": 45,
+      "end_line": 45,
+      "category": "bug",
+      "severity": "high"
+    },
+    {
+      "path": "svc/api.py",
+      "content": "Each endpoint opens a new SQLite connection with `db.connect()` and never closes it, including on the early-return paths. Connections leak until garbage collection and can hold file handles or locks. Use `contextlib.closing(db.connect())` or a shared per-request connection helper.",
+      "existing_code": "def get_profile(token):\n    conn = db.connect()",
+      "start_line": 9,
+      "end_line": 10,
+      "category": "maintainability",
+      "severity": "low"
+    }
+  ],
+  "groups": [
+    {
+      "label": "API entry point and authentication",
+      "files": [
+        "svc/api.py",
+        "svc/auth.py"
+      ]
+    },
+    {
+      "label": "User, billing, and reporting domain logic",
+      "files": [
+        "svc/billing.py",
+        "svc/reports.py",
+        "svc/users.py"
+      ]
+    },
+    {
+      "label": "Infrastructure: cache, files, and background worker",
+      "files": [
+        "svc/cache.py",
+        "svc/files.py",
+        "svc/worker.py"
+      ]
+    }
+  ],
+  "session_id": "860caee1-2d66-450d-b3f5-cab3db9bf2ba",
+  "manifest": {
+    "schema_version": "ocr.run-manifest/v1",
+    "run_id": "860caee1-2d66-450d-b3f5-cab3db9bf2ba",
+    "operation": "review",
+    "terminal_state": "complete",
+    "repository": {},
+    "input": {
+      "mode": "range",
+      "requested_from": "main",
+      "requested_head": "feature",
+      "resolved_base": "bfd21904045585c26f0870297343cfc6a99f7bd9",
+      "resolved_head": "bea2a4d1333cf0bd3d0d50fa7eefdd4435baebee",
+      "exact_range": "bfd21904045585c26f0870297343cfc6a99f7bd9..bea2a4d1333cf0bd3d0d50fa7eefdd4435baebee",
+      "source_artifact_sha256": "cf47159668cb92fdc34af2cddd452832e01fcab3c472959205f373f78e93c0e7"
+    },
+    "execution": {
+      "ocr_version": "v1.13.10",
+      "model": "claude-sonnet-5-5",
+      "configured_concurrency": 8,
+      "max_tool_request_times": 100,
+      "rule_config_sha256": "7d579740667a61cd408a2fe6647d5c01864f7117f22bd9edf00e5511d947a5ab",
+      "runtime_config_sha256": "d32e504f063e541098359dfdbff321d9b42320a1fbd30756d332580efb28ad83"
+    },
+    "coverage": {
+      "selected": [
+        {
+          "item_id": "2a86a8086808f6942b64c075f32823ea60780935c01f0816d7a09460852229b5",
+          "path": "svc/auth.py",
+          "fingerprint": "d2a5b61c708f38337b48e83eb59e35bd25d24e24c804c9c62b249b59a5fdf657"
+        },
+        {
+          "item_id": "5bf596ca15a5c661bed8c74cb2254dd944a637d5cf9b618cac547b5172e16b77",
+          "path": "svc/cache.py",
+          "fingerprint": "5edef595a1932a301b32d6c2e805baf1dd2f3678d3c5506e5ec04224117d1635"
+        },
+        {
+          "item_id": "764511161d659abec335c6af646eced0284e565ce90c09f637d3ab4c45415f51",
+          "path": "svc/worker.py",
+          "fingerprint": "28c1f98cdfb4ceca0013a9dfb26aa18c35cc929281e1d313e4d38f48cb561feb"
+        },
+        {
+          "item_id": "7fcf0090b593b5ad0d24b338cfef04cc29e03d7159a2e0cfa36083d0a5487548",
+          "path": "svc/billing.py",
+          "fingerprint": "b6eb9b90eaeb956a50bbece033dcf1f519b5e037ab97b99d99285ee80a420109"
+        },
+        {
+          "item_id": "949ccef91fce998e7c7ab288cc4611a6f797034b9b7a16a945372bff39d3ed1b",
+          "path": "svc/files.py",
+          "fingerprint": "43489802597ab7215867ac56c43b47276ea1d2a1c9ef50599ab9197e657535a1"
+        },
+        {
+          "item_id": "c266affa36cc9d39411127d7719f68cafc76cc9b85006baf16b9464fc72bba27",
+          "path": "svc/reports.py",
+          "fingerprint": "d2c26ee4b63e77ac63177802c957a8723bd414d22bc19b25f36029c1c6564f95"
+        },
+        {
+          "item_id": "cdf7a9e0b89d41494799f3992c442d09ce3b9d3f9fcfdc72b877da9c2855310a",
+          "path": "svc/api.py",
+          "fingerprint": "7130452fc208a672abfc9d42a5ffdac387089c8b9558b04b8e655cb97b570259"
+        },
+        {
+          "item_id": "fb09a490eec176d9c83105672cd1c2776cb10a4b9d5efd744c51e34c9fd17e1d",
+          "path": "svc/users.py",
+          "fingerprint": "859b2f26b5e3b61c1b369ed81eec95379d94794cd209789c995b6620c235a5c4"
+        }
+      ],
+      "completed": [
+        {
+          "item_id": "2a86a8086808f6942b64c075f32823ea60780935c01f0816d7a09460852229b5",
+          "path": "svc/auth.py",
+          "fingerprint": "d2a5b61c708f38337b48e83eb59e35bd25d24e24c804c9c62b249b59a5fdf657"
+        },
+        {
+          "item_id": "5bf596ca15a5c661bed8c74cb2254dd944a637d5cf9b618cac547b5172e16b77",
+          "path": "svc/cache.py",
+          "fingerprint": "5edef595a1932a301b32d6c2e805baf1dd2f3678d3c5506e5ec04224117d1635"
+        },
+        {
+          "item_id": "764511161d659abec335c6af646eced0284e565ce90c09f637d3ab4c45415f51",
+          "path": "svc/worker.py",
+          "fingerprint": "28c1f98cdfb4ceca0013a9dfb26aa18c35cc929281e1d313e4d38f48cb561feb"
+        },
+        {
+          "item_id": "7fcf0090b593b5ad0d24b338cfef04cc29e03d7159a2e0cfa36083d0a5487548",
+          "path": "svc/billing.py",
+          "fingerprint": "b6eb9b90eaeb956a50bbece033dcf1f519b5e037ab97b99d99285ee80a420109"
+        },
+        {
+          "item_id": "949ccef91fce998e7c7ab288cc4611a6f797034b9b7a16a945372bff39d3ed1b",
+          "path": "svc/files.py",
+          "fingerprint": "43489802597ab7215867ac56c43b47276ea1d2a1c9ef50599ab9197e657535a1"
+        },
+        {
+          "item_id": "c266affa36cc9d39411127d7719f68cafc76cc9b85006baf16b9464fc72bba27",
+          "path": "svc/reports.py",
+          "fingerprint": "d2c26ee4b63e77ac63177802c957a8723bd414d22bc19b25f36029c1c6564f95"
+        },
+        {
+          "item_id": "cdf7a9e0b89d41494799f3992c442d09ce3b9d3f9fcfdc72b877da9c2855310a",
+          "path": "svc/api.py",
+          "fingerprint": "7130452fc208a672abfc9d42a5ffdac387089c8b9558b04b8e655cb97b570259"
+        },
+        {
+          "item_id": "fb09a490eec176d9c83105672cd1c2776cb10a4b9d5efd744c51e34c9fd17e1d",
+          "path": "svc/users.py",
+          "fingerprint": "859b2f26b5e3b61c1b369ed81eec95379d94794cd209789c995b6620c235a5c4"
+        }
+      ],
+      "reused": [],
+      "failed": [],
+      "waived": [],
+      "excluded": []
+    },
+    "elapsed_ms": 29704
+  }
+}

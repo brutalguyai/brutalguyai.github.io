@@ -1,0 +1,41 @@
+{
+ "run": "m2",
+ "model": "claude-sonnet-5-5",
+ "num_turns": 2,
+ "duration_ms": 11172,
+ "usage": {
+  "input_tokens": 4,
+  "cache_creation_input_tokens": 3778,
+  "cache_read_input_tokens": 37066,
+  "output_tokens": 1071,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 3778
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 977,
+    "cache_read_input_tokens": 18533,
+    "cache_creation_input_tokens": 3778,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 3778,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "result": "Findings on `feature` vs `main`:\n\n1. **`svc/auth.py:30`: token expiry check is inverted.** `entry[\"expires\"] < time.time() + TOKEN_TTL` is true for every token, because `expires` is `issue_time + TTL`. Tokens therefore never expire, and the `pop` branch is unreachable. It should be `entry[\"expires\"] > time.time()`.\n\n2. **`svc/users.py:17`: SQL injection through `sort`.** `sort` is concatenated into the `ORDER BY` clause. `ALLOWED_SORT` is defined but never checked. Any admin-supplied `sort` value reaches the query, so validate it with `if sort not in ALLOWED_SORT: raise ValueError`.\n\n3. **`svc/api.py:28`: `delete_user_endpoint` has no admin check.** It only checks that the caller is logged in, so any authenticated user can delete any user. It needs `users.is_admin(user)`, as `list_users_endpoint` has.\n\n4. **`svc/files.py:11`: path traversal in `save_upload`.** `filename` is joined to `UPLOAD_DIR` unsanitized, so `../../etc/x` or an absolute path writes outside the upload directory. Use `os.path.basename` and verify the resolved path stays inside `UPLOAD_DIR`.\n\n5. **`svc/billing.py:15`: the discount is subtracted as a flat amount, not a percentage.** `Decimal(price) - Decimal(percent)` takes 10 off a price of 100 for a 10% discount, which happens to be right only at 100. It should be `price * (1 - percent/100)`.\n\n6. **`svc/worker.py:9-16`: `tries` is never incremented in `send_with_retry`.** A persistent `ConnectionError` makes it loop forever, so the `RuntimeError` is unreachable.\n\n7. **`svc/reports.py:15`: `revenue` skips the first element.** `range(1, len(amounts))` leaves out `amounts[0]`, so the total is understated.\n\n8. **`svc/cache.py:27`: `remember` has a mutable default argument `seen={}`.** The dict is shared across all callers and grows without bound. This is arguably intentional per the docstring, but the cache is global and has no eviction or isolation.\n\n9. **`svc/api.py:15-19` (minor): `list_users_endpoint` passes `limit` to `int()` unguarded.** A non-numeric `limit` raises an unhandled `ValueError` and returns a 500 instead of a 400. `upload_endpoint` has the same problem, because it doesn't catch the `ValueError` from `save_upload` when a file is too large.\n\n10. **`svc/billing.py:29` (minor): `split_evenly` can leave the shares not summing to `total`.** It rounds each share, so for example 100 split three ways gives 33.33 \u00d7 3 = 99.99."
+}

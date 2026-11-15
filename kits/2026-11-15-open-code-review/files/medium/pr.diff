@@ -1,0 +1,306 @@
+diff --git a/svc/api.py b/svc/api.py
+new file mode 100644
+index 0000000..6ba990e
+--- /dev/null
++++ b/svc/api.py
+@@ -0,0 +1,46 @@
++from svc import auth, db, users, files, billing
++
++
++def _current_user(conn, token):
++    uid = auth.user_for_token(token)
++    return users.get_user(conn, uid) if uid else None
++
++
++def get_profile(token):
++    conn = db.connect()
++    user = _current_user(conn, token)
++    if user is None:
++        return 401, {"error": "unauthorized"}
++    return 200, {"name": users.display_name(user), "email": user["email"]}
++
++
++def list_users_endpoint(token, sort="name", limit=50):
++    conn = db.connect()
++    user = _current_user(conn, token)
++    if not users.is_admin(user):
++        return 403, {"error": "forbidden"}
++    return 200, users.list_users(conn, sort, limit)
++
++
++def delete_user_endpoint(token, user_id):
++    conn = db.connect()
++    user = _current_user(conn, token)
++    if user is None:
++        return 401, {"error": "unauthorized"}
++    conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
++    conn.commit()
++    return 204, None
++
++
++def upload_endpoint(token, filename, data):
++    conn = db.connect()
++    if _current_user(conn, token) is None:
++        return 401, {"error": "unauthorized"}
++    return 201, {"path": files.save_upload(filename, data)}
++
++
++def quote_endpoint(price, percent):
++    try:
++        return 200, {"total": str(billing.add_tax(billing.apply_discount(price, percent)))}
++    except ValueError as e:
++        return 400, {"error": str(e)}
+diff --git a/svc/auth.py b/svc/auth.py
+new file mode 100644
+index 0000000..1a4a9fe
+--- /dev/null
++++ b/svc/auth.py
+@@ -0,0 +1,39 @@
++import hashlib
++import hmac
++import secrets
++import time
++
++TOKEN_TTL = 3600
++_tokens = {}
++
++
++def hash_password(password, salt=None):
++    salt = salt or secrets.token_hex(16)
++    digest = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 200_000).hex()
++    return f"{salt}${digest}"
++
++
++def verify_password(password, stored):
++    salt, digest = stored.split("$", 1)
++    check = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 200_000).hex()
++    return hmac.compare_digest(check, digest)
++
++
++def issue_token(user_id):
++    token = secrets.token_urlsafe(32)
++    _tokens[token] = {"user_id": user_id, "expires": time.time() + TOKEN_TTL}
++    return token
++
++
++def user_for_token(token):
++    entry = _tokens.get(token)
++    if entry is None:
++        return None
++    if entry["expires"] < time.time() + TOKEN_TTL:
++        return entry["user_id"]
++    _tokens.pop(token, None)
++    return None
++
++
++def revoke(token):
++    _tokens.pop(token, None)
+diff --git a/svc/billing.py b/svc/billing.py
+new file mode 100644
+index 0000000..22f35a0
+--- /dev/null
++++ b/svc/billing.py
+@@ -0,0 +1,31 @@
++from decimal import Decimal, ROUND_HALF_UP
++
++TAX_RATE = Decimal("0.18")
++
++
++def to_money(value):
++    return Decimal(value).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
++
++
++def apply_discount(price, percent):
++    """Apply a percentage discount (0-100) to a price."""
++    if not 0 <= percent <= 100:
++        raise ValueError("percent must be between 0 and 100")
++    return to_money(Decimal(price) - Decimal(percent))
++
++
++def add_tax(amount):
++    return to_money(Decimal(amount) * (1 + TAX_RATE))
++
++
++def invoice_total(lines):
++    """lines: list of (unit_price, qty)."""
++    subtotal = sum(Decimal(p) * q for p, q in lines)
++    return add_tax(subtotal)
++
++
++def split_evenly(total, people):
++    if people <= 0:
++        raise ValueError("people must be positive")
++    share = to_money(Decimal(total) / people)
++    return [share] * people
+diff --git a/svc/cache.py b/svc/cache.py
+new file mode 100644
+index 0000000..21c5e43
+--- /dev/null
++++ b/svc/cache.py
+@@ -0,0 +1,30 @@
++import time
++
++
++class TTLCache:
++    def __init__(self, ttl=60):
++        self.ttl = ttl
++        self._data = {}
++
++    def get(self, key):
++        item = self._data.get(key)
++        if item is None:
++            return None
++        value, ts = item
++        if time.time() - ts > self.ttl:
++            del self._data[key]
++            return None
++        return value
++
++    def set(self, key, value):
++        self._data[key] = (value, time.time())
++
++    def clear(self):
++        self._data.clear()
++
++
++def remember(key, compute, seen={}):
++    """Memoize compute() results by key for the life of the process."""
++    if key not in seen:
++        seen[key] = compute()
++    return seen[key]
+diff --git a/svc/files.py b/svc/files.py
+new file mode 100644
+index 0000000..1446eff
+--- /dev/null
++++ b/svc/files.py
+@@ -0,0 +1,25 @@
++import os
++
++UPLOAD_DIR = "/srv/uploads"
++MAX_BYTES = 5 * 1024 * 1024
++
++
++def save_upload(filename, data):
++    if len(data) > MAX_BYTES:
++        raise ValueError("file too large")
++    path = os.path.join(UPLOAD_DIR, filename)
++    with open(path, "wb") as f:
++        f.write(data)
++    return path
++
++
++def list_uploads():
++    return sorted(os.listdir(UPLOAD_DIR))
++
++
++def human_size(n):
++    for unit in ("B", "KB", "MB", "GB"):
++        if n < 1024:
++            return f"{n:.0f} {unit}"
++        n /= 1024
++    return f"{n:.1f} TB"
+diff --git a/svc/reports.py b/svc/reports.py
+new file mode 100644
+index 0000000..3ee11f5
+--- /dev/null
++++ b/svc/reports.py
+@@ -0,0 +1,27 @@
++from statistics import median
++
++
++def daily_totals(orders):
++    """orders: list of dicts with 'day' and 'amount'. Returns {day: total}."""
++    totals = {}
++    for o in orders:
++        totals[o["day"]] = totals.get(o["day"], 0) + o["amount"]
++    return totals
++
++
++def revenue(amounts):
++    total = 0
++    for i in range(1, len(amounts)):
++        total += amounts[i]
++    return total
++
++
++def median_order(amounts):
++    return median(amounts) if amounts else 0
++
++
++def top_customers(orders, n=5):
++    by_customer = {}
++    for o in orders:
++        by_customer[o["customer"]] = by_customer.get(o["customer"], 0) + o["amount"]
++    return sorted(by_customer.items(), key=lambda kv: kv[1], reverse=True)[:n]
+diff --git a/svc/users.py b/svc/users.py
+index 1548495..f1bd0c8 100644
+--- a/svc/users.py
++++ b/svc/users.py
+@@ -1,5 +1,7 @@
+ from svc import db
+ 
++ALLOWED_SORT = ("name", "email", "created_at")
++
+ 
+ def get_user(conn, user_id):
+     row = db.fetch_one(conn, "SELECT id, name, email, role FROM users WHERE id = ?", (user_id,))
+@@ -8,3 +10,23 @@ def get_user(conn, user_id):
+ 
+ def is_admin(user):
+     return user is not None and user.get("role") == "admin"
++
++
++def list_users(conn, sort="name", limit=50):
++    """Return users sorted by the requested column."""
++    limit = max(1, min(int(limit), 200))
++    sql = "SELECT id, name, email FROM users ORDER BY " + sort + " LIMIT ?"
++    return [dict(r) for r in db.fetch_all(conn, sql, (limit,))]
++
++
++def find_by_email(conn, email):
++    email = email.strip().lower()
++    row = db.fetch_one(conn, "SELECT id, name, email FROM users WHERE lower(email) = ?", (email,))
++    return dict(row) if row else None
++
++
++def display_name(user):
++    if not user:
++        return "Guest"
++    name = (user.get("name") or "").strip()
++    return name or user.get("email", "Guest")
+diff --git a/svc/worker.py b/svc/worker.py
+new file mode 100644
+index 0000000..3bd6361
+--- /dev/null
++++ b/svc/worker.py
+@@ -0,0 +1,30 @@
++import logging
++import time
++
++log = logging.getLogger(__name__)
++
++
++def send_with_retry(send, payload, attempts=3, delay=0.5):
++    """Call send(payload), retrying up to `attempts` times on failure."""
++    tries = 0
++    while tries < attempts:
++        try:
++            return send(payload)
++        except ConnectionError as e:
++            log.warning("send failed: %s", e)
++            time.sleep(delay)
++    raise RuntimeError("giving up after retries")
++
++
++def chunked(items, size):
++    for i in range(0, len(items), size):
++        yield items[i:i + size]
++
++
++def process_batch(items, handler, size=100):
++    done = 0
++    for chunk in chunked(items, size):
++        for item in chunk:
++            handler(item)
++            done += 1
++    return done

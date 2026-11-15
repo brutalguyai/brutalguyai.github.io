@@ -1,0 +1,62 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>open-code-review test kit · brutal guy.ai</title>
+<style>
+:root{--blue:#b4c6d6;--white:#d7d5d7;--paper:#f3f3f4;--ink:#1b2733;--deep:#2f4a63;--red:#c2272d}
+*{box-sizing:border-box}body{margin:0;background:var(--blue);color:var(--ink);font:17px/1.6 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:780px;margin:0 auto;padding:28px 16px 64px}
+.tag{display:inline-block;background:var(--ink);color:var(--white);font-weight:800;font-size:13px;letter-spacing:.6px;padding:4px 12px;border-radius:999px}
+h1{font-size:clamp(30px,7vw,44px);line-height:1.08;margin:12px 0 6px}h1 em{font-family:Georgia,serif;color:var(--deep)}
+h2{font-size:22px;margin:0 0 8px}.card{background:var(--paper);border-radius:18px;padding:18px 20px;margin:18px 0;box-shadow:0 10px 30px rgba(27,39,51,.12)}
+.verdict{display:inline-block;font-weight:900;font-size:20px;letter-spacing:1px;color:var(--paper);background:var(--deep);padding:4px 14px;border-radius:10px}
+pre{background:var(--ink);color:var(--white);padding:14px;border-radius:12px;overflow-x:auto;font-size:14px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92em}table{width:100%;border-collapse:collapse;font-size:15px}td,th{text-align:left;padding:8px 6px;border-bottom:1px solid var(--white);vertical-align:top}
+.tw{overflow-x:auto}a{color:var(--deep);font-weight:700}.no{color:var(--red);font-weight:800}.ok{color:var(--deep);font-weight:800}small{color:#4a5a69}
+</style></head><body><main>
+<span class="tag">BRUTAL GUY.AI · TEST KIT · NOV 15 2026</span>
+<h1>Open Code Review: <em>really</em> 1/9 of Claude Code's tokens?</h1>
+<p><b>Repo:</b> <a href="https://github.com/alibaba/open-code-review">alibaba/open-code-review</a> (CLI <code>ocr</code> v1.13.10, Apache-2.0) · about 50.8k stars, on GitHub Trending Nov 14.<br>
+<b>Claim (README, Benchmark section):</b> compared to Claude Code with the same model, higher precision and F1 "while consuming only ~1/9 of the tokens" and finishing faster. The README also says recall is lower, on purpose.</p>
+
+<div class="card"><span class="verdict">HALF-TRUE</span>
+<p>In my test the token claim flipped. On a small 2-file PR both tools found all 6 planted bugs and used about the same tokens. On an 8-file PR, ocr used <b>3.4–4.3× more</b> tokens than Claude Code (144–179K vs ~42K), took about 3× longer, and missed 1 of 8 bugs in all 3 runs. Where it clearly won: its line numbers were exact on all 39 findings; Claude Code's were exact on 12 of 42, usually 1–2 lines off.</p>
+<p><small>Fine print: only 2 synthetic Python PRs with bugs I planted, one model (claude-sonnet-5-5), 3 runs each. Alibaba's benchmark uses 200 real PRs from 50 repos; on big PRs the result could be different.</small></p></div>
+
+<div class="card"><h2>Results</h2><div class="tw"><table>
+<tr><th></th><th>Bugs found</th><th>Tokens per run</th><th>Time</th><th>Exact lines</th></tr>
+<tr><td colspan="5"><b>Small PR</b>: 2 files, 39 added lines, 6 bugs</td></tr>
+<tr><td>ocr</td><td>6/6 ×3</td><td>31.1K · 31.2K · 40.8K</td><td>12–14 s</td><td class="ok">18/18</td></tr>
+<tr><td>Claude Code</td><td>6/6 ×3</td><td>38.5K · 38.5K · 38.5K</td><td>9–10 s</td><td class="no">5/18</td></tr>
+<tr><td colspan="5"><b>Bigger PR</b>: 8 files, 250 added lines, 8 bugs</td></tr>
+<tr><td>ocr</td><td class="no">7/8 ×3</td><td class="no">143.7K · 178.1K · 179.0K</td><td>30–36 s</td><td class="ok">21/21</td></tr>
+<tr><td>Claude Code</td><td>8/8 ×3</td><td>41.7K · 41.9K · 41.9K</td><td>12–13 s</td><td class="no">7/24</td></tr>
+</table></div>
+<p><small>Tokens = input + output + cache read + cache write, as each tool reports them (ocr: <code>summary.total_tokens</code>; Claude Code: the <code>result</code> event's usage). The bug ocr missed every time: a mutable default argument used as a cache (<code>remember(..., seen={})</code>).</small></p></div>
+
+<div class="card"><h2>Install + run (what worked)</h2>
+<pre>npm install @alibaba-group/open-code-review@1.13.10
+# point it at Anthropic with your own key
+export OCR_LLM_URL=https://api.anthropic.com/v1/messages
+export OCR_LLM_MODEL=claude-sonnet-5-5
+export OCR_LLM_PROTOCOL=anthropic
+export OCR_LLM_AUTH_HEADER=x-api-key
+export OCR_LLM_TOKEN=$ANTHROPIC_API_KEY
+npx ocr review --from main --to feature --format json --output result.json</pre>
+<p>The Claude Code side (same model, read-only tools):</p>
+<pre>claude -p "Review the changes on branch feature compared to main (git diff main...feature). Report each real bug or security issue with file and line. Be concise." \
+  --model claude-sonnet-5-5 --max-turns 20 --output-format stream-json --verbose \
+  --permission-mode acceptEdits --allowedTools "Bash(git:*)" Read Grep Glob</pre>
+<p><small>ocr prints a warning on git older than 2.41 (I had 2.34); it still ran.</small></p></div>
+
+<div class="card"><h2>Files</h2>
+<ul>
+<li>Small PR: <a href="files/small/pr.diff">pr.diff</a> · <a href="files/small/GROUND_TRUTH.md">the 6 planted bugs</a> · <a href="files/small/app/store.py">store.py</a> · <a href="files/small/app/web.py">web.py</a></li>
+<li>Bigger PR: <a href="files/medium/pr.diff">pr.diff</a> · <a href="files/medium/GROUND_TRUTH.md">the 8 planted bugs</a></li>
+<li>Raw results: ocr <a href="files/results/ocr1.json">1</a> <a href="files/results/ocr2.json">2</a> <a href="files/results/ocr3.json">3</a> · <a href="files/results/ocrm1.json">m1</a> <a href="files/results/ocrm2.json">m2</a> <a href="files/results/ocrm3.json">m3</a> · Claude Code <a href="files/results/claude_code_1.json">1</a> <a href="files/results/claude_code_2.json">2</a> <a href="files/results/claude_code_3.json">3</a> · <a href="files/results/claude_code_m1.json">m1</a> <a href="files/results/claude_code_m2.json">m2</a> <a href="files/results/claude_code_m3.json">m3</a></li>
+<li>Scripts: <a href="files/scripts/ocr_run.sh">ocr_run.sh</a> · <a href="files/scripts/cc_run.sh">cc_run.sh</a> · <a href="files/scripts/cc_sum.py">cc_sum.py</a></li>
+</ul></div>
+
+<div class="card"><h2>Who it's for</h2>
+<p><b>Use it</b> if you want a CI bot that leaves comments on the exact lines, or you review very large PRs (that's where Alibaba's numbers come from; I didn't test that).<br>
+<b>Skip it</b> if you just want a cheaper second look at everyday small PRs: in my test plain Claude Code was as good, cheaper and faster.</p></div>
+<p><a href="../">← all test kits</a> · <a href="https://instagram.com/brutal_guy.ai">Instagram</a> · <a href="https://youtube.com/@brutal_guy_ai">YouTube</a></p>
+</main></body></html>

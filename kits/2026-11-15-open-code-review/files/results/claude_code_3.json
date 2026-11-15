@@ -1,0 +1,41 @@
+{
+ "run": "3",
+ "model": "claude-sonnet-5-5",
+ "num_turns": 2,
+ "duration_ms": 6901,
+ "usage": {
+  "input_tokens": 4,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 37908,
+  "output_tokens": 571,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 479,
+    "cache_read_input_tokens": 19393,
+    "cache_creation_input_tokens": 0,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "result": "I found 7 issues in `git diff main...feature`. I only read the diff and didn't run the code.\n\n**Security**\n- `app/store.py:22`: `search_products` builds the SQL with an f-string, so `term` is injected straight into the query. This is SQL injection. Use `LIKE ?` with `(f\"%{term}%\",)`.\n- `app/web.py:17`: `search_page` puts `term` into the HTML without `escape()`. This is reflected XSS. Use `escape(term)`.\n- `app/store.py:31`: `export_orders` opens `path` without validating it. If `path` comes from user input, this allows arbitrary file writes or path traversal. Restrict it to a fixed export directory.\n\n**Bugs**\n- `app/store.py:27`: `page_of` slices from `start + 1`, so it skips the first item on every page and returns at most 9 items. Use `items[start:start + per_page]`.\n- `app/store.py:32`: `average_order` raises `ZeroDivisionError` when the user has no orders. Return 0 or `None` for an empty list.\n- `app/store.py:34`: `export_orders` never closes the file, and it has no `with` block. Output may not be flushed and the file handle leaks. Use `with open(path, \"w\") as f:`.\n- `app/web.py:23`: `greeting` raises `TypeError` when `get_user` returns `None`, which `profile_page` already handles. Add a `None` check."
+}

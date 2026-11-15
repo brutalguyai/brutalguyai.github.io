@@ -1,0 +1,154 @@
+{
+  "status": "complete",
+  "llm": {
+    "model": "claude-sonnet-5-5"
+  },
+  "message": "Review complete: 6 finding(s) across 2 selected item(s).",
+  "summary": {
+    "files_reviewed": 2,
+    "comments": 6,
+    "total_tokens": 31230,
+    "input_tokens": 29816,
+    "output_tokens": 1414,
+    "cache_read_tokens": 17421,
+    "cache_write_tokens": 12381,
+    "elapsed": "13s"
+  },
+  "tool_calls": {
+    "total": 3,
+    "by_tool": {
+      "code_comment": 1,
+      "file_read": 2
+    },
+    "failure": 0,
+    "failure_by_tool": {},
+    "failure_details": []
+  },
+  "comments": [
+    {
+      "path": "app/store.py",
+      "content": "SQL injection: `term` is interpolated into the query via an f-string. It comes from the search page, so users control it. Use a parameterized query.",
+      "suggestion_code": "    return conn.execute(\n        \"SELECT id, name, price FROM products WHERE name LIKE ?\", (f\"%{term}%\",)\n    ).fetchall()",
+      "existing_code": "    query = f\"SELECT id, name, price FROM products WHERE name LIKE '%{term}%'\"\n    return conn.execute(query).fetchall()",
+      "start_line": 23,
+      "end_line": 24,
+      "category": "security",
+      "severity": "critical"
+    },
+    {
+      "path": "app/store.py",
+      "content": "Off-by-one: the slice starts at `start + 1`, so the first item of every page is skipped. It also ends at `start + per_page`, so each page has only per_page-1 items. Use `items[start:start + per_page]`.",
+      "suggestion_code": "    return items[start:start + per_page]",
+      "existing_code": "    return items[start + 1:start + per_page]",
+      "start_line": 29,
+      "end_line": 29,
+      "category": "bug",
+      "severity": "high"
+    },
+    {
+      "path": "app/store.py",
+      "content": "ZeroDivisionError when the user has no orders. Handle the empty list, for example by returning 0.0 or None.",
+      "suggestion_code": "    if not orders:\n        return 0.0\n    return sum(o[\"total\"] for o in orders) / len(orders)",
+      "existing_code": "    return sum(o[\"total\"] for o in orders) / len(orders)",
+      "start_line": 34,
+      "end_line": 34,
+      "category": "bug",
+      "severity": "medium"
+    },
+    {
+      "path": "app/store.py",
+      "content": "The file is never closed. The handle leaks, and buffered data may not be flushed if an exception occurs. Use a `with` statement.",
+      "suggestion_code": "    with open(path, \"w\") as f:\n        for o in list_orders(conn, user_id):\n            f.write(f\"{o['id']},{o['total']}\\n\")\n    return path",
+      "existing_code": "    f = open(path, \"w\")\n    for o in list_orders(conn, user_id):\n        f.write(f\"{o['id']},{o['total']}\\n\")\n    return path",
+      "start_line": 38,
+      "end_line": 41,
+      "category": "bug",
+      "severity": "medium"
+    },
+    {
+      "path": "app/web.py",
+      "content": "Reflected XSS: `term` is user input and is put into the HTML without escaping. The other fields on this page are escaped. Escape it here too.",
+      "suggestion_code": "    return \"\u003ch2\u003eResults for \" + escape(term) + \"\u003c/h2\u003e\u003cul\u003e\" + items + \"\u003c/ul\u003e\"",
+      "existing_code": "    return \"\u003ch2\u003eResults for \" + term + \"\u003c/h2\u003e\u003cul\u003e\" + items + \"\u003c/ul\u003e\"",
+      "start_line": 17,
+      "end_line": 17,
+      "category": "security",
+      "severity": "critical"
+    },
+    {
+      "path": "app/web.py",
+      "content": "`store.get_user` returns None when the user doesn't exist, so `user[\"name\"]` raises TypeError. `profile_page` handles this case, but `greeting` does not.",
+      "suggestion_code": "    if user is None:\n        return \"Welcome\"\n    return \"Welcome back, \" + escape(user[\"name\"])",
+      "existing_code": "    return \"Welcome back, \" + escape(user[\"name\"])",
+      "start_line": 23,
+      "end_line": 23,
+      "category": "bug",
+      "severity": "medium"
+    }
+  ],
+  "groups": [
+    {
+      "label": "small change set",
+      "files": [
+        "app/store.py",
+        "app/web.py"
+      ]
+    }
+  ],
+  "session_id": "fd132c78-0150-42da-a760-a30b1d19e7dd",
+  "manifest": {
+    "schema_version": "ocr.run-manifest/v1",
+    "run_id": "fd132c78-0150-42da-a760-a30b1d19e7dd",
+    "operation": "review",
+    "terminal_state": "complete",
+    "repository": {},
+    "input": {
+      "mode": "range",
+      "requested_from": "main",
+      "requested_head": "feature",
+      "resolved_base": "a3c43bd84c65fbe090fff63fd8a656cd8e3a0f49",
+      "resolved_head": "1375ad8973bca34228420a2382970be8a04109b1",
+      "exact_range": "a3c43bd84c65fbe090fff63fd8a656cd8e3a0f49..1375ad8973bca34228420a2382970be8a04109b1",
+      "source_artifact_sha256": "23eeed6eba05886bd92ba7e228c5a1f5b04124cba5d84e077181eb9494516b4d"
+    },
+    "execution": {
+      "ocr_version": "v1.13.10",
+      "model": "claude-sonnet-5-5",
+      "configured_concurrency": 8,
+      "max_tool_request_times": 100,
+      "rule_config_sha256": "7d579740667a61cd408a2fe6647d5c01864f7117f22bd9edf00e5511d947a5ab",
+      "runtime_config_sha256": "d32e504f063e541098359dfdbff321d9b42320a1fbd30756d332580efb28ad83"
+    },
+    "coverage": {
+      "selected": [
+        {
+          "item_id": "34b3eb1e4f4d1a1291b2a9da20d02600396f3f461e216ceb3ec63bd09abe46c9",
+          "path": "app/web.py",
+          "fingerprint": "ca0c195cc03fa9c506fe233b40870a86979cf355b62683be6c795a7143410b4c"
+        },
+        {
+          "item_id": "83c3a65e2b2f1be067dff56cb7fc6917d667c2c542301e7169e0c0294b39a584",
+          "path": "app/store.py",
+          "fingerprint": "e54917962c425fe3a4783dd338f36db98eee245952367f0dda749397f72c640c"
+        }
+      ],
+      "completed": [
+        {
+          "item_id": "34b3eb1e4f4d1a1291b2a9da20d02600396f3f461e216ceb3ec63bd09abe46c9",
+          "path": "app/web.py",
+          "fingerprint": "ca0c195cc03fa9c506fe233b40870a86979cf355b62683be6c795a7143410b4c"
+        },
+        {
+          "item_id": "83c3a65e2b2f1be067dff56cb7fc6917d667c2c542301e7169e0c0294b39a584",
+          "path": "app/store.py",
+          "fingerprint": "e54917962c425fe3a4783dd338f36db98eee245952367f0dda749397f72c640c"
+        }
+      ],
+      "reused": [],
+      "failed": [],
+      "waived": [],
+      "excluded": []
+    },
+    "elapsed_ms": 13280
+  }
+}

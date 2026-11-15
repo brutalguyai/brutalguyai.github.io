@@ -1,0 +1,41 @@
+{
+ "run": "m1",
+ "model": "claude-sonnet-5-5",
+ "num_turns": 2,
+ "duration_ms": 11403,
+ "usage": {
+  "input_tokens": 4,
+  "cache_creation_input_tokens": 9213,
+  "cache_read_input_tokens": 31590,
+  "output_tokens": 942,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 9213
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 889,
+    "cache_read_input_tokens": 18533,
+    "cache_creation_input_tokens": 3737,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 3737,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "result": "Bugs found on `feature` (diff against `main`):\n\n**Security**\n1. `svc/users.py:17`: SQL injection. `sort` is concatenated into `ORDER BY`. `ALLOWED_SORT` is defined but never checked. It is reachable from `list_users_endpoint` in `svc/api.py:20`. Fix: reject any `sort` not in `ALLOWED_SORT`.\n2. `svc/files.py:10`: path traversal. `os.path.join(UPLOAD_DIR, filename)` with an unsanitized `filename` accepts `../../x` or an absolute path, so a caller can write files anywhere. Fix: use `os.path.basename` and verify the resolved path stays inside `UPLOAD_DIR`.\n3. `svc/api.py:28-34`: `delete_user_endpoint` only checks that the caller is logged in. It never calls `users.is_admin`, so any user can delete any account. It also returns 204 whether or not the row existed.\n4. `svc/api.py:20`: `list_users_endpoint` passes `user=None` to `is_admin`. That is safe because `is_admin` handles `None`, but the response is 403 rather than 401 for a bad token. This is minor.\n5. `svc/auth.py:33`: the expiry check is inverted. `expires < time.time() + TOKEN_TTL` is almost always true, so expired tokens stay valid forever. It should be `entry[\"expires\"] > time.time()`.\n\n**Correctness**\n6. `svc/billing.py:15`: `apply_discount` subtracts `percent` as a flat amount. It should compute `price * (1 - percent/100)`.\n7. `svc/worker.py:11-18`: `tries` is never incremented, so a persistent `ConnectionError` retries forever and the `RuntimeError` is unreachable. It also sleeps after the last attempt.\n8. `svc/reports.py:15`: `revenue` starts its loop at `range(1, ...)`, which skips the first amount.\n9. `svc/cache.py:27`: `remember(..., seen={})` uses a mutable default argument shared across all calls. That may be intended as a process-wide memo, but it is a hidden global with no eviction and no thread safety. Low severity.\n10. `svc/billing.py:29`: `split_evenly` returns `share * people`, which can differ from `total` by a few cents. The remainder is lost.\n11. `svc/api.py:44`: `quote_endpoint` doesn't catch `decimal.InvalidOperation` from a malformed `price`. That would be a 500 instead of a 400. Also, `percent` as a string raises `TypeError`."
+}
