@@ -1,0 +1,75 @@
+{
+ "num_turns": 3,
+ "duration_ms": 11156,
+ "total_cost_usd": 0.2813918000000001,
+ "usage": {
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 1685,
+  "cache_read_input_tokens": 91191,
+  "output_tokens": 985,
+  "output_tokens_details": {
+   "thinking_tokens": 104
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 1685
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 579,
+    "cache_read_input_tokens": 31114,
+    "cache_creation_input_tokens": 202,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 202,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 30,
+   "outputTokens": 4913,
+   "cacheReadInputTokens": 350007,
+   "cacheCreationInputTokens": 18172,
+   "webSearchRequests": 0,
+   "costUSD": 0.25924140000000007,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 617,
+   "cacheCreationEphemeral5mInputTokens": 18172,
+   "cacheCreationEphemeral1hInputTokens": 0,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  },
+  "claude-haiku-5-5": {
+   "inputTokens": 50,
+   "outputTokens": 23718,
+   "cacheReadInputTokens": 382040,
+   "cacheCreationInputTokens": 51728,
+   "webSearchRequests": 0,
+   "costUSD": 0.0221504,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 10122,
+   "cacheCreationEphemeral5mInputTokens": 51728,
+   "cacheCreationEphemeral1hInputTokens": 0,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "is_error": false,
+ "result": "The monthly report feature from TASK.md is in place. All 28 tests pass, and `python3 -m ledger report data.json --month 2026-10` prints the expected output:\n\n```\nHousing: 900.00\nGroceries: 98.40\nTransport: 45.00\nFun: 37.00\nPossible duplicates: 1\n```\n\n- **New files:** `ledger/report.py` has `summarize` and `find_duplicates`, and `ledger/__main__.py` adds the `report` command. `models.py` and `store.py` weren't touched.\n- **Tests:** `tests/test_report.py` covers month boundaries, refunds, zero totals, rounding, the 2-day duplicate window, sort order, tie-breaking by category name, and the command line itself. Run them with `python3 -m unittest discover -s tests`.\n\nWhere TASK.md was unclear, I made these choices:\n- **Duplicate count:** the count only looks at the requested month. The sample data has a duplicate pair split across Sept 30 and Oct 1 (`t1`/`t2`), so it isn't counted in the October report.\n- **Zero-amount transactions:** these can count as duplicates, because the spec only excludes refunds (negative amounts).\n- **Dropping zero totals:** a category is dropped only if its total before rounding is exactly 0. A tiny non-zero total, such as -0.004, shows as `0.00` instead of disappearing. I checked this case by hand, but it isn't in the test suite yet.\n- **Rounding:** half-cents round up, so 10.005 becomes 10.01.\n\nDONE"
+}
