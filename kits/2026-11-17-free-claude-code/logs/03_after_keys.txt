@@ -1,0 +1,12 @@
+$ omniroute chat "Which model are you? One line."
+I’m ChatGPT, an OpenAI‑developed language model based on the GPT‑4 architecture.
+
+[openai/gpt-oss-120b · 704ms · 184 tok]
+$ omniroute simulate
+No matching combo found. Configure one with: omniroute combo create
+I am ChatGPT, a large language model created by OpenAI.
+
+[openai/gpt-oss-120b · 786ms · 162 tok]
+I am an AI assistant modeled after the groq/allam-2-7b, and I was developed by the National Center for AI (NCAI) in Saudi Arabia.
+
+[allam-2-7b · 428ms · 230 tok]
