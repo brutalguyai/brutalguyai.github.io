@@ -1,0 +1,75 @@
+{
+ "num_turns": 10,
+ "duration_ms": 93129,
+ "total_cost_usd": 0.21069558499999996,
+ "usage": {
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 14837,
+  "cache_read_input_tokens": 194502,
+  "output_tokens": 3989,
+  "output_tokens_details": {
+   "thinking_tokens": 611
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 14837
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 444,
+    "cache_read_input_tokens": 27722,
+    "cache_creation_input_tokens": 259,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 259,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 18,
+   "outputTokens": 3989,
+   "cacheReadInputTokens": 194502,
+   "cacheCreationInputTokens": 14837,
+   "webSearchRequests": 0,
+   "costUSD": 0.19293739999999998,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 611,
+   "cacheCreationEphemeral5mInputTokens": 14837,
+   "cacheCreationEphemeral1hInputTokens": 0,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  },
+  "claude-haiku-5-5": {
+   "inputTokens": 30,
+   "outputTokens": 18090,
+   "cacheReadInputTokens": 209981,
+   "cacheCreationInputTokens": 52883,
+   "webSearchRequests": 0,
+   "costUSD": 0.017758185000000003,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 5281,
+   "cacheCreationEphemeral5mInputTokens": 52883,
+   "cacheCreationEphemeral1hInputTokens": 0,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "is_error": false,
+ "result": "DONE\n\nThe monthly report is in: `ledger/report.py` has `summarize` and `find_duplicates`, and `ledger/__main__.py` adds the `python -m ledger report <data.json> --month YYYY-MM` command. `models.py` and `store.py` are unchanged. All 20 tests in `tests/test_report.py` pass, and running the report on `data.json` for October gives:\n\n```\nHousing: 900.00\nGroceries: 98.40\nTransport: 45.00\nFun: 37.00\nPossible duplicates: 1\n```\n\nThe one duplicate is t3/t4, the two FreshMart charges a day apart. t1/t2 (rent) aren't counted because t1 is dated in September.\n\nThe review found one mismatch, now fixed: the duplicate check was also skipping zero amounts, but the spec only excludes refunds (negative amounts). Zero-amount pairs are now reported.\n\nTwo choices where the spec could be read either way:\n- **Zero totals:** a category is dropped when its total rounds to 0.00, not only when it's exactly 0. This hides floating-point leftovers such as `0.1 + 0.2 - 0.3`.\n- **\"Same amount\":** amounts are compared after rounding to 2 decimals, so 10.004 and 10.00 count as the same."
+}
