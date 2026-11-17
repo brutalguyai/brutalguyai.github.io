@@ -1,0 +1,7 @@
+#!/bin/bash
+KEY=$(grep '^ANTHROPIC_API_KEY=' /mnt/user-data/uploads/brutal-guy-ai/.env | cut -d= -f2)
+PROMPT='The Exact checkout (https://github.com/expo/exact) is already cloned at /home/claude/ex/repo and `bun scripts/exact.mjs setup` has already been run there. Follow its README to make a new Exact app with `exact new` at /home/claude/ex/todo. Make a todo list where I can add items, check them off, delete them, and see how many are left. Put the view in Contract and keep the list in `app.ts`. Write an `app.test.contract`, pass it on web and Linux with `scripts/agent.mjs`, then save a screenshot of the running app on each into /home/claude/ex/todo/shots/ as web.png and linux.png. This machine is Linux with no Xcode, so skip macOS and iOS.'
+s=$(date +%s)
+cd /home/claude/ex
+env -i PATH="/root/.bun-1.4.2/bin:/root/.cargo/bin:$PATH" HOME=/root CLAUDE_CONFIG_DIR=/home/claude/ex/cfg1 HTTPS_PROXY="$HTTPS_PROXY" https_proxy="$https_proxy" NO_PROXY=127.0.0.1,localhost no_proxy=127.0.0.1,localhost NODE_EXTRA_CA_CERTS="$NODE_EXTRA_CA_CERTS" SSL_CERT_FILE="$SSL_CERT_FILE" CARGO_HTTP_CAINFO="$SSL_CERT_FILE" HERMES_LEAN_SYS_MIRROR=http://127.0.0.1:8899 ANTHROPIC_API_KEY="$KEY" timeout 3600 claude -p "$PROMPT" --model claude-sonnet-5-5 --output-format stream-json --verbose --max-turns 200 --max-budget-usd 3 --permission-mode acceptEdits --allowedTools "Read" "Edit" "Write" "Glob" "Grep" "Bash" < /dev/null > /home/claude/ex/run1/agent.jsonl 2> /home/claude/ex/run1/agent.err
+echo "exit=$? secs=$(( $(date +%s) - s ))" > /home/claude/ex/run1/done.txt
