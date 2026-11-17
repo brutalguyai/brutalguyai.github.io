@@ -1,0 +1,22 @@
+{
+  "$schema": "../repo/scripts/app.schema.json",
+  "name": "Todo",
+  "short_name": "Todo",
+  "id": "com.example.todo-4892c5",
+  "start_url": "/",
+  "display": "standalone",
+  "app": {
+    "id": "com.example.todo-4892c5",
+    "name": "Todo"
+  },
+  "host": {
+    "web": {},
+    "linux": {}
+  },
+  "deploy": {
+    "store": {
+      "web": "0",
+      "linux": "0"
+    }
+  }
+}
