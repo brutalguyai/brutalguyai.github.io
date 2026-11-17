@@ -1,0 +1,19 @@
+$ omniroute providers list
+
+OmniRoute Providers
+
+No providers configured.
+
+$ omniroute chat "Reply with the single word: hello"
+✖ 502 Bad Gateway
+{"error":{"message":"cfp/moonshotai/kimi-k2.6: provider — [503]: Cloudflare Playground needs Playwright and its Chromium browser. Install the browser runtime (npm i playwright && npx playwright install chromium) or use an OmniRoute browser-enabled deployment. (HTTP 503); unc/turboderp/Qwen3.8-27B-exl3: auth — [401]: The public beta is closed for now. This endpoint needs an API key, and key registration is closed; check uncloseai.com for when it reopens. (HTTP 401)","type":"server_error","code":"bad_gateway"},"diagnostics":{"poolSize":21,"attempted":2,"excluded":[{"provider":"cloudflare-playground","reason":"exhausted_connection:noauth"},{"provider":"uncloseai","reason":"exhausted_connection:noauth"}],"attemptOrder":[{"provider":"cloudflare-playground","model":"cfp/moonshotai/kimi-k2.6"},{"provider":"cloudflare-playground","model":"cfp/moonshotai/kimi-k2.6"},{"provider":"uncloseai","model":"unc/turboderp/Qwen3.8-27B-exl3"}],"terminalReason":"[401]: The public beta is closed for now. This endpoint needs an API key, and key registration is closed; check uncloseai.com for when it reopens.","recovery":{"action":"retry","next_step":"The combo failed transiently. Retry the same combo, or switch to model: auto if the failure repeats."}},"recovery_hint":{"action":"retry","next_step":"The combo failed transiently. Retry the same combo, or switch to model: auto if the failure repeats."}}
+exit 0
+
+$ omniroute simulate "hello"
+No matching combo found. Configure one with: omniroute combo create
+run 2
+✖ 502 Bad Gateway
+{"error":{"message":"cfp/zai-org/glm-4.7-flash: provider — [503]: Cloudflare Playground needs Playwright and its Chromium browser. Install the browser runtime (npm i playwright && npx playwright install chromium) or use an OmniRoute browser-enabled deploymen
+run 3
+✖ 502 Bad Gateway
+{"error":{"message":"cfp/meta-llama/llama-3.3-70b-instruct-fp8-fast: provider — [503]: Cloudflare Playground needs Playwright and its Chromium browser. Install the browser runtime (npm i playwright && npx playwright install chromium) or use an OmniRoute brow
