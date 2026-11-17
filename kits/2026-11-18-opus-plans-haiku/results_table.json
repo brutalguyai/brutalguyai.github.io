@@ -1,0 +1,104 @@
+[
+ {
+  "run": "opus_1",
+  "cost": 0.2311,
+  "opus_share": 1.0,
+  "tokens": 224380,
+  "models": [
+   "claude-opus-5-5"
+  ],
+  "secs": 61.2,
+  "hidden": "12 passed in 0.20s"
+ },
+ {
+  "run": "opus_2",
+  "cost": 0.2232,
+  "opus_share": 1.0,
+  "tokens": 247326,
+  "models": [
+   "claude-opus-5-5"
+  ],
+  "secs": 53.6,
+  "hidden": "12 passed in 0.09s"
+ },
+ {
+  "run": "opus_3",
+  "cost": 0.1868,
+  "opus_share": 1.0,
+  "tokens": 197064,
+  "models": [
+   "claude-opus-5-5"
+  ],
+  "secs": 45.3,
+  "hidden": "12 passed in 0.16s"
+ },
+ {
+  "run": "omega_1",
+  "cost": 0.2107,
+  "opus_share": 0.916,
+  "tokens": 494330,
+  "models": [
+   "claude-opus-5-5",
+   "claude-haiku-5-5"
+  ],
+  "secs": 95.1,
+  "hidden": "12 passed in 0.10s"
+ },
+ {
+  "run": "omega_2",
+  "cost": 0.2394,
+  "opus_share": 0.906,
+  "tokens": 641146,
+  "models": [
+   "claude-opus-5-5",
+   "claude-haiku-5-5"
+  ],
+  "secs": 123.0,
+  "hidden": "12 passed in 0.11s"
+ },
+ {
+  "run": "omega_3",
+  "cost": 0.2814,
+  "opus_share": 0.921,
+  "tokens": 830658,
+  "models": [
+   "claude-opus-5-5",
+   "claude-haiku-5-5"
+  ],
+  "secs": 151.1,
+  "hidden": "12 passed in 0.08s"
+ },
+ {
+  "run": "haiku_1",
+  "cost": 0.0113,
+  "opus_share": 0.0,
+  "tokens": 421221,
+  "models": [
+   "claude-haiku-5-5"
+  ],
+  "secs": 49.5,
+  "hidden": "12 passed in 0.10s"
+ },
+ {
+  "run": "haiku_2",
+  "cost": 0.0072,
+  "opus_share": 0.0,
+  "tokens": 215469,
+  "models": [
+   "claude-haiku-5-5"
+  ],
+  "secs": 31.0,
+  "hidden": "12 passed in 0.10s"
+ },
+ {
+  "run": "haiku_3",
+  "cost": 0.0078,
+  "opus_share": 0.0,
+  "tokens": 247208,
+  "models": [
+   "claude-haiku-5-5"
+  ],
+  "secs": 32.4,
+  "hidden": "12 passed in 0.10s"
+ }
+]
