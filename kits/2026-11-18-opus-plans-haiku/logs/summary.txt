@@ -1,0 +1,9 @@
+opus_1 secs=61.196418029 hidden: 12 passed in 0.20s
+omega_1 secs=95.058919743 hidden: 12 passed in 0.10s
+haiku_1 secs=49.465307894 hidden: 12 passed in 0.10s
+opus_2 secs=53.572796737 hidden: 12 passed in 0.09s
+omega_2 secs=122.994513608 hidden: 12 passed in 0.11s
+haiku_2 secs=31.033844503 hidden: 12 passed in 0.10s
+opus_3 secs=45.307932543 hidden: 12 passed in 0.16s
+omega_3 secs=151.133001666 hidden: 12 passed in 0.08s
+haiku_3 secs=32.432520700 hidden: 12 passed in 0.10s
