@@ -1,0 +1,12 @@
+✔ Added provider connection 'groq'.
+✔ Added provider connection 'gemini'.
+
+OmniRoute Providers
+
+abd297e1   gemini         gemini                   active
+9fb7813f   groq           groq                     active
+
+OmniRoute Provider Tests
+
+OK gemini: provider test passed
+OK groq: provider test passed
