@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Brutal Test Kit: "Free Claude Code, 9 billion tokens a month"</title>
+<style>body{font-family:Inter,system-ui,sans-serif;background:#b4c6d6;color:#1b2733;margin:0;padding:24px}main{max-width:760px;margin:auto;background:#f3f3f4;border-radius:20px;padding:28px}h1{font-size:28px}h2{margin-top:28px}code,pre{background:#1b2733;color:#f3f3f4;border-radius:10px;padding:2px 6px}pre{padding:14px;overflow:auto}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #c9d3dc;padding:8px;text-align:left}.v{display:inline-block;border:4px solid #c2272d;color:#c2272d;font-weight:800;padding:6px 14px;border-radius:10px;transform:rotate(-3deg)}small{color:#55626e}</style></head><body><main>
+<h1>Brutal Test Kit: "Free Claude Code, 9 billion tokens a month"</h1>
+<p><span class="v">HALF-TRUE</span></p>
+<p>Tested 17 Nov 2026. OmniRoute v3.8.53 from npm, Claude Code 2.1.326, free Groq and Google AI Studio keys. One small bug-fix task, 3 runs each. <b>Not tested:</b> FreeLLMAPI, paid tiers, long sessions, token-compression claims.</p>
+<h2>What happened</h2>
+<table><tr><th>Check</th><th>Result in my test</th></tr>
+<tr><td>Fresh install, no signup</td><td><code>502 Bad Gateway</code>, 3 tries out of 3</td></tr>
+<tr><td>After adding 2 free keys</td><td>Works. Replies came from openai/gpt-oss-120b, allam-2-7b and gemini-3.1-flash-lite. None from Claude.</td></tr>
+<tr><td>Fix one bug, free route</td><td>Fixed 3 of 3. One run took 211 s; two had not finished at the 280 s cap.</td></tr>
+<tr><td>Fix one bug, Claude Sonnet (paid API)</td><td>Fixed 3 of 3 in 8 to 11 s.</td></tr>
+<tr><td>Router's own request log</td><td>30 upstream calls succeeded, 48 returned errors (503 x16, 413 x11, 429 x6, 504 x5, others x10).</td></tr></table>
+<h2>Do it yourself</h2>
+<pre>npm install -g omniroute        # 1,329 packages, about 3.4 GB
+omniroute serve                 # dashboard on http://localhost:20128
+omniroute chat "hello"          # fresh install: 502 in my test
+omniroute providers add groq --credential-env GROQ_API_KEY --yes
+omniroute providers add gemini --credential-env GEMINI_API_KEY --yes
+omniroute launch -- -p "&lt;prompt&gt;" --model auto   # default model failed with "Ambiguous model" on my machine</pre>
+<p>Prompt used: <code>The tests in this folder fail. Find and fix the bug so that `python3 -m pytest -q` passes. Do not edit the test file.</code></p>
+<h2>Fine print</h2>
+<ul><li>OmniRoute's own README calls its "~1.62B tokens / month" an estimate of other providers' free tiers, not a grant, and says you bring your own accounts.</li>
+<li>Your prompts and code go to whichever provider answers. Don't route private code.</li>
+<li>Never give a router your paid Anthropic key unless you mean to.</li>
+<li>One of the keyless providers failed only because the router wanted a browser runtime installed; with it, a fresh install might get further.</li></ul>
+<h2>Files</h2>
+<ul><li><a href="RESULTS.md">RESULTS.md</a>: every number and where it comes from</li>
+<li>The 3-file project with the planted bug: <a href="task/cart.py">cart.py</a>, <a href="task/pricing.py">pricing.py</a>, <a href="task/test_cart.py">test_cart.py</a></li>
+<li>Raw outputs: <a href="logs/01_fresh_install.txt">fresh install</a>, <a href="logs/02_add_providers.txt">adding the free keys</a>, <a href="logs/03_after_keys.txt">who answered</a>, <a href="logs/summary.txt">run times</a>, <a href="logs/usage_logs.json">router request log</a></li></ul>
+<p><small>brutal guy.ai tests the claim so you don't have to. Claims quoted from reels by @nick_saraev, @manikk.ai and @rajenlabs.</small></p></main></body></html>
