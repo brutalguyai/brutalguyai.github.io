@@ -1,0 +1,22 @@
+{
+  "host": {
+    "web": {},
+    "linux": {}
+  },
+  "deploy": {
+    "store": {
+      "web": "0",
+      "linux": "0"
+    }
+  },
+  "$schema": "../repo/scripts/app.schema.json",
+  "name": "Todo3",
+  "short_name": "Todo3",
+  "id": "com.example.todo3-c8f79e",
+  "start_url": "/",
+  "display": "standalone",
+  "app": {
+    "id": "com.example.todo3-c8f79e",
+    "name": "Todo3"
+  }
+}
