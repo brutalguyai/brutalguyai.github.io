@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Brutal Test Kit: expo/exact, "write an app once, an AI agent can build it"</title>
+<style>body{font-family:Inter,system-ui,sans-serif;background:#b4c6d6;color:#1b2733;margin:0;padding:24px}main{max-width:760px;margin:auto;background:#f3f3f4;border-radius:20px;padding:28px}h1{font-size:28px}h2{margin-top:28px}code,pre{background:#1b2733;color:#f3f3f4;border-radius:10px;padding:2px 6px}pre{padding:14px;overflow:auto;white-space:pre-wrap}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #c9d3dc;padding:8px;text-align:left}.v{display:inline-block;border:4px solid #2e8b57;color:#2e8b57;font-weight:800;padding:6px 14px;border-radius:10px;transform:rotate(-3deg)}small{color:#55626e}</style></head><body><main>
+<h1>Brutal Test Kit: expo/exact, "write an app once, and a coding agent can build it"</h1>
+<p><span class="v">LEGIT*</span> <small>*for web + Linux, the platforms I could test</small></p>
+<p>Tested 17-18 Nov 2026 on commit 65a19452. 2-core cloud Linux machine, no GPU, no Xcode. Claude Code headless, Sonnet 5.5, no human input. <b>Not tested:</b> macOS and iOS (need a Mac with Xcode), Android and Windows (early), bundle-size claims.</p>
+<h2>What happened</h2>
+<table><tr><th>Run</th><th>Result</th><th>Time</th><th>App size</th><th>Test: web</th><th>Test: Linux</th></tr>
+<tr><td>1</td><td>done, alone</td><td>29.8 min</td><td>67 lines</td><td>pass</td><td>pass</td></tr>
+<tr><td>2</td><td>done, alone</td><td>31.7 min</td><td>70 lines</td><td>pass</td><td>pass</td></tr>
+<tr><td>3</td><td>done, alone</td><td>21.0 min</td><td>68 lines</td><td>pass</td><td>pass</td></tr></table>
+<p>I re-ran every app's test myself afterwards: 3/3 pass on web and 3/3 on Linux. On Linux there is no browser: Exact paints the screen itself.</p>
+<h2>The catches</h2>
+<ul><li><b>Disk:</b> setup ≈ 10.5 GB (checkout, its build folder, two pinned Rust toolchains, crates, caches); each app's own build folder 5-6 GB. Setup + one app ≈ 16 GB.</li>
+<li><b>First native build:</b> 13-14 minutes on this machine; rebuilds ~5 minutes. Much of each agent run was waiting for the compiler.</li>
+<li><b>Edit speed:</b> README says about 0.1 s (on an Apple Silicon Mac). Here: edit to page 1.95-2.53 s, per Exact's own dev log. Different hardware, but not 0.1 s on a small machine.</li>
+<li><b>Pre-1.0:</b> the README says it changes daily, with no API stability and no migration guide, by design.</li>
+<li><b>Small friction:</b> a new app doesn't list Linux; the agent had to add it to <code>app.json</code> after a build error.</li></ul>
+<h2>Do it yourself</h2>
+<pre>git clone https://github.com/expo/exact && cd exact
+bun scripts/exact.mjs setup          # Bun 1.4.2 + Rust; first run takes a while
+# then give Claude Code this prompt (README's own, adapted to web + Linux):</pre>
+<pre>Follow its README to make a new Exact app with `exact new` at ../todo. Make a todo list where I can add items, check them off, delete them, and see how many are left. Put the view in Contract and keep the list in `app.ts`. Write an `app.test.contract`, pass it on web and Linux with `scripts/agent.mjs`, then save a screenshot of the running app on each.</pre>
+<h2>Files</h2>
+<ul><li><a href="RESULTS.md">RESULTS.md</a>: every number and where it comes from</li>
+<li>Apps the agent wrote: run 1 <a href="apps/run1/app.contract">app.contract</a> · <a href="apps/run1/app.ts">app.ts</a> · <a href="apps/run1/app.test.contract">app.test.contract</a> · <a href="apps/run1/app.json">app.json</a>; run 2 <a href="apps/run2/app.contract">view</a> · <a href="apps/run2/app.ts">data</a>; run 3 <a href="apps/run3/app.contract">view</a> · <a href="apps/run3/app.ts">data</a></li>
+<li>Raw agent logs (every step): <a href="logs/run1.jsonl">run 1</a> · <a href="logs/run2.jsonl">run 2</a> · <a href="logs/run3.jsonl">run 3</a> · runner <a href="run_agent.sh">run_agent.sh</a></li>
+<li>Measuring scripts: <a href="measure/edit.mjs">edit speed</a> · <a href="measure/rec2.mjs">screen capture</a></li></ul>
+<p><small>brutal guy.ai tests the claim so you don't have to. Claim quoted from the expo/exact README.</small></p></main></body></html>
