@@ -1,0 +1,22 @@
+{
+  "host": {
+    "web": {},
+    "linux": {}
+  },
+  "deploy": {
+    "store": {
+      "web": "0",
+      "linux": "0"
+    }
+  },
+  "$schema": "../repo/scripts/app.schema.json",
+  "name": "Todo2",
+  "short_name": "Todo2",
+  "id": "com.example.todo2-d73b11",
+  "start_url": "/",
+  "display": "standalone",
+  "app": {
+    "id": "com.example.todo2-d73b11",
+    "name": "Todo2"
+  }
+}
