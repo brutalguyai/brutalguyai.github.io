@@ -1,0 +1,59 @@
+{
+ "num_turns": 11,
+ "duration_ms": 42836,
+ "total_cost_usd": 0.1867776,
+ "usage": {
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 11423,
+  "cache_read_input_tokens": 180953,
+  "output_tokens": 4670,
+  "output_tokens_details": {
+   "thinking_tokens": 438
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 11423
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 729,
+    "cache_read_input_tokens": 24250,
+    "cache_creation_input_tokens": 317,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 317,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-opus-5-5": {
+   "inputTokens": 18,
+   "outputTokens": 4670,
+   "cacheReadInputTokens": 180953,
+   "cacheCreationInputTokens": 11423,
+   "webSearchRequests": 0,
+   "costUSD": 0.1867776,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 438,
+   "cacheCreationEphemeral5mInputTokens": 11423,
+   "cacheCreationEphemeral1hInputTokens": 0,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "is_error": false,
+ "result": "I added the monthly report to the `ledger` package. `models.py` and `store.py` are unchanged, and all 5 new tests pass.\n\n**What was added:**\n- **`ledger/report.py`** contains both functions:\n  - `summarize(transactions, month)` adds up each category's total for the month, with refunds reducing it. It rounds to 2 decimals and leaves out categories that come to 0.\n  - `find_duplicates(transactions)` returns `(earlier_id, later_id)` pairs with the same payee and amount, dated at most 2 days apart. Refunds are never counted, and the list is sorted by the earlier transaction's date, then its id.\n- **`ledger/__main__.py`** runs the command line, `python -m ledger report <data.json> --month YYYY-MM`.\n- **`tests/test_report.py`** covers the sample data, small rounding errors adding up to exactly 0, refunds being skipped, a run of three matching payments, the sort order, and the full command-line output.\n\nRunning it on `data.json` for October gives:\n```\nHousing: 900.00\nGroceries: 98.40\nTransport: 45.00\nFun: 37.00\nPossible duplicates: 1\n```\nThe duplicate count is 1, not 2: the rent pair (t1 on Sep 30, t2 on Oct 1) is left out because duplicates are only counted among that month's transactions, as the task says.\n\n**Choices I made where the task didn't say:**\n- **All pairs, not just neighbours:** three payments on days 1, 3 and 4 give two pairs, (1, 3) and (3, 4). Days 1 and 4 are 3 apart, so they don't pair.\n- **Same day:** if both transactions fall on the same date, the one with the smaller id counts as earlier.\n- **Zero amounts:** a transaction of 0 can still be a duplicate, since only negative amounts are ruled out.\n- **Amount matching:** amounts are compared after rounding to 2 decimals.\n\nTo rerun the tests: `python3 -m unittest tests/test_report.py`.\n\nDONE"
+}
