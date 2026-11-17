@@ -1,0 +1,59 @@
+{
+ "num_turns": 18,
+ "duration_ms": 47201,
+ "total_cost_usd": 0.011289375,
+ "usage": {
+  "input_tokens": 32,
+  "cache_creation_input_tokens": 18289,
+  "cache_read_input_tokens": 392755,
+  "output_tokens": 10145,
+  "output_tokens_details": {
+   "thinking_tokens": 2164
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 18289
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 764,
+    "cache_read_input_tokens": 31040,
+    "cache_creation_input_tokens": 393,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 393,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 32,
+   "outputTokens": 10145,
+   "cacheReadInputTokens": 392755,
+   "cacheCreationInputTokens": 18289,
+   "webSearchRequests": 0,
+   "costUSD": 0.011289375,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 2164,
+   "cacheCreationEphemeral5mInputTokens": 18289,
+   "cacheCreationEphemeral1hInputTokens": 0,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "is_error": false,
+ "result": "DONE\n\nAdded to the `ledger` package; `models.py` and `store.py` are untouched.\n\n- **`ledger/report.py`**\n  - `summarize(transactions, month)` filters to the calendar month, nets refunds, drops categories that total exactly 0, and rounds to 2 decimals. It sums with `Decimal` (via `str(amount)`), so float noise like 0.1 + 0.2 \u2212 0.3 doesn't leave a phantom non-zero category.\n  - `find_duplicates(transactions)` excludes negative amounts, pairs same payee and amount dated at most 2 days apart (inclusive), and sorts by the earlier transaction's date, then id.\n- **`ledger/__main__.py`** provides `python -m ledger report <file> --month YYYY-MM`. It prints categories sorted by total descending (ties A\u2013Z), each formatted to 2 decimals, then `Possible duplicates: <n>`. The count runs only over that month's transactions.\n- **`tests/test_report.py`**: 9 tests covering the month filter, refunds, zero-net categories, float rounding, the 2-day window, payee and amount matching, refund exclusion, sort order, and an end-to-end CLI run. All pass (`python3 -m pytest -q tests`).\n\nAgainst `data.json`, `--month 2026-10` prints Housing 900.00, Groceries 98.40, Transport 45.00, Fun 37.00, and `Possible duplicates: 1` (the FreshMart pair on Oct 3 and 4).\n\nChoices I made where the spec was open:\n- A duplicate pair is any two transactions within the window, so three matching charges produce three pairs.\n- `summarize` returns floats rounded to 2 decimals, and the CLI formats them for display.\n- The 2-day window is measured on calendar dates, so transactions in different months can pair in `find_duplicates`. The CLI only counts within the requested month."
+}
