@@ -1,0 +1,59 @@
+{
+ "num_turns": 14,
+ "duration_ms": 28441,
+ "total_cost_usd": 0.007201425,
+ "usage": {
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 15915,
+  "cache_read_input_tokens": 192975,
+  "output_tokens": 6561,
+  "output_tokens_details": {
+   "thinking_tokens": 1515
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 15915
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 475,
+    "cache_read_input_tokens": 28199,
+    "cache_creation_input_tokens": 860,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 860,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 18,
+   "outputTokens": 6561,
+   "cacheReadInputTokens": 192975,
+   "cacheCreationInputTokens": 15915,
+   "webSearchRequests": 0,
+   "costUSD": 0.007201425,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 1515,
+   "cacheCreationEphemeral5mInputTokens": 15915,
+   "cacheCreationEphemeral1hInputTokens": 0,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "is_error": false,
+ "result": "DONE\n\nAdded `ledger/report.py` (`summarize`, `find_duplicates`) and `ledger/__main__.py` (the `report` command). `models.py` and `store.py` are unchanged. All 10 unit tests pass in `tests/test_report.py`, and `python -m ledger report data.json --month 2026-10` prints:\n\n```\nHousing: 900.00\nGroceries: 98.40\nTransport: 45.00\nFun: 37.00\nPossible duplicates: 1\n```\n\nChoices I made where the spec was open:\n- **Money math** uses `Decimal` built from `str(amount)`, so float artifacts don't leak into sums. Totals are returned as floats rounded half-up to 2 decimals.\n- **Zero-net check** is done on the exact sum before rounding, so a net of 0.001 stays in the output as `0.00`.\n- **Earlier/later in a duplicate pair**: the earlier is the one with the smaller `(day, id)`, which also decides the tie-break when two transactions share a date.\n- **Duplicate count in the CLI** runs `find_duplicates` only on that month's transactions, as specified."
+}
