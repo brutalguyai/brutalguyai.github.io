@@ -1,0 +1,11 @@
+[
+ {"id": "t1", "day": "2026-09-30", "payee": "Rent Co", "category": "Housing", "amount": 900},
+ {"id": "t2", "day": "2026-10-01", "payee": "Rent Co", "category": "Housing", "amount": 900},
+ {"id": "t3", "day": "2026-10-03", "payee": "FreshMart", "category": "Groceries", "amount": 54.20},
+ {"id": "t4", "day": "2026-10-04", "payee": "FreshMart", "category": "Groceries", "amount": 54.20},
+ {"id": "t5", "day": "2026-10-09", "payee": "Cinema", "category": "Fun", "amount": 18.5},
+ {"id": "t6", "day": "2026-10-12", "payee": "FreshMart", "category": "Groceries", "amount": -10.0},
+ {"id": "t7", "day": "2026-10-20", "payee": "Bus Pass", "category": "Transport", "amount": 45},
+ {"id": "t8", "day": "2026-10-31", "payee": "Cinema", "category": "Fun", "amount": 18.5},
+ {"id": "t9", "day": "2026-11-01", "payee": "Rent Co", "category": "Housing", "amount": 900}
+]
