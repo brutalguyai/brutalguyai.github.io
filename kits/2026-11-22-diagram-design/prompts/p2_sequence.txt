@@ -1,0 +1,1 @@
+Give me a sequence diagram of a customer paying for a salon booking with UPI: the booking page, our backend, Razorpay, the customer's UPI app, and the payment webhook that confirms the booking. Show what happens if the webhook arrives twice.
