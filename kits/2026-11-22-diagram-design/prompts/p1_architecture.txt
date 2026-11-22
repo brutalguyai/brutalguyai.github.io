@@ -1,0 +1,1 @@
+Make me an architecture diagram of my expense-splitting app: a React web app, a Node API, sign-in with Google, Postgres, receipt photos stored in S3, an OCR worker that reads receipts from a queue, and email notifications when someone owes money.
