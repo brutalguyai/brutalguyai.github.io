@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Link-in-bio analytics · data model</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=Noto+Serif:ital@0;1&family=Noto+Sans+KR:wght@400;500;600&family=Noto+Serif+KR:wght@400&family=Noto+Sans+TC:wght@400;500;600&family=Noto+Serif+TC:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #f5f5f5;   /* white-smoke */
+      --color-ink:     #2d3142;   /* jet-black */
+      --color-muted:   #4f5d75;   /* blue-slate */
+      --color-accent:  #bf4520;   /* burnt-tangerine */
+      --font-sans:     'Geist', system-ui, sans-serif;
+      --font-serif:    'Instrument Serif', 'Noto Serif', 'Noto Serif KR', serif;
+      --font-mono:     'Geist Mono', ui-monospace, monospace;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+
+    .frame { max-width: 1280px; width: 100%; }
+    /* The SVG holds its readable width (min-width == the viewBox width, so the
+       type ramp is never silently scaled down). This wrapper lets a narrow
+       screen scroll the diagram instead of the whole page. */
+    .diagram-container { width: 100%; overflow-x: auto; }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--color-ink);
+      margin-bottom: 1.5rem;
+    }
+
+    svg { width: 100%; min-width: 1280px; display: block; }
+    @media print {
+      .diagram-container { overflow-x: visible; }
+      svg { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">ER · Diagram Design</p>
+    <h1>Link-in-bio analytics · data model</h1>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="er-link-in-bio-title er-link-in-bio-desc">
+        <title id="er-link-in-bio-title">Link-in-bio analytics · data model</title>
+        <desc id="er-link-in-bio-desc">Entity-relationship diagram of a link-in-bio site: users own pages, pages list links, and each link receives click events that roll up into daily stats.</desc>
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+          <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#bf4520"/></marker>
+          <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e5aa8"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+        <!-- ───────── Relationship lines (drawn first) ───────── -->
+        <!-- User 1 — N Page -->
+        <line x1="240" y1="120" x2="336" y2="120" stroke="#4f5d75" stroke-width="1"/>
+        <!-- Page 1 — N Link -->
+        <line x1="536" y1="120" x2="632" y2="120" stroke="#4f5d75" stroke-width="1"/>
+        <!-- Link 1 — N ClickEvent -->
+        <line x1="872" y1="120" x2="1000" y2="120" stroke="#4f5d75" stroke-width="1"/>
+        <!-- Link 1 — N LinkDailyStat (elbow down, then right) -->
+        <path d="M 752,300 V 440 Q 752,448 760,448 H 1000" fill="none" stroke="#4f5d75" stroke-width="1"/>
+        <!-- ClickEvent → LinkDailyStat (derived rollup, dashed) -->
+        <line x1="1120" y1="300" x2="1120" y2="380" stroke="#4f5d75" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+
+        <!-- Cardinality -->
+        <text x="248" y="112" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" font-weight="600">1</text>
+        <text x="328" y="112" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" font-weight="600" text-anchor="end">N</text>
+        <text x="544" y="112" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" font-weight="600">1</text>
+        <text x="624" y="112" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" font-weight="600" text-anchor="end">N</text>
+        <text x="880" y="112" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" font-weight="600">1</text>
+        <text x="992" y="112" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" font-weight="600" text-anchor="end">N</text>
+        <text x="760" y="316" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" font-weight="600">1</text>
+        <text x="992" y="440" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" font-weight="600" text-anchor="end">N</text>
+
+        <!-- Relationship labels (masked, 8px above their line) -->
+        <rect x="272" y="100" width="32" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="288" y="109" fill="#5a6580" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">OWNS</text>
+
+        <rect x="564" y="100" width="40" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="584" y="109" fill="#5a6580" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">LISTS</text>
+
+        <rect x="908" y="100" width="56" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="936" y="109" fill="#5a6580" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">RECEIVES</text>
+
+        <rect x="844" y="428" width="72" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="880" y="437" fill="#5a6580" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">DAILY STATS</text>
+
+        <rect x="1130" y="334" width="80" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="1170" y="343" fill="#5a6580" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">ROLLS UP INTO</text>
+
+        <!-- ───────── Entity: User ───────── -->
+        <rect x="40" y="100" width="200" height="160" rx="6" fill="#f5f5f5"/>
+        <rect x="40" y="100" width="200" height="160" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+        <rect x="40" y="100" width="200" height="40" rx="6" fill="rgba(45,49,66,0.04)" stroke="none"/>
+        <rect x="40" y="132" width="200" height="8" fill="rgba(45,49,66,0.04)"/>
+        <line x1="40" y1="140" x2="240" y2="140" stroke="rgba(45,49,66,0.22)" stroke-width="1"/>
+        <text x="56" y="116" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ENTITY</text>
+        <text x="56" y="132" fill="#2d3142" font-size="14" font-weight="600" font-family="'Geist', sans-serif">User</text>
+        <text x="56" y="160" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace"># id</text>
+        <text x="224" y="160" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+        <text x="56" y="180" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">handle</text>
+        <text x="224" y="180" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">text · unique</text>
+        <text x="56" y="200" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">email</text>
+        <text x="224" y="200" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">text · unique</text>
+        <text x="56" y="220" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">display_name</text>
+        <text x="224" y="220" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">text</text>
+        <text x="56" y="240" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">created_at</text>
+        <text x="224" y="240" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">timestamp</text>
+
+        <!-- ───────── Entity: Page ───────── -->
+        <rect x="336" y="100" width="200" height="180" rx="6" fill="#f5f5f5"/>
+        <rect x="336" y="100" width="200" height="180" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+        <rect x="336" y="100" width="200" height="40" rx="6" fill="rgba(45,49,66,0.04)" stroke="none"/>
+        <rect x="336" y="132" width="200" height="8" fill="rgba(45,49,66,0.04)"/>
+        <line x1="336" y1="140" x2="536" y2="140" stroke="rgba(45,49,66,0.22)" stroke-width="1"/>
+        <text x="352" y="116" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ENTITY</text>
+        <text x="352" y="132" fill="#2d3142" font-size="14" font-weight="600" font-family="'Geist', sans-serif">Page</text>
+        <text x="352" y="160" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace"># id</text>
+        <text x="520" y="160" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+        <text x="352" y="180" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">→ user_id</text>
+        <text x="520" y="180" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+        <text x="352" y="200" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">slug</text>
+        <text x="520" y="200" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">text · unique</text>
+        <text x="352" y="220" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">title</text>
+        <text x="520" y="220" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">text</text>
+        <text x="352" y="240" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">theme</text>
+        <text x="520" y="240" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">text</text>
+        <text x="352" y="260" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">is_published</text>
+        <text x="520" y="260" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">bool</text>
+
+        <!-- ───────── Entity: Link (focal hub) ───────── -->
+        <rect x="632" y="100" width="240" height="200" rx="6" fill="#f5f5f5"/>
+        <rect x="632" y="100" width="240" height="200" rx="6" fill="rgba(191,69,32,0.04)" stroke="#bf4520" stroke-width="1"/>
+        <rect x="632" y="100" width="240" height="40" rx="6" fill="rgba(191,69,32,0.10)" stroke="none"/>
+        <rect x="632" y="132" width="240" height="8" fill="rgba(191,69,32,0.10)"/>
+        <line x1="632" y1="140" x2="872" y2="140" stroke="rgba(191,69,32,0.40)" stroke-width="1"/>
+        <text x="648" y="116" fill="#bf4520" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ENTITY · HUB</text>
+        <text x="648" y="132" fill="#2d3142" font-size="14" font-weight="600" font-family="'Geist', sans-serif">Link</text>
+        <text x="648" y="160" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace"># id</text>
+        <text x="856" y="160" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+        <text x="648" y="180" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">→ page_id</text>
+        <text x="856" y="180" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+        <text x="648" y="200" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">label</text>
+        <text x="856" y="200" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">text</text>
+        <text x="648" y="220" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">url</text>
+        <text x="856" y="220" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">text · url</text>
+        <text x="648" y="240" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">position</text>
+        <text x="856" y="240" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">int</text>
+        <text x="648" y="260" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">is_active</text>
+        <text x="856" y="260" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">bool</text>
+        <text x="648" y="280" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">created_at</text>
+        <text x="856" y="280" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">timestamp</text>
+
+        <!-- ───────── Entity: ClickEvent (analytics, raw) ───────── -->
+        <rect x="1000" y="100" width="240" height="200" rx="6" fill="#f5f5f5"/>
+        <rect x="1000" y="100" width="240" height="200" rx="6" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="1"/>
+        <rect x="1000" y="100" width="240" height="40" rx="6" fill="rgba(45,49,66,0.05)" stroke="none"/>
+        <rect x="1000" y="132" width="240" height="8" fill="rgba(45,49,66,0.05)"/>
+        <line x1="1000" y1="140" x2="1240" y2="140" stroke="rgba(45,49,66,0.22)" stroke-width="1"/>
+        <text x="1016" y="116" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">EVENT · APPEND-ONLY</text>
+        <text x="1016" y="132" fill="#2d3142" font-size="14" font-weight="600" font-family="'Geist', sans-serif">ClickEvent</text>
+        <text x="1016" y="160" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace"># id</text>
+        <text x="1224" y="160" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">bigint</text>
+        <text x="1016" y="180" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">→ link_id</text>
+        <text x="1224" y="180" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+        <text x="1016" y="200" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">clicked_at</text>
+        <text x="1224" y="200" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">timestamp</text>
+        <text x="1016" y="220" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">referrer</text>
+        <text x="1224" y="220" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">text</text>
+        <text x="1016" y="240" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">country</text>
+        <text x="1224" y="240" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">text · iso2</text>
+        <text x="1016" y="260" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">device</text>
+        <text x="1224" y="260" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">enum</text>
+        <text x="1016" y="280" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">visitor_hash</text>
+        <text x="1224" y="280" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">text</text>
+
+        <!-- ───────── Entity: LinkDailyStat (analytics, rollup) ───────── -->
+        <rect x="1000" y="380" width="240" height="140" rx="6" fill="#f5f5f5"/>
+        <rect x="1000" y="380" width="240" height="140" rx="6" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="1"/>
+        <rect x="1000" y="380" width="240" height="40" rx="6" fill="rgba(45,49,66,0.05)" stroke="none"/>
+        <rect x="1000" y="412" width="240" height="8" fill="rgba(45,49,66,0.05)"/>
+        <line x1="1000" y1="420" x2="1240" y2="420" stroke="rgba(45,49,66,0.22)" stroke-width="1"/>
+        <text x="1016" y="396" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ROLLUP · PER DAY</text>
+        <text x="1016" y="412" fill="#2d3142" font-size="14" font-weight="600" font-family="'Geist', sans-serif">LinkDailyStat</text>
+        <text x="1016" y="440" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">#→ link_id</text>
+        <text x="1224" y="440" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+        <text x="1016" y="460" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace"># day</text>
+        <text x="1224" y="460" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">date</text>
+        <text x="1016" y="480" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">clicks</text>
+        <text x="1224" y="480" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">int</text>
+        <text x="1016" y="500" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace">unique_visitors</text>
+        <text x="1224" y="500" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end">int</text>
+
+        <!-- Annotation callout -->
+        <text x="776" y="492" fill="#2d3142" font-size="14" font-style="italic" font-family="'Instrument Serif', 'Noto Serif', serif">Raw clicks stay append-only;</text>
+        <text x="776" y="510" fill="#2d3142" font-size="14" font-style="italic" font-family="'Instrument Serif', 'Noto Serif', serif">dashboards read the daily</text>
+        <text x="776" y="528" fill="#2d3142" font-size="14" font-style="italic" font-family="'Instrument Serif', 'Noto Serif', serif">rollup, never the event log.</text>
+        <path d="M 796 478 Q 796 456 836 449" fill="none" stroke="rgba(45,49,66,0.40)" stroke-width="1" stroke-dasharray="4,3"/>
+        <circle cx="836" cy="448" r="2" fill="#2d3142"/>
+
+        <!-- ───────── Legend (bottom strip) ───────── -->
+        <line x1="40" y1="632" x2="1240" y2="632" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+        <text x="40" y="652" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.18em">LEGEND</text>
+
+        <rect x="40" y="668" width="14" height="10" rx="2" fill="rgba(191,69,32,0.04)" stroke="#bf4520" stroke-width="1"/>
+        <text x="60" y="676" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Hub entity</text>
+
+        <rect x="148" y="668" width="14" height="10" rx="2" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+        <text x="168" y="676" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Entity</text>
+
+        <rect x="232" y="668" width="14" height="10" rx="2" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="1"/>
+        <text x="252" y="676" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Analytics table</text>
+
+        <text x="360" y="676" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace" font-weight="600">#</text>
+        <text x="376" y="676" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Primary key</text>
+
+        <text x="464" y="676" fill="#2d3142" font-size="10" font-family="'Geist Mono', monospace" font-weight="600">→</text>
+        <text x="480" y="676" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Foreign key</text>
+
+        <text x="568" y="676" fill="#4f5d75" font-size="10" font-family="'Geist Mono', monospace" font-weight="600">1 / N</text>
+        <text x="600" y="676" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Cardinality</text>
+
+        <line x1="688" y1="673" x2="716" y2="673" stroke="#4f5d75" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+        <text x="724" y="676" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Derived rollup</text>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>
