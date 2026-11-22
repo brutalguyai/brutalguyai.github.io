@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 690" width="1200" height="690" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+    <style>
+      .title { font-size: 15px; font-weight: 700; fill: #0f172a; }
+      .sub   { font-size: 12px; fill: #475569; }
+      .lbl   { font-size: 12px; fill: #334155; }
+      .flow  { fill: none; stroke: #475569; stroke-width: 2; marker-end: url(#arrow); }
+      .dash  { stroke-dasharray: 6 5; }
+      .client  { fill: #dbeafe; stroke: #3b82f6; stroke-width: 2; }
+      .backend { fill: #ede9fe; stroke: #8b5cf6; stroke-width: 2; }
+      .data    { fill: #dcfce7; stroke: #22c55e; stroke-width: 2; }
+      .async   { fill: #ffedd5; stroke: #f97316; stroke-width: 2; }
+      .ext     { fill: #f1f5f9; stroke: #64748b; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="690" fill="#ffffff"/>
+  <text x="60" y="38" font-size="22" font-weight="700" fill="#0f172a">Expense-splitting app: architecture</text>
+
+  <!-- ============ Arrows (drawn first so boxes sit on top) ============ -->
+
+  <!-- React -> Google sign-in -->
+  <path class="flow" d="M170,300 L170,110 L420,110"/>
+  <text class="lbl" x="295" y="100" text-anchor="middle">Sign in with Google</text>
+
+  <!-- React -> API -->
+  <path class="flow" d="M280,345 L420,345"/>
+  <text class="lbl" x="350" y="335" text-anchor="middle">HTTPS / JSON</text>
+
+  <!-- API -> Google (token verification) -->
+  <path class="flow dash" d="M540,290 L540,150"/>
+  <text class="lbl" x="552" y="225">verifies ID token</text>
+
+  <!-- API -> Postgres -->
+  <path class="flow" d="M660,305 L750,305 L750,115 L840,115"/>
+  <text class="lbl" x="762" y="210">reads / writes</text>
+
+  <!-- API -> S3 -->
+  <path class="flow" d="M660,335 L840,335"/>
+  <text class="lbl" x="750" y="356" text-anchor="middle">uploads photos</text>
+
+  <!-- API -> Queue -->
+  <path class="flow" d="M600,400 L600,515"/>
+  <text class="lbl" x="612" y="462">enqueues OCR job</text>
+
+  <!-- API -> Email -->
+  <path class="flow" d="M460,400 L460,470 L170,470 L170,515"/>
+  <text class="lbl" x="315" y="460" text-anchor="middle">email when someone owes</text>
+
+  <!-- Queue -> Worker -->
+  <path class="flow" d="M740,560 L840,560"/>
+  <text class="lbl" x="790" y="550" text-anchor="middle">pulls jobs</text>
+
+  <!-- Worker -> S3 -->
+  <path class="flow" d="M900,515 L900,380"/>
+  <text class="lbl" x="912" y="452">reads photo</text>
+
+  <!-- Worker -> Postgres -->
+  <path class="flow" d="M1100,545 L1150,545 L1150,115 L1100,115"/>
+  <text class="lbl" transform="translate(1171,330) rotate(-90)" text-anchor="middle">saves parsed items</text>
+
+  <!-- ============ Boxes ============ -->
+
+  <!-- Google -->
+  <rect class="ext" x="420" y="70" width="240" height="80" rx="10"/>
+  <text class="title" x="540" y="104" text-anchor="middle">Google Sign-In</text>
+  <text class="sub" x="540" y="125" text-anchor="middle">OAuth / OpenID Connect</text>
+
+  <!-- React -->
+  <rect class="client" x="60" y="300" width="220" height="90" rx="10"/>
+  <text class="title" x="170" y="338" text-anchor="middle">React web app</text>
+  <text class="sub" x="170" y="360" text-anchor="middle">runs in the browser</text>
+
+  <!-- API -->
+  <rect class="backend" x="420" y="290" width="240" height="110" rx="10"/>
+  <text class="title" x="540" y="337" text-anchor="middle">Node API</text>
+  <text class="sub" x="540" y="359" text-anchor="middle">auth, expenses, balances</text>
+
+  <!-- Postgres -->
+  <rect class="data" x="840" y="70" width="260" height="90" rx="10"/>
+  <text class="title" x="970" y="108" text-anchor="middle">Postgres</text>
+  <text class="sub" x="970" y="130" text-anchor="middle">users, groups, expenses</text>
+
+  <!-- S3 -->
+  <rect class="data" x="840" y="290" width="260" height="90" rx="10"/>
+  <text class="title" x="970" y="328" text-anchor="middle">Amazon S3</text>
+  <text class="sub" x="970" y="350" text-anchor="middle">receipt photos</text>
+
+  <!-- Queue -->
+  <rect class="async" x="500" y="515" width="240" height="90" rx="10"/>
+  <text class="title" x="620" y="553" text-anchor="middle">Message queue</text>
+  <text class="sub" x="620" y="575" text-anchor="middle">receipts awaiting OCR (e.g. SQS)</text>
+
+  <!-- Worker -->
+  <rect class="async" x="840" y="515" width="260" height="90" rx="10"/>
+  <text class="title" x="970" y="553" text-anchor="middle">OCR worker</text>
+  <text class="sub" x="970" y="575" text-anchor="middle">reads text from receipts</text>
+
+  <!-- Email -->
+  <rect class="ext" x="60" y="515" width="220" height="90" rx="10"/>
+  <text class="title" x="170" y="553" text-anchor="middle">Email service</text>
+  <text class="sub" x="170" y="575" text-anchor="middle">notifications (e.g. SES)</text>
+
+  <!-- ============ Legend ============ -->
+  <g transform="translate(60,642)">
+    <rect class="client" x="0" y="0" width="16" height="16" rx="3"/>
+    <text class="lbl" x="22" y="13">Client</text>
+    <rect class="backend" x="80" y="0" width="16" height="16" rx="3"/>
+    <text class="lbl" x="102" y="13">API</text>
+    <rect class="data" x="150" y="0" width="16" height="16" rx="3"/>
+    <text class="lbl" x="172" y="13">Storage</text>
+    <rect class="async" x="245" y="0" width="16" height="16" rx="3"/>
+    <text class="lbl" x="267" y="13">Async processing</text>
+    <rect class="ext" x="395" y="0" width="16" height="16" rx="3"/>
+    <text class="lbl" x="417" y="13">External service</text>
+    <line x1="545" y1="8" x2="585" y2="8" stroke="#475569" stroke-width="2" stroke-dasharray="6 5"/>
+    <text class="lbl" x="593" y="13">Auth check</text>
+  </g>
+</svg>
