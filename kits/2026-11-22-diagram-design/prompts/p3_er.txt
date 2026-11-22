@@ -1,0 +1,1 @@
+Draw the data model for my link-in-bio site with analytics: users, pages, links, click events, and daily stats per link.
