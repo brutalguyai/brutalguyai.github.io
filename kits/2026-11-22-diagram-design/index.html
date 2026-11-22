@@ -1,0 +1,46 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Brutal Test Kit: diagram-design, "editorial diagrams, no Mermaid slop"</title>
+<style>body{font-family:Inter,system-ui,sans-serif;background:#b4c6d6;color:#1b2733;margin:0;padding:24px}main{max-width:760px;margin:auto;background:#f3f3f4;border-radius:20px;padding:28px}h1{font-size:28px}h2{margin-top:28px}code,pre{background:#1b2733;color:#f3f3f4;border-radius:10px;padding:2px 6px}pre{padding:14px;overflow:auto;white-space:pre-wrap}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #c9d3dc;padding:8px;text-align:left;vertical-align:top}.v{display:inline-block;border:4px solid #2e8b57;color:#2e8b57;font-weight:800;padding:6px 14px;border-radius:10px;transform:rotate(-3deg)}small{color:#55626e}img{max-width:100%;border-radius:10px;border:1px solid #c9d3dc}</style></head><body><main>
+<h1>Brutal Test Kit: cathrynlavery/diagram-design, "editorial diagrams, no Mermaid slop"</h1>
+<p><span class="v">LEGIT*</span> <small>*it does what the README says. Watch the token cost, and check what it cut.</small></p>
+<p>Tested 22 Nov 2026 on commit d7b0176. Model: Claude Sonnet 5.5 on my own API key. Same 3 prompts, run once plain and once with the skill (the data-model prompt twice each): 4 plain runs and 4 skill runs.</p>
+<p><b>How the skill was loaded:</b> a small harness (<a href="dd_harness.py">dd_harness.py</a>) that calls the API directly and lists the skill the way Claude Code does: its name, its own description and where SKILL.md is. The model decides on its own whether to read it. The plain runs are identical except that no skill is listed. This is <b>not</b> Claude Code itself. Both modes had the same tools (read/write files, run Python, fetch a URL). Playwright wasn't installed, so the skill skipped its own "render and look" step and said so.</p>
+<h2>The prompts (mini projects, not toys)</h2>
+<ul><li><a href="prompts/p1_architecture.txt">Architecture</a>: an expense-splitting app (Google sign-in, Postgres, S3 receipts, OCR worker on a queue, email)</li>
+<li><a href="prompts/p2_sequence.txt">Sequence</a>: paying for a salon booking with UPI through Razorpay, including a duplicate webhook</li>
+<li><a href="prompts/p3_er.txt">Data model</a>: a link-in-bio site with analytics</li></ul>
+<h2>What happened</h2>
+<table><tr><th>Run</th><th>Output</th><th>Tokens*</th><th>Time</th></tr>
+<tr><td>plain, architecture</td><td>hand-written SVG, 5 colours</td><td>17,392</td><td>109 s</td></tr>
+<tr><td>skill, architecture</td><td>HTML + SVG, 1 accent</td><td>377,847</td><td>293 s</td></tr>
+<tr><td>plain, sequence</td><td>Mermaid</td><td>9,404</td><td>27 s</td></tr>
+<tr><td>skill, sequence</td><td>HTML + SVG</td><td>406,402</td><td>243 s</td></tr>
+<tr><td>plain, data model (x2)</td><td>Mermaid, Mermaid</td><td>6,972 / 6,818</td><td>18 s / 18 s</td></tr>
+<tr><td>skill, data model (x2)</td><td>HTML + SVG, HTML + SVG</td><td>434,937 / 462,090</td><td>207 s / 197 s</td></tr></table>
+<p><small>*input + cache reads + cache writes + output, as the API reports them (<a href="logs/tokens.jsonl">tokens.jsonl</a>). One interrupted call during the skill architecture run isn't in the log, so that total is slightly low.</small></p>
+<h2>What held up</h2>
+<ul><li><b>51 diagram types:</b> 51 type references ship in the skill (the GitHub About line still says 45).</li>
+<li><b>One self-contained HTML file:</b> 4/4, no JavaScript, no shadows. The only network request is Google Fonts, which the README discloses.</li>
+<li><b>4px grid:</b> all 54 node boxes in the 4 skill diagrams have x, y, width and height divisible by 4.</li>
+<li><b>Its own checks:</b> the skill ran self_check.py and verify_geometry.py itself in 4/4 runs. I re-ran both: 0 findings.</li>
+<li><b>Loads by itself:</b> read SKILL.md first in 4 of 4 skill runs.</li>
+<li><b>"No Mermaid slop":</b> plain Sonnet answered in Mermaid in 3 of 4 runs.</li></ul>
+<h2>The catches</h2>
+<ul><li><b>Tokens:</b> 22x to 68x more than plain for the same prompt (62x on the first data-model pair). Most of it is the skill reading SKILL.md plus 6-9 reference files, then carrying them through every turn.</li>
+<li><b>It cuts detail on purpose</b> ("target density 4/10", max 5 lifelines in a sequence). In the UPI sequence, the skill version left out the webhook signature check. Razorpay's docs say to verify <code>X-Razorpay-Signature</code> on every webhook. The plain Mermaid version kept it, plus "don't trust the browser callback" and a DB-down retry path.</li>
+<li><b>First-use pause:</b> 4/4 skill runs stopped to ask about brand/style before drawing. The harness answered "Proceed with the default style."</li>
+<li><b>Slower:</b> about 3-5 minutes per diagram vs 18 s to 2 min plain.</li>
+<li><b>Empty band:</b> every skill diagram had a large blank space between the title and the diagram.</li>
+<li><b>The README's own advice:</b> for docs that live in Git and change every sprint, Mermaid is still the better fit.</li></ul>
+<h2>See them side by side</h2>
+<p>Data model, plain vs skill:</p><p><img src="renders/plain-er-1.jpg" alt="plain"> <img src="renders/skill-er-1.jpg" alt="skill"></p>
+<p>UPI sequence, plain vs skill:</p><p><img src="renders/plain-seq-1.jpg" alt="plain"> <img src="renders/skill-seq-1.jpg" alt="skill"></p>
+<h2>Do it yourself</h2>
+<pre>npx skills add cathrynlavery/diagram-design
+# then ask your agent, e.g.:
+"Draw the data model for my link-in-bio site with analytics: users, pages, links, click events, and daily stats per link."</pre>
+<h2>Files</h2>
+<ul><li><a href="RESULTS.md">RESULTS.md</a>: every number and where it comes from</li>
+<li>All 8 outputs: <a href="outputs/plain-arch-1-architecture.svg">plain-arch-1-architecture.svg</a> · <a href="outputs/plain-er-1-data-model.md">plain-er-1-data-model.md</a> · <a href="outputs/plain-er-2-data-model.md">plain-er-2-data-model.md</a> · <a href="outputs/plain-seq-1-upi-booking-payment.md">plain-seq-1-upi-booking-payment.md</a> · <a href="outputs/skill-arch-1-expense-splitting-architecture.html">skill-arch-1-expense-splitting-architecture.html</a> · <a href="outputs/skill-er-1-link-in-bio-data-model.html">skill-er-1-link-in-bio-data-model.html</a> · <a href="outputs/skill-er-2-link-in-bio-data-model.html">skill-er-2-link-in-bio-data-model.html</a> · <a href="outputs/skill-seq-1-sequence-upi-booking.html">skill-seq-1-sequence-upi-booking.html</a> <small>(plain .md files are Mermaid)</small></li>
+<li>Full run logs, every message and tool call: <a href="logs/plain-arch-1.json">plain-arch-1.json</a> · <a href="logs/plain-er-1.json">plain-er-1.json</a> · <a href="logs/plain-er-2.json">plain-er-2.json</a> · <a href="logs/plain-seq-1.json">plain-seq-1.json</a> · <a href="logs/skill-arch-1.json">skill-arch-1.json</a> · <a href="logs/skill-er-1.json">skill-er-1.json</a> · <a href="logs/skill-er-2.json">skill-er-2.json</a> · <a href="logs/skill-seq-1.json">skill-seq-1.json</a> · <a href="logs/tokens.jsonl">tokens.jsonl</a></li>
+<li>Harness: <a href="dd_harness.py">dd_harness.py</a> · renders: <a href="renders/plain-arch-1.jpg">plain-arch-1.jpg</a> · <a href="renders/plain-er-1.jpg">plain-er-1.jpg</a> · <a href="renders/plain-er-2.jpg">plain-er-2.jpg</a> · <a href="renders/plain-seq-1.jpg">plain-seq-1.jpg</a> · <a href="renders/skill-arch-1.jpg">skill-arch-1.jpg</a> · <a href="renders/skill-er-1.jpg">skill-er-1.jpg</a> · <a href="renders/skill-er-2.jpg">skill-er-2.jpg</a> · <a href="renders/skill-seq-1.jpg">skill-seq-1.jpg</a></li></ul>
+<p><small>brutal guy.ai tests the claim so you don't have to. Claims quoted from the diagram-design README.</small></p></main></body></html>
