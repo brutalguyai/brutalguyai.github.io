@@ -1,0 +1,110 @@
+== App Store Compliance Guard ==
+Project. ./apps/var_stripe
+Rule pack. v2.5.1. Its 112 dated sources were verified between 2026-07-13 and 2026-11-22 (newest 1 days ago). The checks run against this dated snapshot, not the live guideline pages.
+Rule pack. 2 of 112 dated sources were last verified more than 60 days ago, so their rules may have changed since. Each one carries its date as verified_on in data/regulatory-deadlines.json.
+Apps. 2 app roots, each scanned on its own
+
+App. ./apps/var_stripe/android
+Platforms. iOS=0 Android=1 Web=0
+Frameworks. Flutter=0 ReactNative/Expo=0 Ionic/Capacitor/Cordova=0 Unity=0 MAUI=0 Tauri=0 KotlinMultiplatform=0
+
+  [CRITICAL] GOOGLE-PERM-SMS-CALLLOG  SMS or Call Log permission declared
+      file. app/src/main/AndroidManifest.xml:5
+      fix. Use the permissions declaration for an approved core use case, or drop it.
+  [CRITICAL] GOOGLE-TARGET-API  targetSdk is 34, below the API 36 floor Play enforces for new apps and updates since 31 August 2026
+      file. app/build.gradle:11
+      fix. Target API 36 or higher (Wear OS and Automotive 35, TV and XR 34), or request the Play Console extension available until 1 November 2026.
+  [CRITICAL] ANDROID-USER-DATA-DISCLOSURE  Missing prominent disclosure for sensitive user data
+      file. app/src/main/AndroidManifest.xml:5
+      fix. Provide a prominent in-app disclosure before collecting sensitive personal data, and obtain explicit user consent.
+  [HIGH]     ANDROID-R8-OPTIMIZATION-MISSING  No release build type with minifyEnabled true
+      fix. Enable R8 (isMinifyEnabled = true, isShrinkResources = true) in the release build type before February 2027.
+  [HIGH]     GOOGLE-MISSING-PRIVACY-POLICY  No privacy policy reference found
+      fix. Publish a privacy policy and set its URL in the Play Console store listing.
+  [MEDIUM]   GOOGLE-12-TESTER-RULE  Verify the closed testing requirement
+      fix. A new personal account needs 12 testers over 14 consecutive days before production.
+
+Manual checks for android. Not attested. The scan proves code, config and manifests only. It cannot prove a working demo account, a live backend, review notes, screenshots of this build, account deletion on a real device, privacy labels that match runtime, or an in-app purchase the reviewer can reach. Copy templates/app-review-readiness.json to the app folder and record each one.
+App. ./apps/var_stripe/ios
+Platforms. iOS=1 Android=0 Web=0
+Frameworks. Flutter=0 ReactNative/Expo=0 Ionic/Capacitor/Cordova=0 Unity=0 MAUI=0 Tauri=0 KotlinMultiplatform=0
+
+  [CRITICAL] APPLE-5.1.1-NO-ACCOUNT-DELETION  Account creation found but no in app account deletion
+      file. SplitBill/LoginView.swift:4
+      fix. Add an in app account deletion flow (Apple 5.1.1(v)).
+  [CRITICAL] APPLE-5.1.1-MISSING-USAGE-DESCRIPTION  Camera used without NSCameraUsageDescription
+      file. SplitBill/ReceiptScanner.swift:10
+      fix. Add NSCameraUsageDescription with a specific reason.
+  [CRITICAL] APPLE-3.1.1-EXTERNAL-PAYMENT  External payment SDK without StoreKit
+      file. SplitBill/PremiumView.swift:2
+      fix. Route digital goods through in app purchase unless the app is a documented exempt category (Apple 3.1.1).
+  [CRITICAL] APPLE-PRIVACY-MANIFEST-MISSING  Required reason APIs or SDKs present but no PrivacyInfo.xcprivacy
+      file. SplitBill/SplitBillApp.swift:16
+      fix. Add a privacy manifest with approved reason codes and tracking domains, and confirm each SDK ships its signed manifest.
+  [HIGH]     BOTH-PLACEHOLDER  Placeholder content (lorem ipsum, example.com, dummy text) found in sources
+      file. SplitBill/Analytics.swift:8
+      fix. Replace placeholder text and assets with real content.
+  [HIGH]     APPLE-4.8-SOCIAL-LOGIN-ONLY  Third party social login without Sign in with Apple
+      file. SplitBill/LoginView.swift:2
+      fix. Add Sign in with Apple or an equal privacy preserving login (Apple 4.8).
+  [HIGH]     APPLE-5.1.2-MISSING-ATT  Tracking SDK without App Tracking Transparency, missing NSUserTrackingUsageDescription in Info.plist or the build settings and the ATTrackingManager.requestTrackingAuthorization call
+      file. SplitBill/Analytics.swift:7
+      fix. Call the ATT prompt and add NSUserTrackingUsageDescription, both are required (Apple 5.1.2).
+  [HIGH]     APPLE-5.1.1-MISSING-PRIVACY-POLICY  No privacy policy reference found in sources
+      fix. Publish a privacy policy, link it in App Store Connect, and reach it from inside the app.
+  [HIGH]     BOTH-UNSAFE-DEEPLINK  Custom URL deep link schemes declared without Universal Links configuration
+      file. SplitBill/Info.plist:11
+      fix. Configure Universal Links (iOS) using apple-app-site-association verification to prevent URL hijacking.
+  [HIGH]     APPLE-EXPORT-COMPLIANCE-MISSING  ITSAppUsesNonExemptEncryption not set
+      fix. Set it in Info.plist or the build stalls in Missing Compliance and never reaches review.
+  [MEDIUM]   APPLE-5.1.2-AI-NO-CONSENT-MODAL  Third party AI integration detected
+      file. SplitBill/ReceiptScanner.swift:19
+      fix. If personal data is sent, show a consent modal naming the AI provider and data types (Apple 5.1.2).
+  [MEDIUM]   APPLE-ACCESSIBILITY-HAPTICS  Taps or button interactions without tactile feedback
+      file. SplitBill/GroupsView.swift:12
+      fix. Integrate haptic feedback generators to improve interaction accessibility (Apple Design - Accessibility).
+  [MEDIUM]   APPLE-2.3-AGE-RATING-2026  Verify the 2026 age rating questionnaire
+      fix. Answer the updated age rating questions (13 plus, 16 plus, 18 plus) in App Store Connect.
+
+Manual checks for ios. Not attested. The scan proves code, config and manifests only. It cannot prove a working demo account, a live backend, review notes, screenshots of this build, account deletion on a real device, privacy labels that match runtime, or an in-app purchase the reviewer can reach. Copy templates/app-review-readiness.json to the app folder and record each one.
+
+== Regulatory Compliance Deadline Status ==
+[HIGH] in 8 days. Google Play (Japan). Play Console payments authorization for developers selling into or out of Japan (policy announcement 29 October 2026) (mandatory 2026-12-01)
+[HIGH] in 9 days. European Union (EU). EU AI Act, Regulation (EU) 2024/1689 as amended by Regulation (EU) 2026/1744, Article 111(4) and Article 5(1)(ba), (bb), (1a) and (1b) (mandatory 2026-12-02)
+[LOW] in 10 days. Apple App Store (Botswana, Colombia, Egypt, Rwanda, Türkiye). Apple tax and price update, 17 November 2026 (Apple Developer news 4o5ie73a) (mandatory 2026-12-03)
+[MEDIUM] in 16 days. European Union (EU). Product Liability Directive (EU) 2024/2853, Articles 21 and 22 (mandatory 2026-12-09)
+[HIGH] in 17 days. Australia. Privacy Act 1988 APP 1.7 to 1.9, inserted by the Privacy and Other Legislation Amendment Act 2024 (mandatory 2026-12-10)
+[HIGH] in 17 days. Australia. Children's Online Privacy Code under the Privacy Act 1988 (mandatory 2026-12-10)
+[HIGH] in 38 days. Indonesia. Government Regulation No. 17 of 2025 (PP TUNAS) and Minister of Communication and Digital Regulation No. 9 of 2026 (mandatory 2026-12-31)
+[CRITICAL] in 39 days. Alabama (USA State). Alabama HB 161 (App Store Accountability Act) (mandatory 2027-01-01)
+[HIGH] in 39 days. United Kingdom (UK). Digital Markets, Competition and Consumers Act 2024, Part 4 Chapter 2 subscription contracts regime (mandatory 2027-01-01)
+[HIGH] in 39 days. Brazil. ANPD Digital ECA roadmap, Etapa II and III (mandatory 2027-01-01)
+[CRITICAL] in 39 days. California (USA State). AB 1043, Digital Age Assurance Act, Civil Code Title 1.81.9 (mandatory 2027-01-01)
+[HIGH] in 39 days. California (USA State). SB 976, Protecting Our Kids from Social Media Addiction Act, Health and Safety Code sections 27001 to 27006 (mandatory 2027-01-01)
+[HIGH] in 39 days. California (USA State). AB 56, Health and Safety Code Chapter 25 from section 28000 (mandatory 2027-01-01)
+[HIGH] in 39 days. California (USA State). CPPA regulations, 11 CCR section 7200(b), 7155(b), 7157(a)(1), 7121(a) (mandatory 2027-01-01)
+[HIGH] in 39 days. Vermont (USA State). Age-Appropriate Design Code Act, Act 63 (mandatory 2027-01-01)
+[HIGH] in 39 days. Washington (USA State). HB 2225, Chapter 168, Laws of 2026, regulating artificial intelligence companion chatbots (mandatory 2027-01-01)
+[MEDIUM] in 39 days. Oklahoma (USA State). SB 546, Oklahoma Consumer Data Privacy Act (mandatory 2027-01-01)
+[HIGH] in 39 days. Apple App Store (Global). App Store Connect release notes, 12 November 2026 (mandatory 2027-01-01)
+[MEDIUM] in 39 days. Apple App Store (United States, California). Apple tax and price update, 17 November 2026 (Apple Developer news 4o5ie73a) (mandatory 2027-01-01)
+[MEDIUM] in 50 days. European Union (EU). Data Act, Regulation (EU) 2023/2854, Article 29(1) (mandatory 2027-01-12)
+[HIGH] in 50 days. Apple App Store (Global). Apple age rating content descriptors, Shared Location and Dating and Relationships (Apple Developer news yxkh08us) (mandatory 2027-01-12)
+[CRITICAL] in 63 days. New York (USA State). Stop Addictive Feeds Exploitation (SAFE) for Kids Act, AG final rules published 29 July 2026 (mandatory 2027-01-25)
+[HIGH] in 65 days. Google Play (Global). Contacts Permissions, Location Permissions, and Foreground Service policy changes for apps targeting Android 17, API level 37 (Play Console Help answers 16909972 and 16965181) (mandatory 2027-01-27)
+[MEDIUM] in 65 days. Google Play (Global). Subscriptions policy, subscriptions with ongoing eligibility-based discounts (announced 29 October 2026) (mandatory 2027-01-27)
+[MEDIUM] in 69 days. United Kingdom (UK). Online Safety Act 2023, Ofcom statutory report on the use of app stores by children (mandatory 2027-01-31)
+[HIGH] in 69 days. Apple App Store (China mainland). App Store Connect China mainland compliance declarations (AI-Generated or Synthetic Content, and Security Assessment) (mandatory 2027-01-31)
+[HIGH] in 70 days. Google Play (Global). Play Console technical quality requirements. memory, bitmap, and DEX optimization thresholds (Play Console Help answer 17492799) (mandatory 2027-02-01)
+[HIGH] in 70 days. Apple App Store (Global). Original Developer ID Certification Authority (Sub-CA) expiry (Apple Developer news w4atic4c) (mandatory 2027-02-01)
+[CRITICAL] in 70 days. Google Play (Global). Play Console trader status declaration under EEA and UK law (Play Console Help answer 17594752) (mandatory 2027-02-01)
+58 passed deadline(s) already carried by the playbook, not listed.
+Full detail. python3 ./repo/scripts/deadline-checker.py
+
+Summary. critical=7 high=8 medium=4
+Coverage. complete ios=1 android=1 web=0
+Scan time. 3s
+Reference. docs/ in the app-store-compliance repo, and data/rejection-patterns.json
+
+BLOCKED. 7 critical rejection risk(s) above. Fix them, or set APP_STORE_GUARD_OK=1 to override.
+Next. Fix each [CRITICAL] line using its fix. line, then run the same command again.
