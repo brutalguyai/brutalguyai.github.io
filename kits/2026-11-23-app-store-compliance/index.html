@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Brutal Test Kit: app-store-compliance, "catch rejections before the reviewer does"</title>
+<style>body{font-family:Inter,system-ui,sans-serif;background:#b4c6d6;color:#1b2733;margin:0;padding:24px}main{max-width:760px;margin:auto;background:#f3f3f4;border-radius:20px;padding:28px}h1{font-size:28px}h2{margin-top:28px}code,pre{background:#1b2733;color:#f3f3f4;border-radius:10px;padding:2px 6px}pre{padding:14px;overflow:auto;white-space:pre-wrap}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #c9d3dc;padding:8px;text-align:left;vertical-align:top}.v{display:inline-block;border:4px solid #2e8b57;color:#2e8b57;font-weight:800;padding:6px 14px;border-radius:10px;transform:rotate(-3deg)}small{color:#55626e}.n{color:#c2272d;font-weight:700}.y{color:#2e8b57;font-weight:700}</style></head><body><main>
+<h1>Brutal Test Kit: mjmirza/app-store-compliance, "catch App Store and Google Play rejection causes before the reviewer does"</h1>
+<p><span class="v">LEGIT*</span> <small>*free, 3-second, read-only scan that caught 8 of my 12 planted traps. It missed 4, including Premium sold through Razorpay. CLEAR is not an approval.</small></p>
+<p>Tested 23 Nov 2026 on commit <code>ad76746</code> (v2.5.1). The scanner is a bash script: no AI, no API key, 0 tokens. I ran it by hand exactly as the README's "Start here" says: <code>bash agent-os/hooks/app-store-compliance-guard.sh "&lt;app folder&gt;"</code>, on a Linux VM.</p>
+<h2>The test app (a mini project, not a toy)</h2>
+<p><b>SplitBill</b>, an expense splitter for trips and flats, iOS (SwiftUI) + Android (Kotlin): Google login, receipt photo read by OpenAI, a Rs 199 Premium (unlimited groups + CSV export), and bank-SMS reading to auto-mark UPI settlements. I hid 12 well-known rejection causes in it (<a href="GROUND_TRUTH.md">GROUND_TRUTH.md</a>), then made a fixed copy with all 12 fixed. It's a static test project: it is scanned, not built or submitted.</p>
+<p>Download: <a href="splitbill_apps.tgz">splitbill_apps.tgz</a> (trap app, fixed app, and the 4 one-change variants below).</p>
+<h2>Trap app: 8 of 12 caught (same findings in 3 of 3 runs)</h2>
+<table><tr><th>#</th><th>Planted trap</th><th>Result</th></tr>
+<tr><td>T1</td><td>Camera used, no NSCameraUsageDescription (Apple 5.1.1)</td><td class="y">CRITICAL, ReceiptScanner.swift:10</td></tr>
+<tr><td>T2</td><td>UserDefaults used, no PrivacyInfo.xcprivacy</td><td class="y">CRITICAL, SplitBillApp.swift:16</td></tr>
+<tr><td>T3</td><td>Login, no in-app account deletion (Apple 5.1.1(v))</td><td class="y">CRITICAL, LoginView.swift:4</td></tr>
+<tr><td>T4</td><td>Google is the only login (Apple 4.8)</td><td class="y">HIGH, LoginView.swift:2</td></tr>
+<tr><td>T5</td><td>Digital Premium sold via a Razorpay link, no In-App Purchase (Apple 3.1.1)</td><td class="n">not flagged</td></tr>
+<tr><td>T6</td><td>Receipt photo sent to OpenAI, no consent (Apple 5.1.2(i))</td><td class="y">MEDIUM, "Third party AI integration detected"</td></tr>
+<tr><td>T7</td><td>Release build points at https://staging-api.splitbill.dev (Apple 2.1)</td><td class="n">not flagged</td></tr>
+<tr><td>T8</td><td>IDFA read, no App Tracking Transparency (Apple 5.1.2)</td><td class="y">HIGH, Analytics.swift:7</td></tr>
+<tr><td>A1</td><td>targetSdk 34</td><td class="y">CRITICAL, build.gradle:11</td></tr>
+<tr><td>A2</td><td>READ_SMS / RECEIVE_SMS, not the default SMS app</td><td class="y">CRITICAL, AndroidManifest.xml:5</td></tr>
+<tr><td>A3</td><td>No in-app account deletion (Android)</td><td class="n">not flagged</td></tr>
+<tr><td>A4</td><td>Receipt photo to a third-party AI, no prominent disclosure (Android)</td><td class="n">not flagged (a disclosure finding fired, but on the SMS permission line)</td></tr></table>
+<p>Scan time 2.9-4.0 s per run. Every file in the app had the same sha256 before and after 3 runs: it changed nothing.</p>
+<h2>Why it missed what it missed</h2>
+<ul><li><b>Razorpay.</b> The iOS payment check (guard line 1044) is <code>grep_has 'Stripe|PayPalCheckout|braintree|razorpay'</code>, which is case-sensitive. A payment link has none of those words. I then swapped in Razorpay's real iOS SDK (<code>import Razorpay</code>, <code>RazorpayCheckout</code>): <span class="n">still not flagged</span>, 3/3. Same app with Stripe (<code>import StripePaymentSheet</code>): <span class="y">CRITICAL 3.1.1</span>, 3/3. Same app with lowercase "razorpay" in the file: <span class="y">caught</span>, 3/3.</li>
+<li><b>Staging URL.</b> The check matches <code>staging\.[a-z]</code> (line 912). <code>staging.splitbill.dev</code> is caught (3/3); <code>staging-api.splitbill.dev</code> is not.</li>
+<li><b>Android account deletion.</b> The pattern <code>ANDROID-ACCOUNT-DELETION-URL</code> is in data/rejection-patterns.json but appears nowhere in the guard script.</li>
+<li><b>The 124.</b> data/rejection-patterns.json has exactly 124 patterns (38 critical). 87 of the 124 IDs appear in the guard script; 37 don't. The guard's checks are hard-coded; it doesn't read that file to run them.</li></ul>
+<h2>Fixed app: CLEAR, plus 3 HIGH warnings that didn't apply</h2>
+<p>0 critical, exit 0 (3/3 runs). It still printed: no privacy policy (the Android settings screen links https://splitbill.app/privacy), "UserDefaults used for sensitive credentials" (it matched the word "credential" in the Sign in with Apple code; UserDefaults only holds a user ID), and a Universal Links warning for the URL scheme Google Sign-In needs. The AI-consent reminder (MEDIUM) also stays even with a consent alert naming OpenAI.</p>
+<h2>Hook mode</h2>
+<p>Fed Claude Code's hook JSON on stdin: trap app + <code>fastlane ios release</code> or <code>eas submit -p ios</code> = exit 2 (block); <code>git status</code> = exit 0, silent. Fixed app: exit 0 for all. Not tested inside a live Claude Code session.</p>
+<h2>Not tested</h2>
+<p>A real App Store or Play review. Flutter / React Native / Expo projects, the monitors, install.sh, and the /app-store-audit AI prompt.</p>
+<h2>Files</h2>
+<ul><li><a href="RESULTS.md">RESULTS.md</a>: full results</li><li><a href="GROUND_TRUTH.md">GROUND_TRUTH.md</a>: the 12 traps and the fixes</li><li><a href="runs.tgz">runs.tgz</a>: every scan log (trap, clean, each variant x3, hook mode)</li><li>Key logs: <a href="runs/trap_1.txt">trap_1</a> · <a href="runs/clean_1.txt">clean_1</a> · <a href="runs/var_sdk_1.txt">razorpay SDK</a> · <a href="runs/var_stripe_1.txt">stripe</a> · <a href="runs/var_rzlow_1.txt">lowercase razorpay</a> · <a href="runs/var_dot_1.txt">staging.</a></li>
+<li>Repo: <a href="https://github.com/mjmirza/app-store-compliance">github.com/mjmirza/app-store-compliance</a></li></ul>
+<p><small>brutal guy.ai · Instagram @brutal_guy.ai · YouTube @brutal_guy_ai</small></p>
+</main></body></html>
