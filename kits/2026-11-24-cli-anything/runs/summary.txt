@@ -1,0 +1,18 @@
+plain_1: files 3/3, sheets ['Expenses', 'Summary'], formula cells 16, numbers right 10/10, turns 7, tokens 24385, CLI commands 0, read SKILL.md False
+   final: I've made the spreadsheet and saved it as `flat_expenses.ods`, with `flat_expenses.xlsx` and `flat_expenses.pdf` exported beside it. I recalculated the xlsx and checked the totals, and read the PDF back to confirm the contents.  - **Expenses sheet:** it lists all 15 expenses with date, item, amount 
+plain_2: files 3/3, sheets ['Expenses', 'Summary'], formula cells 15, numbers right 10/10, turns 9, tokens 34908, CLI commands 0, read SKILL.md False
+   final: I've made the spreadsheet and exported the `.xlsx` and `.pdf` versions. I recalculated the exported `.xlsx` and checked its numbers, and they match the figures below. I only checked the PDF's text, not how it looks on the page.  The month's total is ₹81,804.02, so each person's fair share is ₹20,451
+plain_3: files 3/3, sheets ['Expenses', 'Summary'], formula cells 16, numbers right 10/10, turns 6, tokens 22446, CLI commands 0, read SKILL.md False
+   final: I've made the spreadsheet and exported it. Bhavna, Chirag and Divya should each pay Aarav, and that settles everything.  | Who pays | Pays Aarav (INR) | |---|---| | Bhavna | 14,583.19 | | Chirag | 9,182.40 | | Divya | 11,072.01 | | **Total** | **34,837.60** |  November's expenses came to ₹81,804.02,
+cli_1: files 3/3, sheets ['Expenses', 'Summary'], formula cells 16, numbers right 10/10, turns 7, tokens 31146, CLI commands 2, read SKILL.md True
+   final: I've saved `flat_expenses.ods` and exported `flat_expenses.xlsx` and `flat_expenses.pdf` in the folder. I checked the Summary figures by converting the saved file back out, and the PDF shows the same numbers.  The Expenses sheet lists all 15 expenses with date, item, amount in INR and who paid, plus
+cli_2: files 3/3, sheets ['Expenses', 'Summary'], formula cells 16, numbers right 10/10, turns 10, tokens 61845, CLI commands 1, read SKILL.md True
+   final: I've built the spreadsheet and exported all three files in this folder: `flat_expenses.ods`, `flat_expenses.xlsx` and `flat_expenses.pdf`.  - **Expenses sheet:** all 15 expenses with date, item, amount (INR) and who paid, plus a total row. The total is ₹81,804.02. - **Summary sheet:** a row per pers
+cli_3: files 3/3, sheets ['Expenses', 'Summary'], formula cells 16, numbers right 10/10, turns 8, tokens 39848, CLI commands 1, read SKILL.md True
+   final: I made `flat_expenses.ods` and exported `flat_expenses.xlsx` and `flat_expenses.pdf` in the folder.  - **Expenses sheet:** it has all 15 expenses with date, item, amount (INR) and who paid, plus a total row. - **Summary sheet:** it has total paid, fair share and balance for each person. These are al
+force_1: files 3/3, sheets ['Expenses', 'Summary'], formula cells 15, numbers right 0/10, turns 26, tokens 427560, CLI commands 10, read SKILL.md True
+   final: STOPPED: turns=26 tokens=427560
+force_2: files 3/3, sheets ['Expenses', 'Summary'], formula cells 13, numbers right 10/10, turns 29, tokens 400584, CLI commands 11, read SKILL.md True
+   final: STOPPED: turns=29 tokens=400584
+force_3: files 3/3, sheets ['Expenses', 'Summary'], formula cells 15, numbers right 10/10, turns 27, tokens 422814, CLI commands 12, read SKILL.md True
+   final: STOPPED: turns=27 tokens=422814
