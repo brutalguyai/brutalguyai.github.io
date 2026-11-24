@@ -1,0 +1,5 @@
+Our flat has 4 flatmates: Aarav, Bhavna, Chirag and Divya. Make a LibreOffice spreadsheet of November's shared expenses from expenses.csv in this folder.
+Sheet 1 "Expenses": every expense with date, item, amount (INR) and who paid.
+Sheet 2 "Summary": for each person, total paid, fair share (everything is split equally between the 4), and balance (paid minus share). Use spreadsheet formulas for these, not typed-in numbers.
+Save it as flat_expenses.ods, and also export flat_expenses.xlsx and flat_expenses.pdf in this folder.
+When you're done, tell me who should pay whom how much to settle up.
