@@ -1,0 +1,9 @@
+You are given mona_task.jpg in your working directory: the Mona Lisa, with a red "50% OFF" sticker pasted on the background to her left.
+
+Using Adobe Photoshop (it is installed and running on this Windows PC), produce:
+
+1. clean.png - the painting with the red sticker removed so cleanly it looks like it was never there (the landscape behind it filled in naturally).
+2. cutout.png - Mona Lisa herself (head, hair, body, hands) cut out from the background, background fully transparent. Edges should be clean.
+3. cover.psd and cover.png - a 1080x1920 Instagram Reel cover: a new background of your choice, the cut-out Mona Lisa placed large on it, and the text "FACT OR HYPE?" as an editable text layer.
+
+Rules: Photoshop must do the image editing. Do not edit pixels with Python image libraries (PIL, OpenCV, numpy etc.); you may use them only to inspect/check results. When finished, reply with a short summary of what you did and anything you could not do.
