@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Brutal Test Kit: CLI-Anything on Photoshop</title>
+<style>body{font-family:Inter,system-ui,sans-serif;background:#b4c6d6;color:#1b2733;margin:0;padding:24px}main{max-width:760px;margin:auto;background:#f3f3f4;border-radius:20px;padding:28px}h1{font-size:28px}h2{margin-top:28px}code,pre{background:#1b2733;color:#f3f3f4;border-radius:10px;padding:2px 6px}pre{padding:14px;overflow:auto;white-space:pre-wrap}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #c9d3dc;padding:8px;text-align:left;vertical-align:top}.v{display:inline-block;border:4px solid #c2272d;color:#c2272d;font-weight:800;padding:6px 14px;border-radius:10px;transform:rotate(-3deg)}small{color:#55626e}.n{color:#c2272d;font-weight:700}.y{color:#2e8b57;font-weight:700} img{max-width:100%;border-radius:12px}</style></head><body><main>
+<h1>Brutal Test Kit: HKUDS/CLI-Anything on Adobe Photoshop</h1>
+<p><span class="v">HALF-TRUE</span> <small>One generated CLI, one Windows laptop, Photoshop 2026 (v27.6). Tested 24 Nov 2026.</small></p>
+<h2>1. Building the CLI</h2>
+<p>Photoshop is not one of the 79 ready-made CLIs in the CLI-Hub registry, so I ran the repo's generator in Claude Code: <code>/plugin install cli-anything@cli-anything</code>, then <code>/cli-anything:cli-anything "C:\Program Files\Adobe\Adobe Photoshop 2026"</code>. Plain <code>/cli-anything</code> gave "Unknown command" in my session.</p>
+<p>It ran for <b>45m 43s</b> and produced about 4,800 lines that drive the real Photoshop over Windows COM plus ExtendScript. It is not a mock. I had to close a Photoshop pop-up and a leftover test file before its own tests could run. Generated code: <a href="photoshop/photoshop_cli_generated.tgz">photoshop_cli_generated.tgz</a>.</p>
+<h2>2. Easy job: it works</h2>
+<ul><li><a href="photoshop/run_ps_test.ps1">run_ps_test.ps1</a> is a fixed Reel layout (canvas, shape, image, text and stroke, then PNG, PSD and JPG), run 3 times.
+<ul><li>18 out of 18 commands succeeded.</li>
+<li>All three outputs are <b>pixel-identical</b>, and the pixels I sampled are exact.</li>
+<li>The PSD has a real, editable type layer.</li></ul>
+Example: <a href="photoshop/pstest_run1.png">output</a>.</li>
+<li><a href="photoshop/make_mona.ps1">make_mona.ps1</a> made the Mona Lisa poster with 37 CLI commands.
+<ul><li>The result is 24 layers, including 5 editable text layers.</li>
+<li>One <code>psd edit</code> command made the "before" version.</li>
+<li>Bug: <code>layer set -1 ...</code> fails with "No such option '-1'", so I had to use real layer numbers (<a href="photoshop/fix_mona.ps1">fix_mona.ps1</a>).</li></ul></li></ul>
+<p><img src="photoshop/mona_before.jpg" width="49%"> <img src="photoshop/mona_poster.jpg" width="49%"><br><small>The Mona Lisa is public domain (Wikimedia Commons).</small></p>
+<h2>3. Real Photoshop job: the AI goes around it</h2>
+<p>The agent was Claude Sonnet 5.5 on the Anthropic API, with only PowerShell, the generated CLI and its SKILL.md (<a href="photoshop/ps_agent.py">ps_agent.py</a>, no token cap). The task, in <a href="photoshop/task_ps.txt">task_ps.txt</a>, had three parts:</p>
+<ol><li>Remove a red sticker I pasted onto <a href="photoshop/mona_task.jpg">mona_task.jpg</a>.</li>
+<li>Cut out Mona Lisa.</li>
+<li>Make a 1080×1920 cover with an editable "FACT OR HYPE?" text layer.</li></ol>
+<table><tr><th>Run</th><th>CLI editing commands used</th><th>Raw Photoshop scripts (run-jsx)</th><th>Tokens</th></tr>
+<tr><td>1 (tainted: Photoshop was closed and the run restarted)</td><td class="n">0</td><td>27</td><td>617,587</td></tr>
+<tr><td>2</td><td class="n">0</td><td>11</td><td>417,103</td></tr>
+<tr><td>3</td><td class="n">0</td><td>17</td><td>692,216</td></tr></table>
+<ul><li><b>Why:</b> the CLI has no Select Subject, Content-Aware Fill or mask commands. So the agent wrote raw ExtendScript through <code>backend run-jsx</code> instead.</li>
+<li><b>Sticker:</b> removed 3 out of 3 times. Run 2 left a visible smudge (<a href="photoshop/sheet_clean.jpg">comparison</a>).</li>
+<li><b>Cutout:</b> 3 out of 3 have transparency, but none is clean; all left chunks of landscape (<a href="photoshop/sheet.jpg">cutouts and covers</a>).
+<ul><li>Photoshop's own Select Subject also failed when I ran it by hand on this image, so I don't blame the CLI for the cutout quality.</li>
+<li>All 3 runs used OpenCV to find the outline.</li></ul></li>
+<li><b>Pop-ups:</b> Photoshop error dialogs froze the automation <b>7 times</b> until I clicked OK. A runner bug of mine (a stdin prompt) caused one more stop, and I don't count it. See <a href="photoshop/NOTES.md">NOTES.md</a>.</li></ul>
+<p>Full logs: <a href="photoshop/agent_logs.tgz">agent_logs.tgz</a>. Every command and output is in there.</p>
+<h2>Verdict</h2>
+<p><b>Half-true.</b> The generator really builds a working Photoshop connection, and simple design jobs run cleanly and repeatably. On real Photoshop work (cutouts, fills, masks), the AI ignored the CLI 3 out of 3 times and scripted Photoshop directly. It also needed a human to click through pop-ups.</p>
+<h2>Also tested (same repo)</h2>
+<ul><li><a href="libreoffice.html">LibreOffice CLI</a>: when the AI was forced to use it, formulas broke with Err:510, and export without <code>-p</code> wrote a text document.</li>
+<li>Audacity CLI: the MP3/FLAC/OGG presets write WAV but report MP3 (core/export.py lines 203-209). Only 1 run per mode, so this one is preliminary.</li></ul>
+<p><small>brutal guy.ai · Hype Guy believes every README. Brutal Guy says "run it."</small></p>
+</main></body></html>
