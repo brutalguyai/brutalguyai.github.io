@@ -1,0 +1,5 @@
+{"intent":"product","freshness_mode":"balanced_recent","cluster_mode":"none","subqueries":[
+ {"label":"primary","search_query":"cursor ai code editor","ranking_query":"What are developers saying about Cursor, the AI code editor by Anysphere, in the last 30 days?","sources":["reddit","youtube","tiktok","instagram","hackernews","polymarket"],"weight":1.0},
+ {"label":"reviews","search_query":"cursor ai editor review","ranking_query":"How do users rate the Cursor AI code editor right now?","sources":["youtube","reddit","hackernews"],"weight":0.7},
+ {"label":"vs","search_query":"cursor vs claude code","ranking_query":"How does the Cursor AI editor compare with Claude Code?","sources":["reddit","youtube","hackernews"],"weight":0.6}],
+ "polymarket_hints":{"kind":"company","aliases":["Cursor","Anysphere"]}}
