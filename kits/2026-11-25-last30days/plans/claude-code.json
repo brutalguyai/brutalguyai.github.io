@@ -1,0 +1,4 @@
+{"intent":"product","freshness_mode":"balanced_recent","cluster_mode":"none","subqueries":[
+ {"label":"primary","search_query":"claude code","ranking_query":"What are developers saying about Claude Code, Anthropic's coding agent, in the last 30 days?","sources":["reddit","youtube","tiktok","instagram","hackernews","polymarket"],"weight":1.0},
+ {"label":"workflow","search_query":"claude code workflow tips","ranking_query":"Which Claude Code workflows are people recommending?","sources":["youtube","reddit","hackernews"],"weight":0.7}],
+ "polymarket_hints":{"kind":"product","aliases":["Claude","Anthropic"]}}
