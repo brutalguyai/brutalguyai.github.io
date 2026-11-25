@@ -1,0 +1,5 @@
+{"intent":"product","freshness_mode":"balanced_recent","cluster_mode":"none","subqueries":[
+ {"label":"primary","search_query":"kling ai video","ranking_query":"What are creators saying about Kling AI, Kuaishou's AI video generator, in the last 30 days?","sources":["reddit","youtube","tiktok","instagram","hackernews","polymarket"],"weight":1.0},
+ {"label":"reviews","search_query":"kling ai video generator review","ranking_query":"How good is the Kling AI video generator right now?","sources":["youtube","reddit","tiktok"],"weight":0.7},
+ {"label":"vs","search_query":"kling vs seedance","ranking_query":"How does Kling AI compare with Seedance and Veo for AI video?","sources":["youtube","reddit"],"weight":0.6}],
+ "polymarket_hints":{"kind":"product","aliases":["Kling"]}}
