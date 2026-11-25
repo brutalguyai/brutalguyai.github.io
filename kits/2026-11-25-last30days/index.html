@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Brutal Test Kit: last30days-skill, zero setup</title>
+<style>body{font-family:Inter,system-ui,sans-serif;background:#b4c6d6;color:#1b2733;margin:0;padding:24px}main{max-width:760px;margin:auto;background:#f3f3f4;border-radius:20px;padding:28px}h1{font-size:28px}h2{margin-top:28px}code,pre{background:#1b2733;color:#f3f3f4;border-radius:10px;padding:2px 6px}pre{padding:14px;overflow:auto;white-space:pre-wrap}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #c9d3dc;padding:8px;text-align:left;vertical-align:top}.v{display:inline-block;border:4px solid #c2272d;color:#c2272d;font-weight:800;padding:6px 14px;border-radius:10px;transform:rotate(-3deg)}small{color:#55626e}.n{color:#c2272d;font-weight:700}.y{color:#2e8b57;font-weight:700}</style></head><body><main>
+<h1>Brutal Test Kit: mvanhorn/last30days-skill with zero setup</h1>
+<p><span class="v">HALF-TRUE</span> <small>v4.6.0 (commit 7c2e1c2b), Windows laptop, home connection in India. No keys, no logins. Tested 25 Nov 2026.</small></p>
+<h2>The claim</h2>
+<p>README: "Zero config. Reddit, HN, Polymarket, and GitHub work immediately." Its setup table lists those four as needing <b>Nothing</b>. TikTok, Instagram and X need a key per the README, so I did not count them against it.</p>
+<h2>How I ran it</h2>
+<ul><li><a href="run_test.ps1">run_test.ps1</a>: the engine's own planner. "Claude Code" x3, "Kling AI", "Cursor", plus the built-in <code>doctor --probe</code>.</li>
+<li><a href="run_test2.ps1">run_test2.ps1</a>: the same engine with an agent query plan, the way Claude Code runs it (<a href="plans/cursor.json">cursor</a>, <a href="plans/kling.json">kling</a>, <a href="plans/claude-code.json">claude-code</a>). "Cursor" x2, "Kling AI" x2, "Claude Code". Reddit's 6-hour skip cache was cleared before every run, so Reddit got a fresh live try each time. It also does a plain request to Reddit from the same connection.</li>
+<li>Raw outputs: <a href="outputs_round1.tgz">round 1</a>, <a href="outputs_round2.tgz">round 2</a> (JSON results + each run's log).</li></ul>
+<h2>Results (10 runs)</h2>
+<table><tr><th>Source ("needs nothing")</th><th>Runs with results</th></tr>
+<tr><td>Hacker News</td><td class="y">8 / 10 (0 only for Kling AI)</td></tr>
+<tr><td>Polymarket</td><td>3 / 5 agent-planned runs</td></tr>
+<tr><td>GitHub</td><td>3 / 5 round-1 runs, then rate-limited / failed (unauthenticated tier)</td></tr>
+<tr><td>Reddit</td><td class="n">0 / 10. Every live try: "HTTP 403: Blocked". Web fallback: 0 threads.</td></tr></table>
+<ul><li><b>Numbers are real.</b> HN "Goldman Sachs is pulling Claude Code from its bankers and traders": tool 905 points / 497 comments, live HN 905 / 497. "1994 Jeep's ECU": 458 / 244 both.</li>
+<li><b>Reddit on my connection:</b> a plain request to reddit.com's JSON search also got 403, while the normal old.reddit.com page loaded (200). So Reddit refuses script requests from this connection. Its logged-in Reddit mode was not tested.</li>
+<li><b>"Claude Code" (agent plan):</b> 32 items (12 YouTube, 15 HN, 5 Polymarket), all inside the 30 days.</li>
+<li><b>"Kling AI" (agent plan, 2 of 2 runs):</b> 8 YouTube videos, nothing else; 4 of 8 under 25 views; 1 off-topic.</li>
+<li><b>"Cursor" without a plan:</b> a tutorial from Oct 2024 and 3 of 11 HN posts about the mouse cursor. With the agent plan: all inside the window, 1 of 14 HN still about a text cursor.</li></ul>
+<h2>Verdict</h2>
+<p><span class="v">HALF-TRUE</span> What it finds is real and exact. But with zero setup, on my connection, I got mostly YouTube and Hacker News; Reddit gave nothing in 10 of 10 runs. Full write-up: <a href="RESULTS.md">RESULTS.md</a>.</p>
+<p><small>brutal guy.ai · Hype Guy believes every README. Brutal Guy says "Run it."</small></p>
+</main></body></html>
