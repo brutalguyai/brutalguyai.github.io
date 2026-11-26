@@ -1,0 +1,26 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Brutal Test Kit: Agent Reach, with vs without</title>
+<style>body{font-family:Inter,system-ui,sans-serif;background:#b4c6d6;color:#1b2733;margin:0;padding:24px}main{max-width:780px;margin:auto;background:#f3f3f4;border-radius:20px;padding:28px}h1{font-size:28px}h2{margin-top:28px}code{background:#1b2733;color:#f3f3f4;border-radius:10px;padding:2px 6px;word-break:break-all}table{border-collapse:collapse;width:100%;font-size:15px}td,th{border-bottom:1px solid #c9d3dc;padding:6px;text-align:left}.v{display:inline-block;border:4px solid #c98a12;color:#c98a12;font-weight:800;padding:6px 14px;border-radius:10px;transform:rotate(-3deg)}small{color:#55626e}.n{color:#c2272d;font-weight:700}.y{color:#2e8b57;font-weight:700}</style></head><body><main>
+<h1>Brutal Test Kit: Panniantong/Agent-Reach, with vs without</h1>
+<p><span class="v">HALF-TRUE</span> <small>Agent Reach v1.6.1 · Claude Sonnet 5.5 on both sides · Windows laptop · no logins, no cookies, no API keys · tested 26 Nov 2026.</small></p>
+<p>Video: <a href="https://youtu.be/oSVGbNAcLvY">youtu.be/oSVGbNAcLvY</a></p>
+<h2>Setup</h2>
+<p>Installed from the official release only: <code>uv tool install --force https://github.com/Panniantong/Agent-Reach/releases/latest/download/agent-reach.zip</code>. (The README warns the PyPI package named agent-reach is <b>not</b> this project, and there is no official token/coin.)</p>
+<ul><li><a href="run_ar_phase1.ps1">run_ar_phase1.ps1</a>: install, version, setup, channels.</li>
+<li><a href="run_ar_phase2.ps1">run_ar_phase2.ps1</a> + <a href="ar_harness.py">ar_harness.py</a>: direct CLI tests (3× each) and 30 agent runs. "skill" = the agent-reach SKILL.md listed as an available skill + CLI on PATH; "plain" = no skill, agent-reach removed from PATH. Tools: run PowerShell, read file, write file; 25 turns / 120K tokens max per run.</li>
+<li><a href="cli_outputs.tgz">cli_outputs.tgz</a>: every CLI output + timings.csv. <a href="agent_logs.tgz">agent_logs.tgz</a>: every step of all 30 agent runs. <a href="RESULTS.md">RESULTS.md</a>: full write-up.</li></ul>
+<h2>Agent results (correct answers out of 3)</h2>
+<table><tr><th>Task</th><th>Without</th><th>With Agent Reach</th></tr>
+<tr><td>Summarise a YouTube video from its spoken words</td><td class="y">3/3</td><td class="n">0/3 · requested zh-Hans subs → HTTP 429, then paused ~1 h</td></tr>
+<tr><td>Top 5 V2EX hot topics</td><td class="y">3/3</td><td class="y">3/3 (identical list)</td></tr>
+<tr><td>GitHub stars + latest release</td><td class="y">3/3 · ~4.7 s, ~2.2K tokens</td><td>2/3 · 1 SSL error · ~24.9 s, ~39.6K tokens</td></tr>
+<tr><td>3 Reddit posts from the past week</td><td class="n">0/3 (403/429)</td><td class="n">0/3 (port 9222 clash; index had nothing newer than Oct 31)</td></tr>
+<tr><td>3 key points of an Anthropic article</td><td class="y">3/3</td><td class="y">3/3</td></tr>
+<tr><th>Total</th><th>9/15 · avg 11.7K tokens</th><th>8/15 · avg 33.0K tokens</th></tr></table>
+<p>Made-up answers: <b>0 of 30</b>. 11 of 15 skill runs answered in Chinese (the SKILL.md is written in Chinese).</p>
+<h2>Direct CLI, no login (3 runs each)</h2>
+<p class="y">OK: web read/search, YouTube read/subtitle/search, V2EX hot, Bilibili hot/search, Reddit public-web search.</p>
+<p class="n">Failed: GitHub read/search ("gh is not installed"), Twitter search (first try hung 753 s, then asked for a Chrome extension).</p>
+<h2>Caveats</h2>
+<ul><li>The CLI test hit YouTube 9 times just before the agent runs, which may have triggered the 429.</li><li>Port 9222 was held by another browser debug session on this laptop.</li><li>The GitHub SSL error may be specific to this machine/network.</li><li>Login channels (X, Reddit browse, Instagram, Xiaohongshu…) were not tested: we don't log into accounts for tests. The README itself lists them as login-required.</li></ul>
+<p><small>brutal guy.ai · <a href="https://www.youtube.com/@brutal_guy_ai">@brutal_guy_ai</a> · <a href="../">all kits</a></small></p>
+</main></body></html>
